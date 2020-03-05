@@ -1,0 +1,9 @@
+﻿[Unit]
+Description = Nextion Service for "dmonitor" delay timer
+
+[Timer]
+OnBootSec=30sec
+#Unit=nextion.service
+
+[Install]
+WantedBy=timers.target
