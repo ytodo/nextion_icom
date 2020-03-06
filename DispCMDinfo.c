@@ -36,13 +36,13 @@ void getipaddr(void)
 	}
 
 	/* 設定IP アドレスと実際のIP アドレスの比較 */
-	if (strcmp(ifaddr, dstarrepeater.ipaddress) == FALES && strcmp(dstarrepeater.ipaddress, "127.0.0.1") == FALES)
+	if (strcmp(ifaddr, ds.ipaddress) == 0 && strcmp(ds.ipaddress, "127.0.0.1") == 0)
 	{
-		strcpy(ipaddress, "Different IP set!");
+		strcpy(gd.ipaddress, "Different IP set!");
 	}
 	else
 	{
-		sprintf(getdatas.ipaddress, "%s:%s", ifname, ifaddr);
+		sprintf(gd.ipaddress, "%s:%s", ifname, ifaddr);
 	}
 
 	return;

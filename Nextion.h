@@ -83,7 +83,7 @@ typedef	struct {
 	int	microsec;			// リスト書き込み時のスピード調整用
 	int	debug;				// 1の時デバッグモード
 } nextion_ini_t;
-extern	nextion_ini_t	nextion_ini;		// nextion.iniの内容
+extern	nextion_ini_t	nx;			// nextion.iniの内容
 
 typedef	struct {
 	char	station[8];			// ノードコール（Terminal:個人コール/Access Point:クラブコール）
@@ -91,18 +91,18 @@ typedef	struct {
 	char	localport[6];			// DStarRepeaterのローカルポート
 	char	modemtype[16];			// DStarRepeaterのモデムタイプ
 } dstarrepeater_t;
-extern	dstarrepeater_t	dstarrepeater;		// dstarrepeaterの設定内容
+extern	dstarrepeater_t	ds;			// dstarrepeaterの設定内容
 
 typedef struct {
-	char	ipaddress[16];			// RasPiのIPアドレス
+	char	ipaddress[32];			// RasPiのIPアドレス
 } getdatas_t;
-extern	getdatas_t	getdatas;		// コマンド実行等で得たデータ
+extern	getdatas_t	gd;			// コマンド実行等で得たデータ
 
 extern	char	stat_dmon[32];			// ログファイルからの状況取得用
 extern	char	stat_dstar1[32];		// 	〃
 extern	char	stat_dstar2[32]; 		// 	〃（主にラストハード）
 extern	char	usercmd[32];			// タッチパネルからのコマンド
-extern	char	linkref[32];			// 接続先リフレクタ
+extern	char	linkref[8];			// 接続先リフレクタ
 extern	char	station_dmon[8];		// dmonitor接続用コールサイン
 extern	char	station_dstar[8];		// リフレクタ接続用コールサイン
 extern	char	chklink[16];			// ループ内の多重処理禁止用
@@ -113,6 +113,8 @@ extern	char	chkstat3[256];			// ループ内の多重処理禁止用
 extern	int	cnt_temp;			// 温度測定間隔調整用カウンタ
 extern	int	net_flag;			// ネット側ストリームon/off状態
 extern	int	rf_flag;			// RF 側ストリームon/off状態
+extern	char	rptcallpre[8];
+extern	char	statpre[32];
 
 /* Functions */
 int	openport(char *devicename, long baudrate);

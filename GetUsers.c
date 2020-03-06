@@ -27,7 +27,7 @@ void	getusers(void)
 		if ((fp = fopen(users_tbl, "r")) == NULL)
 		{
 			printf("File open error!\n");
-			return (EXIT_FAILURE);
+			return;
 		}
 
 		/* ファイルを一行ずつ読み最終行まで繰り返す  */
@@ -59,20 +59,18 @@ void	getusers(void)
 		}
 
 		/* ステータス・ラストハードの表示 */
-		getstatus();
-
-		if ((strncmp(status, "", 1) != 0) && (strncmp(status, statpre, 24) != 0))
-		{
-			strcpy(statpre, status);
+//		if ((strncmp(tmpstr, "", 1) != 0) && (strncmp(tmpstr, statpre, 24) != 0))
+//		{
+//			strcpy(statpre, tmpstr);
 
 			/* 取得ステイタス=> STATUS1 */
-			sendcmd("t9.txt=t8.txt");
-			sprintf(command, "t8.txt=\"%s\"", status);
-			sendcmd(command);
+//			sendcmd("t9.txt=t8.txt");
+//			sprintf(command, "t8.txt=\"%s\"", status);
+//			sendcmd(command);
 
 			/* statusをクリアする */
-			status[0] = '\0';
-		}
+//			status[0] = '\0';
+//		}
 
 		/* 1秒に一回リフレッシュする */
 		sleep(1);

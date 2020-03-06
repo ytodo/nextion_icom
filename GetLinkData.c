@@ -34,14 +34,14 @@ int 	getlinkdata(void)
 	while ((fgets(line, sizeof(line), fp)) != NULL)
 	{
 		/* Find out Callsign, IP Address and Port number */
-		if ((strcall = strstr(line, "callsign")) != NULL )
+		if ((ptrcall = strstr(line, "callsign")) != NULL )
 		{
 			ptraddr  = strstr(line, "ip_addr");
 			ptrport  = strstr(line, "port");
 			ptrzone  = strstr(line, "zr_call");
 
 			/* コールサインの保存 */
-			strncpy(linkdata[i].call, strcall + 10, 8);
+			strncpy(linkdata[i].call, ptrcall + 10, 8);
 
 			/* 第八番目もじ（拡張子）が空白だったら「Ａ」とする */
 			if (strncmp(" ", &linkdata[i].call[7], 1) == 0)

@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 
 	/* 現在利用可能なリピータリストの取得*/
 	system("systemctl restart auto_repmon.service");
-	usleep(microsec * 100);
+	usleep(nx.microsec * 100);
 	num = getlinkdata();
 
 	/* GPIO シリアルポートのオープン*/
@@ -56,9 +56,9 @@ int main(int argc, char *argv[])
 	/* メインスクリーンの初期設定 */
 	sendcmd("dim=dims");
 	sendcmd("page DMON");
-	sprintf(command, "DMON.station.txt=\"STATION : %s\"", station);
+	sprintf(command, "DMON.station.txt=\"STATION : %s\"", nx.station);
 	sendcmd(command);
-	sprintf(command, "t0.txt=\"STATION : %s\"", station);
+	sprintf(command, "t0.txt=\"STATION : %s\"",nx.station);
 	sendcmd(command);
 	sendcmd("t1.txt=\"LINK TO : NONE\"");
 	sendcmd("link.txt=\"LINK TO : NONE\"");
@@ -101,9 +101,9 @@ int main(int argc, char *argv[])
 		recvdata(concall);
 
 		/* もしタッチデータが選択されていない場合、初回のみデフォルトリピータをセットする */
-		if ((strlen(concall) == 0) && (strlen(default_rpt) != 0))
+		if ((strlen(concall) == 0) && (strlen(nx.default_rpt) != 0))
 		{
-			strcpy(concall, default_rpt);
+			strcpy(concall, nx.default_rpt);
 		}
 
 		/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
 				/* 指定リピータに接続する */
 				i = 0;
 				system("systemctl restart auto_repmon.service");
-				usleep(microsec * 100);		// リスト読み込み完了を確実にするウェイト
+				usleep(nx.microsec * 100);		// リスト読み込み完了を確実にするウェイト
 				num = getlinkdata();
 				for (i = 0; i < num; i++)
 				{
@@ -199,11 +199,11 @@ int main(int argc, char *argv[])
 						system("sudo rig_port_check");
 
 						/* 接続コマンドの実行 */
-						sprintf(command, "dmonitor '%s' %s %s '%s' '%s'", station, linkdata[i].addr, linkdata[i].port, linkdata[i].call, linkdata[i].zone);
+						sprintf(command, "dmonitor '%s' %s %s '%s' '%s'", nx.station, linkdata[i].addr, linkdata[i].port, linkdata[i].call, linkdata[i].zone);
 						sendcmd("page DMON");
 
 						/* killした後、disconnectの表示を待って再接続 */
-						usleep(microsec * 50);
+						usleep(nx.microsec * 50);
 						system(command);
 						break;
 					}
@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
 		 */
 
 		/* ステータス・ラストハードの読み取り */
-		getstatus();
+		dispstatus_dmon();
 	}		// Loop
 
 	/* GPIO シリアルポートのクローズ*/

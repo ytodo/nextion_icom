@@ -1,19 +1,19 @@
 
 #include	"Nextion.h"
 
-FILE	*fp;						// ファイルポインタ
-char	*tmpptr;					// 一時的ポインタ
-char	line[256]		= {'\0'};		// ファイルから読んだ一行
-char	tmpstr[32];		= {'\0'};
-char	cmdline[64]		= {'\0'};		// system command line
-char	command[32]		= {'\0'};		// nextion command
+FILE	*fp;					// ファイルポインタ
+char	*tmpptr;				// 一時的ポインタ
+char	line[256]	= {'\0'};		// ファイルから読んだ一行
+char	tmpstr[32]	= {'\0'};
+char	cmdline[64]	= {'\0'};		// system command line
+char	command[32]	= {'\0'};		// nextion command
 
 
 /********************************************************
  * dstarrepeaterd-yyyy-mm-dd.log を読み込み、
  * 処理の結果情報を取得する
  ********************************************************/
-void disploginfo_ref(void)
+void dispstatus_ref(void)
 {
 	char	line2[256]		= {'\0'};
 	char	fname[32]		= {'\0'};	// ファイル名
@@ -255,11 +255,6 @@ void disploginfo_ref(void)
 		pclose(fp);
 
 	}
-	else
-	{
-		exit(EXIT_FAILURE);
-	}
-
 	return;
 }
 
@@ -269,7 +264,7 @@ void disploginfo_ref(void)
 	dmonitor のログファイルよりラストハード及び
 	状況を取得し変数status に入れる
  ************************************************************/
-void getstatus(void)
+void	dispstatus_dmon(void)
 {
 
 	char	ret[2]		= {'\0'};
@@ -285,7 +280,7 @@ void getstatus(void)
 	if ((fp = popen(cmdline, "r")) == NULL)
 	{
 		printf("File open error!\n");
-		return (EXIT_FAILURE);
+		return;
 	}
 
 	/* 過去のデータをクリアする  */
@@ -315,7 +310,7 @@ void getstatus(void)
 				sprintf(command, "MAIN.status_dmon.txt=\"%s\"", tmpstr);
 				sendcmd(command);
 				stat = 0;
-				
+
 			}
 
 			/* どこに接続したかを取得 */
@@ -325,7 +320,7 @@ void getstatus(void)
 			}
 
 			/* Last packet wrong ステータスの場合、文字を黄色に */
-			if ((stat == 1) && (nextion_ini.debug == 1) && (strstr(line, "Last packet wrong") != NULL))
+			if ((stat == 1) && (nx.debug == 1) && (strstr(line, "Last packet wrong") != NULL))
 			{
 				strcpy(status, "Last packet wrong...");
 				break;
@@ -355,14 +350,14 @@ void getstatus(void)
 		}
 
 		/* 無線機の接続状況 */
-		if ((nextion_ini.debug == 1) && (strstr(line, "init/re-init") != NULL))
+		if ((nx.debug == 1) && (strstr(line, "init/re-init") != NULL))
 		{
 			memset(&status[0], '\0', sizeof(status));
 			strcpy(status, "Initializing RIG is done.");
 		}
 
 		/* ドロップパケット比の表示 */
-		if ((nextion_ini.debug == 1) && ((tmpptr = strstr(line, "drop")) != NULL))
+		if ((nx.debug == 1) && ((tmpptr = strstr(line, "drop")) != NULL))
 		{
 			memset(&status[0], '\0', sizeof(status));
 			strcpy(status, "Drop PKT ");

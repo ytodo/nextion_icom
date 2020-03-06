@@ -23,15 +23,15 @@ void getconfig(void)
         if ((fp = fopen(INIFILE, "r")) == NULL)
         {
                 printf("File open error!\n");
-                return (EXIT_FAILURE);
+                return;
         }
 
         while ((fgets(line, sizeof(line), fp)) != NULL)
         {
-                if ((ret = strstr(line, "STATION"))     != NULL) sscanf(line, "STATION=%[^\n]",     nextion_ini.station);
-                if ((ret = strstr(line, "DEFAULT_RPT")) != NULL) sscanf(line, "DEFAULT_RPT=%[^\n]", nextion_ini.default_rpt);
-                if ((ret = strstr(line, "SLEEPTIME"))   != NULL) sscanf(line, "SLEEPTIME=%d",       nextion_ini.microsec);
-                if ((ret = strstr(line, "DEBUG"))       != NULL) sscanf(line, "DEBUG=%d",           nextion_ini.debug);
+                if ((ret = strstr(line, "STATION"))     != NULL) sscanf(line, "STATION=%[^\n]",     nx.station);
+                if ((ret = strstr(line, "DEFAULT_RPT")) != NULL) sscanf(line, "DEFAULT_RPT=%[^\n]", nx.default_rpt);
+                if ((ret = strstr(line, "SLEEPTIME"))   != NULL) sscanf(line, "SLEEPTIME=%d",       nx.microsec);
+                if ((ret = strstr(line, "DEBUG"))       != NULL) sscanf(line, "DEBUG=%d",           nx.debug);
         }
         fclose(fp);
 
@@ -40,7 +40,7 @@ void getconfig(void)
         if ((fp = fopen(INIFILE, "r")) == NULL)
         {
                 printf("File open error!\n");
-                return (EXIT_FAILURE);
+                return;
         }
 
 	if ((fp = fopen(CONFFILE, "r")) != NULL)
@@ -48,19 +48,19 @@ void getconfig(void)
 		/* テーブルを読み込み変数に格納する */
 		while ((fgets(line, sizeof(line), fp)) != NULL)
 		{
-			if ((ret = strstr(line, "callsign"))     != NULL) sscanf(line, "callsign=%[^\n]",     dstarrepeater.station);
-			if ((ret = strstr(line, "localAddress")) != NULL) sscanf(line, "localAddress=%[^\n]", dstarrepeater.ipaddress);
-			if ((ret = strstr(line, "localPort"))    != NULL) sscanf(line, "localPort=%[^\n]",    dstarrepeater.localport);
-			if ((ret = strstr(line, "modemType"))    != NULL) sscanf(line, "modemType=%[^\n]",    dstarrepeater.modemtype);
+			if ((ret = strstr(line, "callsign"))     != NULL) sscanf(line, "callsign=%[^\n]",     ds.station);
+			if ((ret = strstr(line, "localAddress")) != NULL) sscanf(line, "localAddress=%[^\n]", ds.ipaddress);
+			if ((ret = strstr(line, "localPort"))    != NULL) sscanf(line, "localPort=%[^\n]",    ds.localport);
+			if ((ret = strstr(line, "modemType"))    != NULL) sscanf(line, "modemType=%[^\n]",    ds.modemtype);
 		}
 
 		/* ファイルクローズ */
 		fclose(fp);
 
 		/* ステーション名にバンド名を追加設定 */
-		if (strcmp(&dstarrepeater.station[7], "B") == 0) strcpy(tmpstr, " (70cm)");
-		if (strcmp(&dstarrepeater.station[7], "C") == 0) strcpy(tmpstr, " (2m)");
-		strcat(dstarrepeater.station, tmpstr);
+		if (strcmp(&ds.station[7], "B") == 0) strcpy(tmpstr, " (70cm)");
+		if (strcmp(&ds.station[7], "C") == 0) strcpy(tmpstr, " (2m)");
+		strcat(ds.station, tmpstr);
 	}
 
 	return;
