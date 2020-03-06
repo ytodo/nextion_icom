@@ -11,8 +11,6 @@ FILE	*fp;					// ファイルポインタ
 char	*tmpptr;				// 一時的ポインタ
 char	line[256]	= {'\0'};		// ファイルから読んだ一行
 char	tmpstr[32]	= {'\0'};		// 一時的文字列
-char	cmdline[64]	= {'\0'};		// system command line
-
 
 /********************************************************
  * dstarrepeaterd-yyyy-mm-dd.log を読み込み、

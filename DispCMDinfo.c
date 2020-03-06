@@ -9,7 +9,6 @@
 #define		SLEEPTIME	300000	/* micro sec (default 0.3秒=300000) */
 
 FILE	*fp;
-char	*cmdline;
 
 /********************************************************
  * Main から呼び出されIPアドレスをシステムコマンドで
@@ -21,7 +20,7 @@ void dispipaddr(void)
 	char	ifaddr[32]	= {'\0'};
 
 	/* コマンドの標準出力をオープン（ネットワーク・インターフェース名の取得） */
-	cmdline = "for DEV in `find /sys/devices -name net | grep -v virtual`; do ls $DEV/; done";
+	strcpy(cmdline, "for DEV in `find /sys/devices -name net | grep -v virtual`; do ls $DEV/; done");
 	if ((fp = popen(cmdline, "r")) != NULL)
 	{
 		fgets(ifname, sizeof(ifname), fp);
@@ -32,7 +31,7 @@ void dispipaddr(void)
 	}
 
 	/* コマンドの標準出力オープン（IPアドレスの取得）*/
-	cmdline = "hostname -I | cut -f1 -d' '";
+	strcpy(cmdline, "hostname -I | cut -f1 -d' '");
 	if ((fp = popen(cmdline, "r")) != NULL)
 	{
 		fgets(ifaddr, sizeof(ifaddr), fp);
@@ -73,7 +72,7 @@ void disptemp(void)
 	 */
 
 	/* CPU 温度を取得するシステムコマンド */
-	cmdline = "vcgencmd measure_temp";
+	strcpy(cmdline, "vcgencmd measure_temp");
 
 	/* コマンドの返りをファイルとしてオープン */
 	if ((fp = popen(cmdline, "r")) != NULL)
@@ -116,10 +115,5 @@ void disptemp(void)
 			sendcmd("t20.bco=63488");
 		}
 	}
-	else
-	{
-		exit(EXIT_FAILURE);
-	}
-
 	return;
 }

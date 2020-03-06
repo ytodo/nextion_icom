@@ -94,6 +94,7 @@ typedef	struct {
 } dstarrepeater_t;
 extern	dstarrepeater_t	ds;			// dstarrepeaterの設定内容
 extern	char	command[32];			// Nextionに送信するコマンド
+extern	char	cmdline[128];			// システムコマンド
 extern	char	stat_dmon[32];			// ログファイルからの状況取得用
 extern	char	stat_dstar1[32];		// 	〃
 extern	char	stat_dstar2[32]; 		// 	〃（主にラストハード）
@@ -109,7 +110,7 @@ extern	char	chkstat3[256];			// ループ内の多重処理禁止用
 extern	int	cnt_temp;			// 温度測定間隔調整用カウンタ
 extern	int	net_flag;			// ネット側ストリームon/off状態
 extern	int	rf_flag;			// RF 側ストリームon/off状態
-extern	char	rptcallpre[8];
+extern	char	rptcallpre[32];
 extern	char	statpre[32];
 
 /* Functions */

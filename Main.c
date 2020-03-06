@@ -44,9 +44,6 @@ int main(int argc, char *argv[])
 	int	i;
 	int	flag;
 	int	bufcnt;
-	char	command[64]	= {'\0'};
-	char	statpre[32]	= {'\0'};
-	char	rptcallpre[32]	= {'\0'};
 	char	concall[8]	= {'\0'};
 	char	concallpre[8]	= {'\0'};
 
@@ -99,6 +96,8 @@ int main(int argc, char *argv[])
 //	sprintf(command, "SYSTEM.va0.txt=\"%s\"", ipaddress);
 //	sendcmd(command);
 
+
+/*
 
 	/* 送・受信ループ */
 	while (1)
@@ -229,6 +228,7 @@ int main(int argc, char *argv[])
 		/* ステータス・ラストハードの読み取り */
 		dispstatus_dmon();
 	}		// Loop
+
 
 	/* GPIO シリアルポートのクローズ*/
 	close(fd);
