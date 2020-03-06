@@ -1,19 +1,26 @@
-
+////////////////////////////////////////////////////////////////////////////////////////
+//	ファイル名	DispCMDinfo.c
+//			2020.03.07-
+//	機能	dispipaddr	本プログラム実行中の物理インターフェースIPを取得表示
+//		disptemp	本プログラム実行中のRaspberryPiにおけるCPU温度を表示
+//		システムコマンドを実行することによってデータを取得
+////////////////////////////////////////////////////////////////////////////////////////
 #include	"Nextion.h"
 #define		SLEEPTIME	300000	/* micro sec (default 0.3秒=300000) */
 
+FILE	*fp;
+char	*cmdline;
+
 /********************************************************
  * Main から呼び出されIPアドレスをシステムコマンドで
- * 取得し、getdatas構造体に代入する。
+ * 取得し、Nextionグローバル変数に代入する。
  ********************************************************/
-void getipaddr(void)
+void dispipaddr(void)
 {
-	FILE	*fp;
-	char	*cmdline;
 	char	ifname[16]	= {'\0'};
 	char	ifaddr[32]	= {'\0'};
 
-	/* コマンドの標準出力をオープン */
+	/* コマンドの標準出力をオープン（ネットワーク・インターフェース名の取得） */
 	cmdline = "for DEV in `find /sys/devices -name net | grep -v virtual`; do ls $DEV/; done";
 	if ((fp = popen(cmdline, "r")) != NULL)
 	{
@@ -38,13 +45,14 @@ void getipaddr(void)
 	/* 設定IP アドレスと実際のIP アドレスの比較 */
 	if (strcmp(ifaddr, ds.ipaddress) == 0 && strcmp(ds.ipaddress, "127.0.0.1") == 0)
 	{
-		strcpy(gd.ipaddress, "Different IP set!");
+		sprintf(command, "IDLE.ipaddr.txt=\"%s\"", "Different IP set!");
+		sendcmd(command);
 	}
 	else
 	{
-		sprintf(gd.ipaddress, "%s:%s", ifname, ifaddr);
+		sprintf(command, "IDLE.ipaddr.txt=\"%s:%s\"", ifname, ifaddr);
+		sendcmd(command);
 	}
-
 	return;
 }
 
@@ -53,12 +61,9 @@ void getipaddr(void)
  * Main から呼び出されCPU の温度をシステムコマンドで
  * 取得し、Nextion に表示する。
  ********************************************************/
-void disptempinfo(void)
+void disptemp(void)
 {
-	FILE	*fp;
 	char	*tmpptr;
-	char	cmdline[512]	= {'\0'};
-	char	command[32]	= {'\0'};
 	char	tmpstr[32]	= {'\0'};
 	char	line[512]	= {'\0'};
 	char	cputemp[16]	= {'\0'};
@@ -68,7 +73,7 @@ void disptempinfo(void)
 	 */
 
 	/* CPU 温度を取得するシステムコマンド */
-	strcpy(cmdline, "vcgencmd measure_temp");
+	cmdline = "vcgencmd measure_temp";
 
 	/* コマンドの返りをファイルとしてオープン */
 	if ((fp = popen(cmdline, "r")) != NULL)

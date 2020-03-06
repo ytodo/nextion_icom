@@ -20,7 +20,18 @@
  *
  */
 
-
+////////////////////////////////////////////////////////////////////////
+// 	D-STAR  Nextion display for ICOM Terminal/Access Mode
+//
+//	ファイル名	Main.c 
+//			2020.03.05 - 
+//
+//	機能	Multi_Forwardが搭載されているリピータリストを取得して
+//		「接続可能リピータ」としてdmonitor用ディスプレイに表示。
+//		タッチパネルから接続する
+//		また、同様にターミナルモードのDStarRepeaterの接続と、
+//		状態表示もし、双方を切れ替えて使用する
+////////////////////////////////////////////////////////////////////////
 #include	"Nextion.h"
 #define		WAITTIME	0.5	// sec
 
@@ -42,8 +53,7 @@ int main(int argc, char *argv[])
 
 	/* 環境設定ファイルの読み取り */
 	getconfig();
-	getipaddr();
-
+	dispipaddr();
 
 	/* 現在利用可能なリピータリストの取得*/
 	system("systemctl restart auto_repmon.service");

@@ -20,16 +20,19 @@
  *
  */
 
-/*********************************************************************
- 	D-STAR  Nextion display for ICOM Terminal/Access Mode
-		Nextion.h 
-		2020.03.05 - 
+////////////////////////////////////////////////////////////////////////
+// 	D-STAR  Nextion display for ICOM Terminal/Access Mode
+//
+//	ファイル名	Nextion.h 
+//			2020.03.05 - 
+//
+//	機能	Multi_Forwardが搭載されているリピータリストを取得して
+//		「接続可能リピータ」としてdmonitor用ディスプレイに表示。
+//		タッチパネルから接続する
+//		また、同様にターミナルモードのDStarRepeaterの接続と、
+//		状態表示もし、双方を切れ替えて使用する
+////////////////////////////////////////////////////////////////////////
  
-	Multi_Forwardが搭載されているリピータリストを
-	取得して「接続可能リピータ」としてdmonitor用
-	ディスプレイに表示。タッチパネルから接続する
- 
- *********************************************************************/
 #ifndef __NEXTION_H__
 #define __NEXTION_H__
 
@@ -76,7 +79,6 @@ typedef struct {				// Hole Punch リピータリスト
 	char    zone[8];			// リピータゾーンコール
 } repeater_t;
 extern	repeater_t	linkdata[LISTSIZE];     // リピータリスト構造体配列の宣言
-
 typedef	struct {
 	char	station[8];			// ノードコール（Terminal:個人コール/Access Point:クラブコール）
 	char	default_rpt[8];			// 立ち上げ時自動接続リピータ
@@ -84,7 +86,6 @@ typedef	struct {
 	int	debug;				// 1の時デバッグモード
 } nextion_ini_t;
 extern	nextion_ini_t	nx;			// nextion.iniの内容
-
 typedef	struct {
 	char	station[8];			// ノードコール（Terminal:個人コール/Access Point:クラブコール）
 	char	ipaddress[16];			// DStarRepeaterのIPアドレス
@@ -92,12 +93,7 @@ typedef	struct {
 	char	modemtype[16];			// DStarRepeaterのモデムタイプ
 } dstarrepeater_t;
 extern	dstarrepeater_t	ds;			// dstarrepeaterの設定内容
-
-typedef struct {
-	char	ipaddress[32];			// RasPiのIPアドレス
-} getdatas_t;
-extern	getdatas_t	gd;			// コマンド実行等で得たデータ
-
+extern	char	command[32];			// Nextionに送信するコマンド
 extern	char	stat_dmon[32];			// ログファイルからの状況取得用
 extern	char	stat_dstar1[32];		// 	〃
 extern	char	stat_dstar2[32]; 		// 	〃（主にラストハード）
@@ -124,13 +120,12 @@ void	getconfig(void);
 void	dispstatus_dmon(void);
 void	dispstatus_ref(void);
 int	dispstreaminfo(void);
-void	getipaddr(void);
-void	disptempinfo(void);
+void	dispipaddr(void);
+void	disptemp(void);
 void	sendcmd(char *cmd);
 void	reflesh_idle(void);
 
 void	recvdata(char *touchcmd);		// 統一する
 void	recvdata(char *rptcon);
-
 
 #endif // __NEXTION_H__
