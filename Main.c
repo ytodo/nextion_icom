@@ -218,34 +218,6 @@ int main(int argc, char *argv[])
 
 		/* ステータス・ラストハードの読み取り */
 		getstatus();
-
-		/* 接続先の表示*/
-		if ((strncmp(rptcall, "", 1) != 0) && (strncmp(rptcall, rptcallpre, 8) != 0))
-		{
-			strcpy(rptcallpre, rptcall);
-			sprintf(command, "DMON.t1.txt=\"LINK TO : %s\"", rptcall);
-			sendcmd(command);
-			sprintf(command, "DMON.link.txt=\"LINK TO : %s\"", rptcall);
-			sendcmd(command);
-		}
-
-		/* ステータス・ラストハードの表示 */
-		if ((strncmp(status, "", 1) != 0) && (strncmp(status, statpre, 24) != 0))
-		{
-			strcpy(statpre, status);
-
-			/* STATUS1 => STATUS2 */
-			sendcmd("DMON.stat2.txt=DMON.stat1.txt");
-
-			/* 取得ステイタス=> STATUS1 */
-			sprintf(command, "DMON.stat1.txt=\"%s\"", status);
-			sendcmd(command);
-			sendcmd("MAIN.t2.txt=DMON.stat1.txt");
-			sendcmd("MAIN.t3.txt=DMON.stat2.txt");
-
-			/* statusをクリアする */
-			status[0] = '\0';
-		}
 	}		// Loop
 
 	/* GPIO シリアルポートのクローズ*/

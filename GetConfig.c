@@ -1,10 +1,10 @@
 #include "Nextion.h"
 
-/*********************************************
- * 環境設定ファイルnextion.ini の内容を読む
- *********************************************/
+/************************************************************
+ * 環境設定ファイルnextion.ini と dstarrepeater の内容を読む
+ ************************************************************/
 
-int getconfig(void)
+void getconfig(void)
 {
 	FILE	*fp;
 	char	*ret;
@@ -63,42 +63,6 @@ int getconfig(void)
 		strcat(dstarrepeater.station, tmpstr);
 	}
 
-
-	/*
-	 * コマンドの標準出力オープン（ネットワークインターフェース名取得）
-	 */
-	cmdline = "for DEV in `find /sys/devices -name net | grep -v virtual`; do ls $DEV/; done";
-	if ((fp = popen(cmdline, "r")) != NULL)
-	{
-		fgets(ifname, sizeof(ifname), fp);
-		ifname[strlen(ifname) - 1] = '\0';
-
-		/* 標準出力クローズ */
-		pclose(fp);
-	}
-
-	/*
-	 * コマンドの標準出力オープン（IPアドレスの取得）
-	 */
-	cmdline = "hostname -I | cut -f1 -d' '";
-	if ((fp = popen(cmdline, "r")) != NULL)
-	{
-		fgets(ifaddr, sizeof(ifaddr), fp);
-
-		/* 設定IP アドレスと実際のIP アドレスの比較 */
-		if (strcmp(ifaddr, dstarrepeater.ipaddress) == FALES && strcmp(dstarrepeater.ipaddress, "127.0.0.1") == FALES)
-		{
-			strcpy(ipaddress, "Different IP set!");
-	        }
-		else
-		{
-			sprintf(dstarrepeater.ipaddress, "%s:%s", ifname, ifaddr);
-		}
-
-		/* 標準出力クローズ */
-		pclose(fp);
-	}
-
-	return (EXIT_SUCCESS);
+	return;
 }
 

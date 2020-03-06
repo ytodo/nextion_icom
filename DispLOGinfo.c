@@ -1,22 +1,26 @@
+
+#include	"Nextion.h"
+
+FILE	*fp;						// ファイルポインタ
+char	*tmpptr;					// 一時的ポインタ
+char	line[256]		= {'\0'};		// ファイルから読んだ一行
+char	tmpstr[32];		= {'\0'};
+char	cmdline[64]		= {'\0'};		// system command line
+char	command[32]		= {'\0'};		// nextion command
+
+
 /********************************************************
  * dstarrepeaterd-yyyy-mm-dd.log を読み込み、
  * 処理の結果情報を取得する
  ********************************************************/
-
-#include	"Nextion.h"
-
-int disploginfo(void)
+void disploginfo_ref(void)
 {
-	FILE	*fp;
-	char	*tmpptr;
-	char	cmdline[64]	= {'\0'};
-	char	line[256]	= {'\0'};
-	char	line2[256]	= {'\0'};
-	char	command[32]	= {'\0'};
-	char	fname[32]	= {'\0'};
-	char	mycall[10]	= {'\0'};
-	char	urcall[10]	= {'\0'};
-
+	char	line2[256]		= {'\0'};
+	char	fname[32]		= {'\0'};	// ファイル名
+	char	mycall[8]		= {'\0'};
+	char	urcall[8]		= {'\0'};
+	char	dstarlogpath[32]	= {'\0'};	// D-STAR Repeater ログのフルパス
+	char	status2[32] 		= {'\0'};
 	/*
 	 * ログファイルからリフレクタへのリンク情報を抽出する
 	 */
@@ -256,5 +260,158 @@ int disploginfo(void)
 		exit(EXIT_FAILURE);
 	}
 
-	return (EXIT_SUCCESS);
+	return;
 }
+
+
+
+/************************************************************
+	dmonitor のログファイルよりラストハード及び
+	状況を取得し変数status に入れる
+ ************************************************************/
+void getstatus(void)
+{
+
+	char	ret[2]		= {'\0'};
+	char	jitter_av[8]	= {'\0'};
+	char	jitter_mx[8]	= {'\0'};
+	char	jitter_mi[8]	= {'\0'};
+	char	status[32]	= {'\0'};
+	char	rptcall[8]	= {'\0'};
+	int	stat		= 0;
+
+	/* コマンドの標準出力オープン */
+	strcpy(cmdline, "tail -n3 /var/log/dmonitor.log");
+	if ((fp = popen(cmdline, "r")) == NULL)
+	{
+		printf("File open error!\n");
+		return (EXIT_FAILURE);
+	}
+
+	/* 過去のデータをクリアする  */
+	memset(&status[0], '\0', sizeof(status));
+	memset(&rptcall[0],'\0', sizeof(rptcall));
+
+	/* 標準出力を配列に取得 */
+	while ((fgets(line, sizeof(line), fp)) != NULL)
+	{
+		/* status に関する文字列があったら */
+		if ((tmpptr = strstr(line, "from")) != NULL)
+		{
+			/* 日付時間とコールサインをログとして出力 */
+			if ((strstr(line, "Connected") == NULL) && (strstr(line, "Last packet") == NULL))
+			{
+				memset(&status[0], '\0', sizeof(status));
+				strncpy(status, line, 16);
+				strncat(status, tmpptr - 9, 8);
+
+				/* JST 時刻の算出 */
+				jstimer = time(NULL);
+				jstimeptr = localtime(&jstimer);
+
+				/* LastheardとしてMAINページに表示 */
+				strftime(tmpstr, sizeof(tmpstr), "%H:%M ", jstimeptr);
+				strncat(tmpstr,tmpptr - 9, 8);
+				sprintf(command, "MAIN.status_dmon.txt=\"%s\"", tmpstr);
+				sendcmd(command);
+				stat = 0;
+				
+			}
+
+			/* どこに接続したかを取得 */
+			if ((tmpptr = strstr(line, "Connected")) != NULL)
+			{
+				strncpy(rptcall, tmpptr + 13, 8);
+			}
+
+			/* Last packet wrong ステータスの場合、文字を黄色に */
+			if ((stat == 1) && (nextion_ini.debug == 1) && (strstr(line, "Last packet wrong") != NULL))
+			{
+				strcpy(status, "Last packet wrong...");
+				break;
+			}
+		}
+
+		/* dmonitorの開始とバージョンを取得 */
+		if ((tmpptr = strstr(line, "dmonitor start")) != NULL)
+		{
+			memset(&status[0], '\0', sizeof(status));
+			strncpy(status, tmpptr, 21);
+		}
+
+		/* バッファの拡張のサイズを取得 */
+		if ((tmpptr = strstr(line, "New FiFo buffer")) != NULL)
+		{
+			memset(&status[0], '\0', sizeof(status));
+			strcpy(status, tmpptr + 9);
+			status[strlen(status) - 1] = '\0';
+		}
+
+		/* 接続解除を取得 */
+		if (strstr(line, "dmonitor end") != NULL)
+		{
+			memset(&status[0], '\0', sizeof(status));
+			strcpy(status, "Disconnected");
+		}
+
+		/* 無線機の接続状況 */
+		if ((nextion_ini.debug == 1) && (strstr(line, "init/re-init") != NULL))
+		{
+			memset(&status[0], '\0', sizeof(status));
+			strcpy(status, "Initializing RIG is done.");
+		}
+
+		/* ドロップパケット比の表示 */
+		if ((nextion_ini.debug == 1) && ((tmpptr = strstr(line, "drop")) != NULL))
+		{
+			memset(&status[0], '\0', sizeof(status));
+			strcpy(status, "Drop PKT ");
+			strcat(status, tmpptr + 17);
+			status[strlen(status) - 1] = '\0';
+			stat = 1;
+		}
+	}
+	pclose(fp);
+
+	/* 接続先の表示*/
+	if ((strncmp(rptcall, "", 1) != 0) && (strncmp(rptcall, rptcallpre, 8) != 0))
+	{
+		strcpy(rptcallpre, rptcall);
+		sprintf(command, "DMON.t1.txt=\"LINK TO : %s\"", rptcall);
+		sendcmd(command);
+		sprintf(command, "DMON.link.txt=\"LINK TO : %s\"", rptcall);
+		sendcmd(command);
+	}
+
+	/* ステータス・ラストハードの表示 */
+	if ((strncmp(status, "", 1) != 0) && (strncmp(status, statpre, 24) != 0))
+	{
+		strcpy(statpre, status);
+
+		/* STATUS1 => STATUS2 */
+		sendcmd("DMON.stat2.txt=DMON.stat1.txt");
+
+		/* 取得ステイタス=> STATUS1 */
+		sprintf(command, "DMON.stat1.txt=\"%s\"", status);
+		sendcmd(command);
+		sendcmd("DMON.t2.txt=DMON.stat1.txt");
+		sendcmd("DMON.t3.txt=DMON.stat2.txt");
+
+		/* statusをクリアする */
+		status[0] = '\0';
+	}
+
+	return;
+}
+
+
+/* sample
+Nov 16 09:35:00 ham12 dmonitor[30968]: drop pakcet rate 0.00% (0/22)
+Nov 16 09:35:00 ham12 dmonitor[30968]: jitter info. ave:20mSec. max:26mSec. min:17mSec.
+Nov 16 09:35:20 ham12 dmonitor[30968]: dmonitor end
+Nov 16 09:35:20 ham12 dmonitor[9408]: dmonitor start V01.27 (Compiled Nov 11 2019 12:50:00)
+Nov 16 09:35:20 ham12 dmonitor[9408]: Connected to JP3YIY A (153.131.76.69:51000) from JE3HCZ D
+Nov 16 09:35:21 ham12 dmonitor[9408]: RIG(ID-xxPlus) open
+Nov 16 09:35:21 ham12 dmonitor[9408]: hole punch done.
+Nov 16 09:35:21 ham12 dmonitor[9408]: RIG(ID-xxPlus) init/re-init done
+*/

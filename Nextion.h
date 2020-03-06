@@ -20,16 +20,16 @@
  *
  */
 
-/************************************************************
- 	D-STAR Repeater Nextion display for dmonitor
-		main.h version 00.01
-		2018.11.01 - 2020.02.10
+/*********************************************************************
+ 	D-STAR  Nextion display for ICOM Terminal/Access Mode
+		Nextion.h 
+		2020.03.05 - 
  
 	Multi_Forwardが搭載されているリピータリストを
 	取得して「接続可能リピータ」としてdmonitor用
 	ディスプレイに表示。タッチパネルから接続する
  
- ************************************************************/
+ *********************************************************************/
 #ifndef __NEXTION_H__
 #define __NEXTION_H__
 
@@ -68,38 +68,43 @@ time_t	jstimer;
 struct	tm *jstimeptr;
 
 /* Variables */
-typedef	struct {
-	char	station[8];			// ノードコール（Terminal:個人コール/Access Point:クラブコール）
-	char	default_rpt[8];			// 立ち上げ時自動接続リピータ
-	int	microsec;			// リスト書き込み時のスピード調整用
-	int	debug;				// 1の時デバッグモード
-}	nextion_ini;				// nextion.iniの内容
-
-typedef	struct {
-	char	station[8];			// ノードコール（Terminal:個人コール/Access Point:クラブコール）
-	char	ipaddress[16];			// DStarRepeaterのIPアドレス
-	char	localport[6];			// DStarRepeaterのローカルポート
-	char	modemtype[16];			// DStarRepeaterのモデムタイプ
-}	dstarrepeater				// dstarrepeaterの設定内容
-
 typedef struct {				// Hole Punch リピータリスト
 	char    name[20];			// 予備
 	char    call[8];			// リピータコールサイン
 	char    addr[16];			// リピータグローバルアドレス
 	char    port[6];			// multi_forward接続ポート
 	char    zone[8];			// リピータゾーンコール
-}	repeater_t;
+} repeater_t;
 extern	repeater_t	linkdata[LISTSIZE];     // リピータリスト構造体配列の宣言
+
+typedef	struct {
+	char	station[8];			// ノードコール（Terminal:個人コール/Access Point:クラブコール）
+	char	default_rpt[8];			// 立ち上げ時自動接続リピータ
+	int	microsec;			// リスト書き込み時のスピード調整用
+	int	debug;				// 1の時デバッグモード
+} nextion_ini_t;
+extern	nextion_ini_t	nextion_ini;		// nextion.iniの内容
+
+typedef	struct {
+	char	station[8];			// ノードコール（Terminal:個人コール/Access Point:クラブコール）
+	char	ipaddress[16];			// DStarRepeaterのIPアドレス
+	char	localport[6];			// DStarRepeaterのローカルポート
+	char	modemtype[16];			// DStarRepeaterのモデムタイプ
+} dstarrepeater_t;
+extern	dstarrepeater_t	dstarrepeater;		// dstarrepeaterの設定内容
+
+typedef struct {
+	char	ipaddress[16];			// RasPiのIPアドレス
+} getdatas_t;
+extern	getdatas_t	getdatas;		// コマンド実行等で得たデータ
+
 extern	char	stat_dmon[32];			// ログファイルからの状況取得用
 extern	char	stat_dstar1[32];		// 	〃
 extern	char	stat_dstar2[32]; 		// 	〃（主にラストハード）
 extern	char	usercmd[32];			// タッチパネルからのコマンド
 extern	char	linkref[32];			// 接続先リフレクタ
 extern	char	station_dmon[8];		// dmonitor接続用コールサイン
-extern	char	station_dstar[8]		// リフレクタ接続用コールサイン
-extern	char	modemtype[16];			// モデムアダプタの種類
-extern	char	cputemp[8];			// CPU の温度
-extern	char	dstarlogpath[32];		// D-STAR Repeater ログのフルパス
+extern	char	station_dstar[8];		// リフレクタ接続用コールサイン
 extern	char	chklink[16];			// ループ内の多重処理禁止用
 extern	char	chklink2[16];			// ループ内の多重処理禁止用
 extern	char	chkstat[256];			// ループ内の多重処理禁止用
@@ -111,19 +116,19 @@ extern	int	rf_flag;			// RF 側ストリームon/off状態
 
 /* Functions */
 int	openport(char *devicename, long baudrate);
-int     getlinkdata(void);
-int     getstatus(void);
-int     getipaddr(void);
-int     getusers(void);
-int	getconfig(void);
-int	dispcmdinfo(void);
-int	disploginfo(void);
+int	getlinkdata(void);
+void	getusers(void);
+void	getconfig(void);
+void	dispstatus_dmon(void);
+void	dispstatus_ref(void);
 int	dispstreaminfo(void);
+void	getipaddr(void);
+void	disptempinfo(void);
+void	sendcmd(char *cmd);
+void	reflesh_idle(void);
 
 void	recvdata(char *touchcmd);		// 統一する
 void	recvdata(char *rptcon);
 
-void	sendcmd(char *cmd);
-void	reflesh_idle();
 
 #endif // __NEXTION_H__
