@@ -1,3 +1,5 @@
+// 原罪未使用 Not in use
+
 #include "Nextion.h"
 #define SLEEPTIME	300000
 
