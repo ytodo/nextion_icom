@@ -42,7 +42,7 @@ void dispipaddr(void)
 	}
 
 	/* 設定IP アドレスと実際のIP アドレスの比較 */
-	if (strcmp(ifaddr, ds.ipaddress) == 0 && strcmp(ds.ipaddress, "127.0.0.1") == 0)
+	if (strcmp(ifaddr, ds.ipaddress) == 0 ) //&& strcmp(ds.ipaddress, "127.0.0.1") == 0)
 	{
 		sprintf(command, "IDLE.ipaddr.txt=\"%s\"", "Different IP set!");
 		sendcmd(command);
@@ -52,6 +52,8 @@ void dispipaddr(void)
 		sprintf(command, "IDLE.ipaddr.txt=\"%s:%s\"", ifname, ifaddr);
 		sendcmd(command);
 	}
+	sendcmd("IDLE.t3.txt=ipaddr.txt");
+
 	return;
 }
 
@@ -86,9 +88,9 @@ void disptemp(void)
 		pclose(fp);
 
 		/* CPU 温度の表示*/
-		sprintf(command, "temp.txt=\"%s\"", cputemp);
+		sprintf(command, "IDLE.temp.txt=\"%s\"", cputemp);
 		sendcmd(command);
-		sendcmd("t20.txt=temp.txt");
+		sendcmd("IDLE.t20.txt=temp.txt");
 
 		/* CPU 温度による表示色変更 */
 		strcpy(tmpstr, cputemp);
@@ -96,23 +98,23 @@ void disptemp(void)
 		int temp = atoi(tmpstr);
 		if (temp < 45)
 		{
-			sendcmd("t20.pco=2016");
-			sendcmd("t20.bco=25356");
+			sendcmd("IDLE.t20.pco=2016");
+			sendcmd("IDLE.t20.bco=25356");
 		}
 		if (temp >= 45 && temp < 50)
 		{
-			sendcmd("t20.pco=65504");
-			sendcmd("t20.bco=25356");
+			sendcmd("IDLE.t20.pco=65504");
+			sendcmd("IDLE.t20.bco=25356");
 		}
 		if (temp >= 50 && temp < 55)
 		{
-			sendcmd("t20.pco=64520");
-			sendcmd("t20.bco=25356");
+			sendcmd("IDLE.t20.pco=64520");
+			sendcmd("IDLE.t20.bco=25356");
 		}
 		if (temp >= 55)
 		{
-			sendcmd("t20.pco=65504");
-			sendcmd("t20.bco=63488");
+			sendcmd("IDLE.t20.pco=65504");
+			sendcmd("IDLE.t20.bco=63488");
 		}
 	}
 	return;

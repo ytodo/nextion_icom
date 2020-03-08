@@ -72,36 +72,39 @@ struct	tm *jstimeptr;
 
 /* Variables */
 typedef struct {				// Hole Punch リピータリスト
-	char    name[20];			// 予備
-	char    call[8];			// リピータコールサイン
+	char    call[9];			// リピータコールサイン
 	char    addr[16];			// リピータグローバルアドレス
 	char    port[6];			// multi_forward接続ポート
-	char    zone[8];			// リピータゾーンコール
+	char    zone[9];			// リピータゾーンコール
+	char    name[20];			// 予備
 } repeater_t;
 extern	repeater_t	linkdata[LISTSIZE];     // リピータリスト構造体配列の宣言
+
 typedef	struct {
-	char	station[8];			// ノードコール（Terminal:個人コール/Access Point:クラブコール）
-	char	default_rpt[8];			// 立ち上げ時自動接続リピータ
-	int	microsec;			// リスト書き込み時のスピード調整用
-	int	debug;				// 1の時デバッグモード
+	char	station[9];			// ノードコール（Terminal:個人コール/Access Point:クラブコール）
+	char	default_rpt[9];			// 立ち上げ時自動接続リピータ
+	char	microsec[6];			// リスト書き込み時のスピード調整用
+	char	debug[1];			// 1の時デバッグモード
 } nextion_ini_t;
 extern	nextion_ini_t	nx;			// nextion.iniの内容
+
 typedef	struct {
-	char	station[8];			// ノードコール（Terminal:個人コール/Access Point:クラブコール）
+	char	station[16];			// ノードコール（Terminal:個人コール/Access Point:クラブコール）
 	char	ipaddress[16];			// DStarRepeaterのIPアドレス
 	char	localport[6];			// DStarRepeaterのローカルポート
-	char	modemtype[16];			// DStarRepeaterのモデムタイプ
+	char	modemtype[32];			// DStarRepeaterのモデムタイプ
 } dstarrepeater_t;
 extern	dstarrepeater_t	ds;			// dstarrepeaterの設定内容
+
 extern	char	command[32];			// Nextionに送信するコマンド
 extern	char	cmdline[128];			// システムコマンド
 extern	char	stat_dmon[32];			// ログファイルからの状況取得用
 extern	char	stat_dstar1[32];		// 	〃
 extern	char	stat_dstar2[32]; 		// 	〃（主にラストハード）
 extern	char	usercmd[32];			// タッチパネルからのコマンド
-extern	char	linkref[8];			// 接続先リフレクタ
-extern	char	station_dmon[8];		// dmonitor接続用コールサイン
-extern	char	station_dstar[8];		// リフレクタ接続用コールサイン
+extern	char	linkref[9];			// 接続先リフレクタ
+extern	char	station_dmon[9];		// dmonitor接続用コールサイン
+extern	char	station_dstar[9];		// リフレクタ接続用コールサイン
 extern	char	chklink[16];			// ループ内の多重処理禁止用
 extern	char	chklink2[16];			// ループ内の多重処理禁止用
 extern	char	chkstat[256];			// ループ内の多重処理禁止用
@@ -124,9 +127,7 @@ int	dispstreaminfo(void);
 void	dispipaddr(void);
 void	disptemp(void);
 void	sendcmd(char *cmd);
-void	reflesh_idle(void);
-
-void	recvdata(char *touchcmd);		// 統一する
-void	recvdata(char *rptcon);
+void	reflesh_pages(void);
+void	recvdata(char *touchcmd);
 
 #endif // __NEXTION_H__

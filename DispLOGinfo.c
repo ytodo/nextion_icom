@@ -4,7 +4,7 @@
 //	機能	dispstatus_ref	dstarrepeaterd.logから現状をピックアップ
 //		dispstatus_dmon	dmonitor.logから現状をピックアップ
 //		Nextion上にラストハードやステータスとして表示する。
-///////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////
 #include	"Nextion.h"
 
 FILE	*fp;					// ファイルポインタ
@@ -80,6 +80,8 @@ void dispstatus_ref(void)
 				sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
 				sendcmd(command);
 				sendcmd("IDLE.t2.txt=status2.txt");
+				sendcmd("MAIN.status_ref.txt=IDLE.status2.txt");
+				sendcmd("MAIN.t1.txt=MAIN.status_ref.txt");
 			}
 		}
 
@@ -110,7 +112,7 @@ void dispstatus_ref(void)
 				sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
 				sendcmd(command);
 
-				reflesh_idle();
+				reflesh_pages();
 			}
 		}
 
@@ -157,6 +159,7 @@ void dispstatus_ref(void)
 				/* ステータス2 を保存 */
 				sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
 				sendcmd(command);
+
 			}
 			rf_flag = 1;
 		}
@@ -228,7 +231,7 @@ void dispstatus_ref(void)
 				sleep(TXHANG);
 
 				/* IDLE 画面に戻る */
-				reflesh_idle();
+				reflesh_pages();
 			}
 			rf_flag = 0;
 		}
@@ -249,7 +252,7 @@ void dispstatus_ref(void)
 				sleep(TXHANG);
 
 				/* IDLE 画面に戻る */
-				reflesh_idle();
+				reflesh_pages();
 			}
 			net_flag = 0;
 		}
@@ -275,7 +278,7 @@ void	dispstatus_dmon(void)
 	char	jitter_mx[8]	= {'\0'};
 	char	jitter_mi[8]	= {'\0'};
 	char	status[32]	= {'\0'};
-	char	rptcall[8]	= {'\0'};
+	char	rptcall[9]	= {'\0'};
 	int	stat		= 0;
 
 	/* コマンドの標準出力オープン */
@@ -300,18 +303,21 @@ void	dispstatus_dmon(void)
 			if ((strstr(line, "Connected") == NULL) && (strstr(line, "Last packet") == NULL))
 			{
 				memset(&status[0], '\0', sizeof(status));
-				strncpy(status, line, 16);
-				strncat(status, tmpptr - 9, 8);
+				strncpy(status, line, 16);			// 日付と時刻
+				strncat(status, tmpptr - 9, 8);			// Callsign
+				status[24] = '\0';
 
 				/* JST 時刻の算出 */
 				jstimer = time(NULL);
 				jstimeptr = localtime(&jstimer);
 
 				/* LastheardとしてMAINページに表示 */
-				strftime(tmpstr, sizeof(tmpstr), "%H:%M ", jstimeptr);
-				strncat(tmpstr,tmpptr - 9, 8);
+				strftime(tmpstr, sizeof(tmpstr), "%m.%d %H:%M ", jstimeptr);
+				strncat(tmpstr, tmpptr - 9, 8);
+				tmpstr[20] = '\0';
 				sprintf(command, "MAIN.status_dmon.txt=\"%s\"", tmpstr);
 				sendcmd(command);
+				sendcmd("MAIN.t0.txt=MAIN.status_dmon.txt");
 				stat = 0;
 
 			}
@@ -320,10 +326,11 @@ void	dispstatus_dmon(void)
 			if ((tmpptr = strstr(line, "Connected")) != NULL)
 			{
 				strncpy(rptcall, tmpptr + 13, 8);
+				rptcall[8] = '\0';
 			}
 
 			/* Last packet wrong ステータスの場合、文字を黄色に */
-			if ((stat == 1) && (nx.debug == 1) && (strstr(line, "Last packet wrong") != NULL))
+			if ((stat == 1) && (nx.debug == "1") && (strstr(line, "Last packet wrong") != NULL))
 			{
 				strcpy(status, "Last packet wrong...");
 				break;
@@ -346,21 +353,21 @@ void	dispstatus_dmon(void)
 		}
 
 		/* 接続解除を取得 */
-		if (strstr(line, "dmonitor end") != NULL)
+		if ((nx.debug == "1") && (strstr(line, "dmonitor end") != NULL))
 		{
 			memset(&status[0], '\0', sizeof(status));
 			strcpy(status, "Disconnected");
 		}
 
 		/* 無線機の接続状況 */
-		if ((nx.debug == 1) && (strstr(line, "init/re-init") != NULL))
+		if ((nx.debug == "1") && (strstr(line, "init/re-init") != NULL))
 		{
 			memset(&status[0], '\0', sizeof(status));
 			strcpy(status, "Initializing RIG is done.");
 		}
 
 		/* ドロップパケット比の表示 */
-		if ((nx.debug == 1) && ((tmpptr = strstr(line, "drop")) != NULL))
+		if ((nx.debug == "1") && ((tmpptr = strstr(line, "drop")) != NULL))
 		{
 			memset(&status[0], '\0', sizeof(status));
 			strcpy(status, "Drop PKT ");
@@ -394,6 +401,8 @@ void	dispstatus_dmon(void)
 		sendcmd(command);
 		sendcmd("DMON.t2.txt=DMON.stat1.txt");
 		sendcmd("DMON.t3.txt=DMON.stat2.txt");
+		sendcmd("USERS.t8.txt=DMON.stat1.txt");
+		sendcmd("USERS.t9.txt=DMON.stat2.txt");
 
 		/* statusをクリアする */
 		status[0] = '\0';

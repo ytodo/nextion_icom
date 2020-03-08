@@ -105,13 +105,28 @@ void recvdata(char *touchcmd)
 /*********************************************
  * IDLE 画面に復帰時データを再表示
  *********************************************/
-void reflesh_idle()
+void reflesh_pages()
 {
 	sendcmd("dim=dims");
-	sendcmd("page IDLE");
-	sendcmd("t0.txt=station.txt");
-	sendcmd("t1.txt=status.txt");
-	sendcmd("t2.txt=status2.txt");
-	sendcmd("t3.txt=ipaddr.txt");
-	sendcmd("t30.txt=type.txt");
+//	sendcmd("page MAIN");
+
+	/* MAIN reflesh */
+	sendcmd("MAIN.t0.txt=MAIN.status_dmon.txt");
+	sendcmd("MAIN.t1.txt=MAIN.status_ref.txt");
+
+	/* IDLE reflesh */
+	sendcmd("IDLE.t0.txt=IDLE.station.txt");
+	sendcmd("IDLE.t1.txt=IDLE.status.txt");
+	sendcmd("IDLE.t2.txt=IDLE.status2.txt");
+	sendcmd("IDLE.t3.txt=IDLE.ipaddr.txt");
+	sendcmd("IDLE.t30.txt=IDLE.type.txt");
+	dispipaddr();
+
+	/* DMON reflesh */
+	sprintf(command, "DMON.station.txt=\"STATION : %s\"", nx.station);
+	sendcmd(command);
+	sendcmd("DMON.t0.txt=DMON.station.txt");
+	sendcmd("DMON.t1.txt=DMON.link.txt");
+	sendcmd("DMON.t2.txt=DMON.stat1.txt");
+	sendcmd("DMON.t3.txt=DMON.stat2.txt");
 }
