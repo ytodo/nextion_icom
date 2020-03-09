@@ -77,6 +77,7 @@ typedef struct {				// Hole Punch リピータリスト
 	char    port[6];			// multi_forward接続ポート
 	char    zone[9];			// リピータゾーンコール
 	char    name[20];			// 予備
+	char	selected_page[2];		// 表示されている最初:F /最後:E
 } repeater_t;
 extern	repeater_t	linkdata[LISTSIZE];     // リピータリスト構造体配列の宣言
 

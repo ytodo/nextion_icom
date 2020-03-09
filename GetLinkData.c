@@ -81,3 +81,44 @@ int 	getlinkdata(void)
 	/* 軒数を返す */
 	return (i);
 }
+
+void	previous_page(int num)
+{
+	int i 		= 0;
+	int j 		= 0;
+	int first	= 0;
+	int contents	= 0;
+	
+	
+
+
+
+	for (i = 0; i < num;, i++)
+	{
+		if (strncmp(linkdata[i].selected_page, "F", 1) == TRUE)
+		{
+			if (i < 21) first = num - (21 - i); else first = i;
+			if (first + 21 > num ) contents = num - first; else contents = 21;
+
+			/* 全リストを空にした後リピータ数分の文字配列にコールサインを格納 */
+			for (j = 0; j < 21; j++)
+			{
+				sprintf(command, "RPTLIST.va%d.txt=\"\"", j);
+				sendcmd(command);
+			}
+			for (j = 0; j < contents; j++)
+			{
+				sprintf(command, "RPTLIST.va%d.txt=\"%s\"", linkdata[first + j].call);
+				sendcmd(command);
+				if (j = 0) strcpy(linkdata[first].selected_page, "F");
+			}
+		}
+	}
+}
+
+void	next_page(int num)
+{
+	int i		= 0;
+	int j		= 0;
+	int end		
+}
