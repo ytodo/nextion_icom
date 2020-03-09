@@ -37,19 +37,19 @@
 
 int main(int argc, char *argv[])
 {
-	int     num;				// 返り値のi を受ける（件数）
-	int     arraycount;
-	int     fd;
-	int     i;
-	int     flag;
-	int     bufcnt;
-        char    concallpre[8]   = {'\0'};
+	int	num;				// 返り値のi を受ける（件数）
+	int	arraycount;
+	int	fd;
+	int	i;
+	int	flag;
+	int	bufcnt;
+	char	concallpre[8]	= {'\0'};
 	char	tmpstr[32]	= {'\0'};
 
-        /* GPIO シリアルポートのオープン*/
-        fd = openport(SERIALPORT, BAUDRATE);
+	/* GPIO シリアルポートのオープン*/
+	fd = openport(SERIALPORT, BAUDRATE);
 
-        /* 環境設定ファイルの読み取り */
+	/* 環境設定ファイルの読み取り */
 	sendcmd("page MAIN");
 	getconfig();
 	reflesh_pages();
@@ -90,107 +90,107 @@ int main(int argc, char *argv[])
 			strcpy(usercmd, nx.default_rpt);
 		}
 
-                /* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
-                if ((strlen(usercmd) > 1) && (strncmp(usercmd, concallpre, 8) != 0))
-                {
-                        /* 現在の返り値を保存 */
-                        strncpy(concallpre, usercmd, 8);
+		/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
+		if ((strlen(usercmd) > 1) && (strncmp(usercmd, concallpre, 8) != 0))
+		{
+			/* 現在の返り値を保存 */
+			strncpy(concallpre, usercmd, 8);
 
-                        /* コマンドをスイッチに振り分ける */
-                        if (strncmp(usercmd, "restart", 7) == 0) flag = 1;
-                        if (strncmp(usercmd, "reboot",  6) == 0) flag = 2;
-                        if (strncmp(usercmd, "shutdown",8) == 0) flag = 3;
-                        if (strncmp(usercmd, "Update",  6) == 0) flag = 4;
-                        if (strncmp(usercmd, "UP",      2) == 0) flag = 5;
-                        if (strncmp(usercmd, "DWN",     3) == 0) flag = 6;
-                        if (strncmp(usercmd, "USERS",   5) == 0) flag = 7;
+			/* コマンドをスイッチに振り分ける */
+			if (strncmp(usercmd, "restart", 7) == 0) flag = 1;
+			if (strncmp(usercmd, "reboot",  6) == 0) flag = 2;
+			if (strncmp(usercmd, "shutdown",8) == 0) flag = 3;
+			if (strncmp(usercmd, "Update",  6) == 0) flag = 4;
+			if (strncmp(usercmd, "UP",      2) == 0) flag = 5;
+			if (strncmp(usercmd, "DWN",     3) == 0) flag = 6;
+			if (strncmp(usercmd, "USERS",   5) == 0) flag = 7;
 
-                        switch (flag) {
-                        case 1:                                         // nextionドライバのリスタート
-                                sendcmd("dim=10");
-                                system("killall -q -s 2 dmonitor");
-                                system("rm /var/run/dmonitor.pid");
-                                system("systemctl restart nextion.service");
-                                break;
+			switch (flag) {
+			case 1:						// nextionドライバのリスタート
+				sendcmd("dim=10");
+				system("killall -q -s 2 dmonitor");
+				system("rm /var/run/dmonitor.pid");
+				system("systemctl restart nextion.service");
+				break;
 
-                        case 2:                                         // 再起動
-                                sendcmd("dim=10");
-                                system("killall -q -s 2 dmonitor");
-                                system("rm /var/run/dmonitor.pid");
-                                system("shutdown -r now");
-                                break;
+			case 2:						// 再起動
+				sendcmd("dim=10");
+				system("killall -q -s 2 dmonitor");
+				system("rm /var/run/dmonitor.pid");
+				system("shutdown -r now");
+				break;
 
-                        case 3:                                         // シャットダウン
-                                sendcmd("dim=10");
-                                system("killall -q -s 2 dmonitor");
-                                system("rm /var/run/dmonitor.pid");
-                                system("shutdown -h now");
-                                break;
+                        case 3:						// シャットダウン
+				sendcmd("dim=10");
+				system("killall -q -s 2 dmonitor");
+				system("rm /var/run/dmonitor.pid");
+				system("shutdown -h now");
+				break;
 
-                        case 4:                                         // OS及びdmonitorのアップデート
+			case 4:						// OS及びdmonitorのアップデート
 
-                                /* [Update]ボタンの表示を変える */
-                                sendcmd("SYSTEM.b4.bco=63488");
-                                sendcmd("SYSTEM.b4.pco=65535");
-                                sendcmd("SYSTEM.b4.txt=\"Checking Update\"");
+				/* [Update]ボタンの表示を変える */
+				sendcmd("SYSTEM.b4.bco=63488");
+				sendcmd("SYSTEM.b4.pco=65535");
+				sendcmd("SYSTEM.b4.txt=\"Checking Update\"");
 
-                                /* システムコマンドの実行 */
-                                system("killall -q -s 2 dmonitor");
-                                system("rm /var/run/dmonitor.pid");
-                                system("apt clean && apt update && apt install dmonitor");
+				/* システムコマンドの実行 */
+				system("killall -q -s 2 dmonitor");
+				system("rm /var/run/dmonitor.pid");
+				system("apt clean && apt update && apt install dmonitor");
 
-                                /* [REBOOT]の表示及びrebootコマンド発行 */
-                                sendcmd("SYSTEM.b4.bco=64512");
-                                sendcmd("SYSTEM.b4.txt=\"Restarting...\"");
-                                sendcmd("dim=10");
-                                system("systemctl restart nextion.service");
-                                break;
+				/* [REBOOT]の表示及びrebootコマンド発行 */
+				sendcmd("SYSTEM.b4.bco=64512");
+				sendcmd("SYSTEM.b4.txt=\"Restarting...\"");
+				sendcmd("dim=10");
+				system("systemctl restart nextion.service");
+				break;
 
-                        case 5:                                         // バッファの増加
-                                if (strncmp(usercmd, "up", 2) == 0) break;
-                                strcpy(usercmd, "up");
-                                system("killall -q -s SIGUSR1 dmonitor");
-                                break;
+			case 5:						// バッファの増加
+				if (strncmp(usercmd, "up", 2) == 0) break;
+				strcpy(usercmd, "up");
+				system("killall -q -s SIGUSR1 dmonitor");
+				break;
 
-                        case 6:                                         // バッファの減少
-                                if (strncmp(usercmd, "dwn", 3) == 0) break;
-                                strcpy(usercmd, "dwn");
-                                system("killall -q -s SIGUSR2 dmonitor");
-                                break;
+			case 6:						// バッファの減少
+				if (strncmp(usercmd, "dwn", 3) == 0) break;
+				strcpy(usercmd, "dwn");
+				system("killall -q -s SIGUSR2 dmonitor");
+				break;
 
-                        case 7:                                         // Remote Usersパネルへ接続ユーザ表示
-                                sendcmd("page USERS");
-                                sprintf(command, "USERS.b0.txt=\"LINKED USERS on %s\"", rptcallpre);
-                                sendcmd(command);
-                                getusers();
-                                strcpy(usercmd, "Return");
-                                break;
+			case 7:						// Remote Usersパネルへ接続ユーザ表示
+				sendcmd("page USERS");
+				sprintf(command, "USERS.b0.txt=\"LINKED USERS on %s\"", rptcallpre);
+				sendcmd(command);
+				getusers();
+				strcpy(usercmd, "Return");
+				break;
 
-                        default:
+			default:
 
-                                /* 指定リピータに接続する */
-                                i = 0;
-                                system("systemctl restart auto_repmon.service");
-                                usleep(atoi(nx.microsec) * 10000);              // リスト読み込み完了を確実にするウェイト
-                                for (i = 0; i < num; i++)
-                                {
-                                        if (strncmp(linkdata[i].call, usercmd, 8) == 0)
-                                        {
-                                                /* 現在稼働中のdmonitor をKILL */
-                                                system("killall -q -s 2 dmonitor");
-                                                system("rm /var/run/dmonitor.pid");
-                                                system("rig_port_check");
+				/* 指定リピータに接続する */
+				i = 0;
+//				system("systemctl restart auto_repmon.service");
+//				usleep(atoi(nx.microsec) * 10000);	// リスト読み込み完了を確実にするウェイト
+				for (i = 0; i < num; i++)
+				{
+					if (strncmp(linkdata[i].call, usercmd, 8) == 0)
+					{
+						/* 現在稼働中のdmonitor をKILL */
+						system("killall -q -s 2 dmonitor");
+						system("rm /var/run/dmonitor.pid");
+						system("rig_port_check");
 
-                                                /* 接続コマンドの実行 */
-                                                sprintf(command, "dmonitor '%s' %s %s '%s' '%s'", nx.station, linkdata[i].addr, linkdata[i].port, linkdata[i].call, linkdata[i].zone);
-//                                                sendcmd("page DMON");
-                                                system(command);
-                                                break;
-                                        }
-                                }
-                        }
-                        flag = 0;
-                }
+						/* 接続コマンドの実行 */
+						sprintf(command, "dmonitor '%s' %s %s '%s' '%s'", nx.station, linkdata[i].addr, linkdata[i].port, linkdata[i].call, linkdata[i].zone);
+//						sendcmd("page DMON");
+						system(command);
+						break;
+					}
+				}
+			}
+			flag = 0;
+		}
 
 
 		/*
@@ -208,8 +208,8 @@ int main(int argc, char *argv[])
 		/* CPU 温度の表示 */
 		disptemp();
 		/* 日付･時刻表示 */
-                jstimer = time(NULL);
-                jstimeptr = localtime(&jstimer);
+		jstimer = time(NULL);
+		jstimeptr = localtime(&jstimer);
 		strftime(tmpstr, sizeof(tmpstr), "%Y.%m.%d %H:%M:%S ", jstimeptr);
 		sprintf(command, "MAIN.t2.txt=\"%s\"", tmpstr);
 		sendcmd(command);

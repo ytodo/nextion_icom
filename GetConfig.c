@@ -16,6 +16,8 @@ void getconfig(void)
 	 *	設定ファイルをオープンし構造体に記録する
 	 */
 
+	///// dmonitor /////
+
 	/* nextion.iniをオープンする */
         if ((fp = fopen(INIFILE, "r")) == NULL)
         {
@@ -24,7 +26,7 @@ void getconfig(void)
         }
 
 	while ((fgets(line, sizeof(line), fp)) != NULL)
-	{
+	{							// 構造体 nextion_ini へ保存
 		if ((ret = strstr(line, "STATION"))     != NULL) sscanf(line, "STATION=%[^\n]",     nx.station);
 		if ((ret = strstr(line, "DEFAULT_RPT")) != NULL) sscanf(line, "DEFAULT_RPT=%[^\n]", nx.default_rpt);
 		if ((ret = strstr(line, "SLEEPTIME"))   != NULL) sscanf(line, "SLEEPTIME=%d",       nx.microsec);
@@ -34,6 +36,8 @@ void getconfig(void)
 	/* ファイルクローズ */
         fclose(fp);
 
+	///// DStarRepeater /////
+
         /* dstarrepeater をオープンする */
         if ((fp = fopen(CONFFILE, "r")) == NULL)
         {
@@ -42,7 +46,7 @@ void getconfig(void)
         }
 
 	while ((fgets(line, sizeof(line), fp)) != NULL)
-	{
+	{							// 構造体 dstarrepeater へ保存
 		if ((ret = strstr(line, "callsign"))     != NULL) sscanf(line, "callsign=%[^\n]",     ds.station);
 		if ((ret = strstr(line, "localAddress")) != NULL) sscanf(line, "localAddress=%[^\n]", ds.ipaddress);
 		if ((ret = strstr(line, "localPort"))    != NULL) sscanf(line, "localPort=%[^\n]",    ds.localport);
@@ -53,8 +57,8 @@ void getconfig(void)
 	fclose(fp);
 
 	/* ステーション名にバンド名を追加設定 */
-	if (strcmp(&ds.station[7], "B") == 0) strcat(ds.station, " (70cm)");
-	if (strcmp(&ds.station[7], "C") == 0) strcat(ds.station, " (2m)");
+//	if (strcmp(&ds.station[7], "B") == 0) strcat(ds.station, " (70cm)");
+//	if (strcmp(&ds.station[7], "C") == 0) strcat(ds.station, " (2m)");
 
 
 
@@ -62,6 +66,11 @@ void getconfig(void)
 	 *	取得した設定値をNextionにグローバル変数に保存
 	 */
 
+	///// dmonitor /////
+	sprintf(command, "DMON.station.txt=\"STATION : %s\"", nx.station);
+	sendcmd(command);
+
+	///// DStarRepeater /////
 	sprintf(command, "IDLE.station.txt=\"%s\"", ds.station);
 	sendcmd(command);
 	sprintf(command, "IDLE.type.txt=\"%s\"", ds.modemtype);

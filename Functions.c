@@ -107,8 +107,8 @@ void recvdata(char *touchcmd)
  *********************************************/
 void reflesh_pages()
 {
+	/* 明るさをバー指定値に設定 */
 	sendcmd("dim=dims");
-//	sendcmd("page MAIN");
 
 	/* MAIN reflesh */
 	sendcmd("MAIN.t0.txt=MAIN.status_dmon.txt");
@@ -123,8 +123,6 @@ void reflesh_pages()
 	dispipaddr();
 
 	/* DMON reflesh */
-	sprintf(command, "DMON.station.txt=\"STATION : %s\"", nx.station);
-	sendcmd(command);
 	sendcmd("DMON.t0.txt=DMON.station.txt");
 	sendcmd("DMON.t1.txt=DMON.link.txt");
 	sendcmd("DMON.t2.txt=DMON.stat1.txt");
