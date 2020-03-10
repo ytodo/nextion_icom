@@ -35,7 +35,7 @@
 #include        "Nextion.h"
 #define         WAITTIME        0.5     // sec
 
-int main(int argc, char *argv[])
+int main(void)
 {
 	int	num;				// 返り値のi を受ける（件数）
 	int	arraycount;
@@ -246,8 +246,5 @@ printf("%s\n", usercmd);
 		strftime(tmpstr, sizeof(tmpstr), "%Y.%m.%d %H:%M:%S ", jstimeptr);
 		sprintf(command, "MAIN.t2.txt=\"%s\"", tmpstr);
 		sendcmd(command);
-
-//		sleep(1);
 	}
-	return(EXIT_SUCCESS);
 }
