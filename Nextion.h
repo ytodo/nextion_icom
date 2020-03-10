@@ -137,5 +137,8 @@ void	reflesh_pages(void);
 void	recvdata(char *touchcmd);
 void	next_page(int num);
 void	previous_page(int num);
+void	dmonitor_restart(void);
+void	dstarrepeater_restart(void);
+void	modem_stop(void);
 
 #endif // __NEXTION_H__

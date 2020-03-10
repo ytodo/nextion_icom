@@ -105,9 +105,10 @@ int main(int argc, char *argv[])
 			strncpy(concallpre, usercmd, 8);
 
 printf("%s\n", usercmd);
-
-			if (strncmp(usercmd, "dmonitor", 8) == 0) strcpy(usercmd, "restart dmonitor");
-			if (strncmp(usercmd, "dstarrepeater", 13) == 0) strcpy(usercmd, "restart dstarrepeater");
+			/* MAINのモードスイッチの状態を保存 */
+			if (strncmp(usercmd, "dmonitor", 8) == 0) strcpy(usercmd, "restart dmonitor"); st.mode = 1;
+			if (strncmp(usercmd, "dstarrepeater", 13) == 0)	strcpy(usercmd, "restart dstarrepeater"); st.mode = 2;
+			} else st.mode = 0;
 
 			/* コマンドをスイッチに振り分ける */
 			if (strncmp(usercmd, "restart",  7) == 0) flag = 1;
@@ -122,49 +123,33 @@ printf("%s\n", usercmd);
 
 			switch (flag) {
 			case 1:						// ドライバのリスタート
-				if (strncmp(&usercmd[8], "dmonitor", 8) == 0)
+				/* dmonitor モードのとき */
+				if (st.mode == 1)
 				{
 					sendcmd("dim=10");
 					sendcmd("page DMON");
-					system("sudo systemctl stop dstarrepeater.service");
-
-					system("sudo killall -q -s 2 dmonitor");
-					system("sudo rm /var/run/dmonitor.pid");
-					system("sudo systemctl restart nextion.service");
-					system("sudo systemctl restart lighttpd.service");
-					system("sudo systemctl restart auto_repmon.service");
-					system("sudo rig_port_check");
+					dmonitor_restart();
 				}
 
-				if (strncmp(&usercmd[8], "dstarrepeater", 13) == 0)
+				/* DStarRepeater モードのとき */
+				if (st.mode == 2)
 				{
 	                                sendcmd("dim=10");
 					sendcmd("page IDLE");
-					system("sudo systemctl stop auto_repmon.service");
-					system("sudo /usr/bin/killall -q -s 9 repeater_scan");
-					system("sudo /usr/bin/killall -q -s 2 repeater_mon");
-					system("sudo /usr/bin/killall -q -s 2 dmonitor");
-					system("sudo rm /var/run/dmonitor.pid");
-					system("sudo /usr/bin/killall -q -s 2  sleep");
-					system("sudo systemctl stop lighttpd.service");
-
-        	                        system("sudo systemctl restart nextion.service");
-                	                system("sudo systemctl restart dstarrepeater.service");
+					dstarrepeater_restart();
 				}
 
 				break;
 
 			case 2:						// 再起動
 				sendcmd("dim=10");
-				system("killall -q -s 2 dmonitor");
-				system("rm /var/run/dmonitor.pid");
+				modem_stop();
 				system("shutdown -r now");
 				break;
 
                         case 3:						// シャットダウン
 				sendcmd("dim=10");
-				system("killall -q -s 2 dmonitor");
-				system("rm /var/run/dmonitor.pid");
+				modem_stop();
 				system("shutdown -h now");
 				break;
 

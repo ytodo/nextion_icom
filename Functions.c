@@ -1,12 +1,15 @@
-////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
 //	ファイル名	Functions.c
 //			2020.03.07-
-//	機能	openport	ttyAMA0ポートを開ける（from ON7LDS source)
-//		sendcmd		Nextionへのコマンド送信
-//		recvdata	Nextionからのコマンド受信
-//		reflesh_idle	Nextionページの再表示
+//	機能	openport		ttyAMA0ポートを開ける（from ON7LDS source)
+//		sendcmd			Nextionへのコマンド送信
+//		recvdata		Nextionからのコマンド受信
+//		reflesh_idle		Nextionページの再表示
+//		dmonitor_restart	dmonitorのrestart用システムコマンド
+//		dstarrepeater_restart	DStarRepeaterのrestart用システムコマンド
+//		modem_stop		reboot/shutdown前にサービスを止める
 //		基本的なファンクション・コマンドのツールボックス    
-////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
 #include "Nextion.h"
 
 int fd;
@@ -133,4 +136,46 @@ void reflesh_pages(void)
 	sendcmd("DMON.t3.txt=DMON.stat2.txt");
 
 	return;
+}
+
+void dmonitor_restart(void)
+{
+	/* DStarRepeater を止める */
+	system("sudo systemctl stop dstarrepeater.service");
+
+	/* dmonitor を再起動する */
+	system("sudo killall -q -s 2 dmonitor");
+	system("sudo rm /var/run/dmonitor.pid");
+	system("sudo systemctl restart nextion.service");
+	system("sudo systemctl restart lighttpd.service");
+	system("sudo systemctl restart auto_repmon.service");
+	system("sudo rig_port_check");
+
+	return;
+}
+
+void dstarrepeater_restart(void)
+{
+	/* dmonitor を止める */
+	system("sudo systemctl stop auto_repmon.service");
+	system("sudo /usr/bin/killall -q -s 9 repeater_scan");
+	system("sudo /usr/bin/killall -q -s 2 repeater_mon");
+	system("sudo /usr/bin/killall -q -s 2 dmonitor");
+	system("sudo rm /var/run/dmonitor.pid");
+	system("sudo /usr/bin/killall -q -s 2  sleep");
+	system("sudo systemctl stop lighttpd.service");
+
+	/* DStarRepeater を再起動する */
+	system("sudo systemctl restart dstarrepeater.service");
+
+	return;
+}
+
+void modem_stop(void)
+{
+	system("killall -q -s 2 dmonitor");
+	system("rm /var/run/dmonitor.pid");
+	system("sudo systemctl stop dstarrepeater.service");
+	system("sudo systemctl stop ircddbgateway.service");
+	system("sudo systemctl stop nextion.service");
 }
