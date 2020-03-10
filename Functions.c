@@ -72,6 +72,7 @@ void sendcmd(char *cmd)
 		write(fd, cmd ,strlen(cmd));
 		write(fd, endofcmd, 3);
 	}
+	return;
 }
 
 
@@ -91,7 +92,7 @@ void recvdata(char *touchcmd)
 	{
 		for (i = 0; i < len; i++)
 		{
-            		if (buf[i] >= 30 && buf[i] <= 122)
+            		if (buf[i] >= 30 && buf[i] <= 122 || buf[i] == 20)
 			{
     				sprintf(&touchcmd[i], "%c", buf[i]);
 				j++;
@@ -99,13 +100,15 @@ void recvdata(char *touchcmd)
 		}
 		touchcmd[i] = '\0';
 	}
+usleep(nx.microsec);
+	return;
 }
 
 
 /*********************************************
  * IDLE 画面に復帰時データを再表示
  *********************************************/
-void reflesh_pages()
+void reflesh_pages(void)
 {
 	/* 明るさをバー指定値に設定 */
 	sendcmd("dim=dims");
@@ -116,6 +119,7 @@ void reflesh_pages()
 
 	/* IDLE reflesh */
 	sendcmd("IDLE.t0.txt=IDLE.station.txt");
+	sendcmd("IDLE.status.txt=IDLE.ref.txt");
 	sendcmd("IDLE.t1.txt=IDLE.status.txt");
 	sendcmd("IDLE.t2.txt=IDLE.status2.txt");
 	sendcmd("IDLE.t3.txt=IDLE.ipaddr.txt");
@@ -127,4 +131,6 @@ void reflesh_pages()
 	sendcmd("DMON.t1.txt=DMON.link.txt");
 	sendcmd("DMON.t2.txt=DMON.stat1.txt");
 	sendcmd("DMON.t3.txt=DMON.stat2.txt");
+
+	return;
 }

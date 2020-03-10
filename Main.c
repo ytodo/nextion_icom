@@ -52,7 +52,8 @@ int main(int argc, char *argv[])
 	/* 環境設定ファイルの読み取り */
 	sendcmd("page MAIN");
 	getconfig();
-	reflesh_pages();
+
+	///// dmonitor の準備 /////
 
 	/* 現在利用可能なリピータリストの取得*/
 	system("sudo systemctl restart auto_repmon.service");
@@ -72,6 +73,13 @@ int main(int argc, char *argv[])
 		sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i, linkdata[i].call);
 		sendcmd(command);
 	}
+
+	///// DStarRepeater の準備 /////
+
+
+
+	reflesh_pages();
+
 
 
 	/* 送・受信ループ */
@@ -96,21 +104,54 @@ int main(int argc, char *argv[])
 			/* 現在の返り値を保存 */
 			strncpy(concallpre, usercmd, 8);
 
+printf("%s\n", usercmd);
+
+			if (strncmp(usercmd, "dmonitor", 8) == 0) strcpy(usercmd, "restart dmonitor");
+			if (strncmp(usercmd, "dstarrepeater", 13) == 0) strcpy(usercmd, "restart dstarrepeater");
+
 			/* コマンドをスイッチに振り分ける */
-			if (strncmp(usercmd, "restart", 7) == 0) flag = 1;
-			if (strncmp(usercmd, "reboot",  6) == 0) flag = 2;
-			if (strncmp(usercmd, "shutdown",8) == 0) flag = 3;
-			if (strncmp(usercmd, "Update",  6) == 0) flag = 4;
-			if (strncmp(usercmd, "UP",      2) == 0) flag = 5;
-			if (strncmp(usercmd, "DWN",     3) == 0) flag = 6;
-			if (strncmp(usercmd, "USERS",   5) == 0) flag = 7;
+			if (strncmp(usercmd, "restart",  7) == 0) flag = 1;
+			if (strncmp(usercmd, "reboot",   6) == 0) flag = 2;
+			if (strncmp(usercmd, "shutdown", 8) == 0) flag = 3;
+			if (strncmp(usercmd, "Update",   6) == 0) flag = 4;
+			if (strncmp(usercmd, "UP",       2) == 0) flag = 5;
+			if (strncmp(usercmd, "DWN",      3) == 0) flag = 6;
+			if (strncmp(usercmd, "USERS",    5) == 0) flag = 7;
+			if (strncmp(usercmd, "next",	 4) == 0) flag = 8;
+			if (strncmp(usercmd, "previous", 8) == 0) flag = 9;
 
 			switch (flag) {
-			case 1:						// nextionドライバのリスタート
-				sendcmd("dim=10");
-				system("killall -q -s 2 dmonitor");
-				system("rm /var/run/dmonitor.pid");
-				system("systemctl restart nextion.service");
+			case 1:						// ドライバのリスタート
+				if (strncmp(&usercmd[8], "dmonitor", 8) == 0)
+				{
+					sendcmd("dim=10");
+					sendcmd("page DMON");
+					system("sudo systemctl stop dstarrepeater.service");
+
+					system("sudo killall -q -s 2 dmonitor");
+					system("sudo rm /var/run/dmonitor.pid");
+					system("sudo systemctl restart nextion.service");
+					system("sudo systemctl restart lighttpd.service");
+					system("sudo systemctl restart auto_repmon.service");
+					system("sudo rig_port_check");
+				}
+
+				if (strncmp(&usercmd[8], "dstarrepeater", 13) == 0)
+				{
+	                                sendcmd("dim=10");
+					sendcmd("page IDLE");
+					system("sudo systemctl stop auto_repmon.service");
+					system("sudo /usr/bin/killall -q -s 9 repeater_scan");
+					system("sudo /usr/bin/killall -q -s 2 repeater_mon");
+					system("sudo /usr/bin/killall -q -s 2 dmonitor");
+					system("sudo rm /var/run/dmonitor.pid");
+					system("sudo /usr/bin/killall -q -s 2  sleep");
+					system("sudo systemctl stop lighttpd.service");
+
+        	                        system("sudo systemctl restart nextion.service");
+                	                system("sudo systemctl restart dstarrepeater.service");
+				}
+
 				break;
 
 			case 2:						// 再起動
@@ -166,12 +207,19 @@ int main(int argc, char *argv[])
 				strcpy(usercmd, "Return");
 				break;
 
+			case 8:
+				break;
+
+			case 9:
+				previous_page(num);
+				break;
+
 			default:
 
 				/* 指定リピータに接続する */
 				i = 0;
-//				system("systemctl restart auto_repmon.service");
-//				usleep(atoi(nx.microsec) * 10000);	// リスト読み込み完了を確実にするウェイト
+				system("systemctl restart auto_repmon.service");
+				usleep(nx.microsec * 10000);	// リスト読み込み完了を確実にするウェイト
 				for (i = 0; i < num; i++)
 				{
 					if (strncmp(linkdata[i].call, usercmd, 8) == 0)
@@ -213,8 +261,6 @@ int main(int argc, char *argv[])
 		strftime(tmpstr, sizeof(tmpstr), "%Y.%m.%d %H:%M:%S ", jstimeptr);
 		sprintf(command, "MAIN.t2.txt=\"%s\"", tmpstr);
 		sendcmd(command);
-
-
 
 //		sleep(1);
 	}

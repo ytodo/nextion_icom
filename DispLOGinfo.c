@@ -330,7 +330,7 @@ void	dispstatus_dmon(void)
 			}
 
 			/* Last packet wrong ステータスの場合、文字を黄色に */
-			if ((stat == 1) && (nx.debug == "1") && (strstr(line, "Last packet wrong") != NULL))
+			if ((stat == 1) && (nx.debug == 1) && (strstr(line, "Last packet wrong") != NULL))
 			{
 				strcpy(status, "Last packet wrong...");
 				break;
@@ -353,21 +353,21 @@ void	dispstatus_dmon(void)
 		}
 
 		/* 接続解除を取得 */
-		if ((nx.debug == "1") && (strstr(line, "dmonitor end") != NULL))
+		if ((nx.debug == 1) && (strstr(line, "dmonitor end") != NULL))
 		{
 			memset(&status[0], '\0', sizeof(status));
 			strcpy(status, "Disconnected");
 		}
 
 		/* 無線機の接続状況 */
-		if ((nx.debug == "1") && (strstr(line, "init/re-init") != NULL))
+		if ((nx.debug == 1) && (strstr(line, "init/re-init") != NULL))
 		{
 			memset(&status[0], '\0', sizeof(status));
 			strcpy(status, "Initializing RIG is done.");
 		}
 
 		/* ドロップパケット比の表示 */
-		if ((nx.debug == "1") && ((tmpptr = strstr(line, "drop")) != NULL))
+		if ((nx.debug == 1) && ((tmpptr = strstr(line, "drop")) != NULL))
 		{
 			memset(&status[0], '\0', sizeof(status));
 			strcpy(status, "Drop PKT ");
@@ -394,15 +394,15 @@ void	dispstatus_dmon(void)
 		strcpy(statpre, status);
 
 		/* STATUS1 => STATUS2 */
-		sendcmd("DMON.stat2.txt=DMON.stat1.txt");
+//		sendcmd("DMON.stat2.txt=DMON.stat1.txt");
 
 		/* 取得ステイタス=> STATUS1 */
 		sprintf(command, "DMON.stat1.txt=\"%s\"", status);
 		sendcmd(command);
-		sendcmd("DMON.t2.txt=DMON.stat1.txt");
-		sendcmd("DMON.t3.txt=DMON.stat2.txt");
-		sendcmd("USERS.t8.txt=DMON.stat1.txt");
-		sendcmd("USERS.t9.txt=DMON.stat2.txt");
+//		sendcmd("DMON.t2.txt=DMON.stat1.txt");
+//		sendcmd("DMON.t3.txt=DMON.stat2.txt");
+//		sendcmd("USERS.t8.txt=DMON.stat1.txt");
+//		sendcmd("USERS.t9.txt=DMON.stat2.txt");
 
 		/* statusをクリアする */
 		status[0] = '\0';

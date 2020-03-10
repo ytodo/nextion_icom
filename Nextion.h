@@ -77,15 +77,14 @@ typedef struct {				// Hole Punch リピータリスト
 	char    port[6];			// multi_forward接続ポート
 	char    zone[9];			// リピータゾーンコール
 	char    name[20];			// 予備
-	char	selected_page[2];		// 表示されている最初:F /最後:E
 } repeater_t;
 extern	repeater_t	linkdata[LISTSIZE];     // リピータリスト構造体配列の宣言
 
 typedef	struct {
 	char	station[9];			// ノードコール（Terminal:個人コール/Access Point:クラブコール）
 	char	default_rpt[9];			// 立ち上げ時自動接続リピータ
-	char	microsec[6];			// リスト書き込み時のスピード調整用
-	char	debug[1];			// 1の時デバッグモード
+	int	microsec;			// リスト書き込み時のスピード調整用
+	int	debug;				// 1の時デバッグモード
 } nextion_ini_t;
 extern	nextion_ini_t	nx;			// nextion.iniの内容
 
@@ -96,6 +95,12 @@ typedef	struct {
 	char	modemtype[32];			// DStarRepeaterのモデムタイプ
 } dstarrepeater_t;
 extern	dstarrepeater_t	ds;			// dstarrepeaterの設定内容
+
+typedef struct {
+	int	mode;				// 使用中のモード
+	int	selected_page;			// 表示されているページ (num % 21)
+} status_t;
+extern	status_t	st;			// Nextionの使用状況まとめ
 
 extern	char	command[32];			// Nextionに送信するコマンド
 extern	char	cmdline[128];			// システムコマンド
@@ -130,5 +135,7 @@ void	disptemp(void);
 void	sendcmd(char *cmd);
 void	reflesh_pages(void);
 void	recvdata(char *touchcmd);
+void	next_page(int num);
+void	previous_page(int num);
 
 #endif // __NEXTION_H__

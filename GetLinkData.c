@@ -1,12 +1,23 @@
+
 //////////////////////////////////////////////////////////////////////////////////
 //	ファイル名	GetLinkData.c
 //			2020.03.07-
+//
 //	機能	サーバよりmulti_forward のインストールされたゲートウェイリストを
 //		ダウンロードして配列を作成する。
+//
+//		getlinkdata	このファイルのメイン機能　元となる配列作成
+//		previous_page	配列を元にページを戻す
+//
 //////////////////////////////////////////////////////////////////////////////////
+
 #include	"Nextion.h"
 #define		RPTSTBL	"/tmp/repeater.json"
 
+/*****************************************************************
+ *	サーバよりmulti_forward のインストールされた
+ *	ゲートウェイリストをダウンロードして配列を作成する。
+ *****************************************************************/
 int 	getlinkdata(void)
 {
 	char	*ptrcall;	// リピータのコールサイン用ポインタ
@@ -82,43 +93,53 @@ int 	getlinkdata(void)
 	return (i);
 }
 
+
+/*****************************************************************
+ *	表示ページを前ページへ戻す
+ *****************************************************************/
+
 void	previous_page(int num)
 {
-	int i 		= 0;
-	int j 		= 0;
-	int first	= 0;
-	int contents	= 0;
-	
-	
+	int 	i 		= 0;
+	int	pages		= 0;
+	int	lastpagenum	= 0;
 
+	pages 		= num % 21;
+	lastpagenum	= num - pages * 21;
 
-
-	for (i = 0; i < num;, i++)
+	/* 現在の表示が最初のページの時 */
+	if (st.selected_page == 0)
 	{
-		if (strncmp(linkdata[i].selected_page, "F", 1) == TRUE)
+		for (i = 0; i < 21; i++)
 		{
-			if (i < 21) first = num - (21 - i); else first = i;
-			if (first + 21 > num ) contents = num - first; else contents = 21;
-
-			/* 全リストを空にした後リピータ数分の文字配列にコールサインを格納 */
-			for (j = 0; j < 21; j++)
+			if (i >= lastpagenum )	// データが21に満たない場合残りをクリアする
 			{
-				sprintf(command, "RPTLIST.va%d.txt=\"\"", j);
-				sendcmd(command);
+				sprintf(command, "RPTLIST.va%d.txt=\"\"", i);
 			}
-			for (j = 0; j < contents; j++)
+			else			// 実在するデータ分を代入
 			{
-				sprintf(command, "RPTLIST.va%d.txt=\"%s\"", linkdata[first + j].call);
-				sendcmd(command);
-				if (j = 0) strcpy(linkdata[first].selected_page, "F");
+				sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i, linkdata[i + 21 * pages + 1]);
 			}
 		}
+		st.selected_page = pages;       // 表示した最後のページを保存
 	}
+	/* 現在のページが最初のページではない場合 */
+	else
+	{
+		for (i = 0; i < 21; i++)
+		{
+			sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i, linkdata[i + 21 * (st.selected_page - 1) + 1]);
+		}
+		st.selected_page -= 1;
+	}
+
+	/* Nextionに書き込む */
+	sendcmd(command);
+
+	return;
 }
 
-void	next_page(int num)
-{
-	int i		= 0;
-	int j		= 0;
-	int end		
-}
+
+/*****************************************************************
+ *	表示ページを次ページへ送る
+ *****************************************************************/
