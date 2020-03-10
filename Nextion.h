@@ -129,7 +129,7 @@ void	getusers(void);
 void	getconfig(void);
 void	dispstatus_dmon(void);
 void	dispstatus_ref(void);
-int	dispstreaminfo(void);
+void	dispstreaminfo(void);
 void	dispipaddr(void);
 void	disptemp(void);
 void	sendcmd(char *cmd);

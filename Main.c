@@ -107,7 +107,7 @@ int main(void)
 printf("%s\n", usercmd);
 			/* MAINのモードスイッチの状態を保存 */
 			if (strncmp(usercmd, "dmonitor", 8) == 0) strcpy(usercmd, "restart dmonitor"); st.mode = 1;
-			if (strncmp(usercmd, "dstarrepeater", 13) == 0)	strcpy(usercmd, "restart dstarrepeater"); st.mode = 2;
+			if (strncmp(usercmd, "dstarrepeater", 13) == 0)	{ strcpy(usercmd, "restart dstarrepeater"); st.mode = 2;
 			} else st.mode = 0;
 
 			/* コマンドをスイッチに振り分ける */
@@ -247,4 +247,5 @@ printf("%s\n", usercmd);
 		sprintf(command, "MAIN.t2.txt=\"%s\"", tmpstr);
 		sendcmd(command);
 	}
+	return(0);
 }

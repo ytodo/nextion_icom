@@ -3,7 +3,7 @@
 #include "Nextion.h"
 #define SLEEPTIME	300000
 
-int dispstreaminfo(void)
+void dispstreaminfo(void)
 {
 	FILE	*fp;
 	char	*ret;
