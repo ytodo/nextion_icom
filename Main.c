@@ -43,7 +43,7 @@ int main(void)
 	int	i;
 	int	flag;
 	int	bufcnt;
-	char	concallpre[8]	= {'\0'};
+	char	concallpre[32]	= {'\0'};
 	char	tmpstr[32]	= {'\0'};
 
 	/* GPIO シリアルポートのオープン*/
@@ -56,7 +56,6 @@ int main(void)
 	///// dmonitor の準備 /////
 
 	/* 現在利用可能なリピータリストの取得*/
-	system("sudo systemctl restart auto_repmon.service");
 	num = getlinkdata();
 
 	/* 読み込んだリピータの総数を表示 */
@@ -99,16 +98,18 @@ int main(void)
 		}
 
 		/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
-		if ((strlen(usercmd) > 1) && (strncmp(usercmd, concallpre, 8) != 0))
+		if ((strlen(usercmd) > 1) && (strcmp(usercmd, concallpre) != 0))
 		{
-			/* 現在の返り値を保存 */
-			strncpy(concallpre, usercmd, 8);
 
-printf("%s\n", usercmd);
 			/* MAINのモードスイッチの状態を保存 */
 			if (strncmp(usercmd, "dmonitor", 8) == 0) strcpy(usercmd, "restart dmonitor"); st.mode = 1;
 			if (strncmp(usercmd, "dstarrepeater", 13) == 0)	{ strcpy(usercmd, "restart dstarrepeater"); st.mode = 2;
 			} else st.mode = 0;
+
+printf("%s    %s   %d\n", usercmd, concallpre, st.mode);
+
+			/* 現在の返り値を保存 */
+			strcpy(concallpre, usercmd);
 
 			/* コマンドをスイッチに振り分ける */
 			if (strncmp(usercmd, "restart",  7) == 0) flag = 1;
@@ -204,7 +205,7 @@ printf("%s\n", usercmd);
 				/* 指定リピータに接続する */
 				i = 0;
 				system("systemctl restart auto_repmon.service");
-				usleep(nx.microsec * 10000);	// リスト読み込み完了を確実にするウェイト
+				usleep(atoi(nx.microsec) * 10000);	// リスト読み込み完了を確実にするウェイト
 				for (i = 0; i < num; i++)
 				{
 					if (strncmp(linkdata[i].call, usercmd, 8) == 0)

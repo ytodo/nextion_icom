@@ -27,10 +27,10 @@ void getconfig(void)
 
 	while ((fgets(line, sizeof(line), fp)) != NULL)
 	{							// 構造体 nextion_ini へ保存
-		if ((ret = strstr(line, "STATION"))     != NULL) sscanf(line, "STATION=%[^\n]",     nx.station);
-		if ((ret = strstr(line, "DEFAULT_RPT")) != NULL) sscanf(line, "DEFAULT_RPT=%[^\n]", nx.default_rpt);
-		if ((ret = strstr(line, "SLEEPTIME"))   != NULL) sscanf(line, "SLEEPTIME=%d",       nx.microsec);
-		if ((ret = strstr(line, "DEBUG"))       != NULL) sscanf(line, "DEBUG=%d",           nx.debug);
+		if ((ret = strstr(line, "STATION"))     != NULL) sscanf(line, "STATION=%[^\n]",		nx.station);
+		if ((ret = strstr(line, "DEFAULT_RPT")) != NULL) sscanf(line, "DEFAULT_RPT=%[^\n]",	nx.default_rpt);
+		if ((ret = strstr(line, "SLEEPTIME"))   != NULL) sscanf(line, "SLEEPTIME=%d",		nx.microsec);
+		if ((ret = strstr(line, "DEBUG"))       != NULL) sscanf(line, "DEBUG=%d",		nx.debug);
 	}
 
 	/* ファイルクローズ */
@@ -38,7 +38,7 @@ void getconfig(void)
 
 	///// DStarRepeater /////
 
-        /* dstarrepeater をオープンする */
+        /* dstarrepeater(設定ファイル)をオープンする */
         if ((fp = fopen(CONFFILE, "r")) == NULL)
         {
                 printf("File open error!\n");
@@ -47,10 +47,10 @@ void getconfig(void)
 
 	while ((fgets(line, sizeof(line), fp)) != NULL)
 	{							// 構造体 dstarrepeater へ保存
-		if ((ret = strstr(line, "callsign"))     != NULL) sscanf(line, "callsign=%[^\n]",     ds.station);
-		if ((ret = strstr(line, "localAddress")) != NULL) sscanf(line, "localAddress=%[^\n]", ds.ipaddress);
-		if ((ret = strstr(line, "localPort"))    != NULL) sscanf(line, "localPort=%[^\n]",    ds.localport);
-		if ((ret = strstr(line, "modemType"))    != NULL) sscanf(line, "modemType=%[^\n]",    ds.modemtype);
+		if ((ret = strstr(line, "callsign"))     != NULL) sscanf(line, "callsign=%[^\n]",	ds.station);
+		if ((ret = strstr(line, "localAddress")) != NULL) sscanf(line, "localAddress=%[^\n]",	ds.ipaddress);
+		if ((ret = strstr(line, "localPort"))    != NULL) sscanf(line, "localPort=%[^\n]",	ds.localport);
+		if ((ret = strstr(line, "modemType"))    != NULL) sscanf(line, "modemType=%[^\n]",	ds.modemtype);
 	}
 
 	/* ファイルクローズ */

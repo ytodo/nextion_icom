@@ -7,7 +7,7 @@
 #include "Nextion.h"
 
 repeater_t	linkdata[LISTSIZE]      = {'\0'};
-nextion_ini_t	nx			= {'\0', '\0', 0, 0};
+nextion_ini_t	nx			= {'\0'};
 dstarrepeater_t	ds			= {'\0'};
 status_t	st			= {0, 0};
 char		command[32]		= {'\0'};

@@ -83,8 +83,8 @@ extern	repeater_t	linkdata[LISTSIZE];     // リピータリスト構造体配�
 typedef	struct {
 	char	station[9];			// ノードコール（Terminal:個人コール/Access Point:クラブコール）
 	char	default_rpt[9];			// 立ち上げ時自動接続リピータ
-	int	microsec;			// リスト書き込み時のスピード調整用
-	int	debug;				// 1の時デバッグモード
+	char	microsec[8];			// リスト書き込み時のスピード調整用
+	char	debug[1];			// 0:通常／1:デバッグモード(status表示が多くなる）
 } nextion_ini_t;
 extern	nextion_ini_t	nx;			// nextion.iniの内容
 

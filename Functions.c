@@ -100,10 +100,10 @@ void recvdata(char *touchcmd)
     				sprintf(&touchcmd[i], "%c", buf[i]);
 				j++;
 			}
+usleep(atoi(nx.microsec));
 		}
 		touchcmd[i] = '\0';
 	}
-usleep(nx.microsec);
 	return;
 }
 
