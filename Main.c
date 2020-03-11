@@ -100,11 +100,13 @@ int main(void)
 		/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
 		if ((strlen(usercmd) > 1) && (strcmp(usercmd, concallpre) != 0))
 		{
+			/* 比較後、保存変数をクリア */
+			concallpre[0] = '\0';
 
 			/* MAINのモードスイッチの状態を保存 */
-			if (strncmp(usercmd, "dmonitor", 8) == 0) strcpy(usercmd, "restart dmonitor"); st.mode = 1;
-			if (strncmp(usercmd, "dstarrepeater", 13) == 0)	{ strcpy(usercmd, "restart dstarrepeater"); st.mode = 2;
-			} else st.mode = 0;
+			if (strncmp(usercmd, "dmonitor",       8) == 0)   st.mode = 1;
+			if (strncmp(usercmd, "dstarrepeater", 13) == 0)	{ st.mode = 2;
+								} else 	  st.mode = 0;
 
 printf("%s    %s   %d\n", usercmd, concallpre, st.mode);
 
@@ -122,22 +124,25 @@ printf("%s    %s   %d\n", usercmd, concallpre, st.mode);
 			if (strncmp(usercmd, "next",	 4) == 0) flag = 8;
 			if (strncmp(usercmd, "previous", 8) == 0) flag = 9;
 
+			/* 比較後、usercmd をクリア */
+			usercmd[0] = '\0';
+
 			switch (flag) {
 			case 1:						// ドライバのリスタート
 				/* dmonitor モードのとき */
 				if (st.mode == 1)
 				{
 					sendcmd("dim=10");
-					sendcmd("page DMON");
 					dmonitor_restart();
+					sendcmd("page DMON");
 				}
 
 				/* DStarRepeater モードのとき */
 				if (st.mode == 2)
 				{
 	                                sendcmd("dim=10");
-					sendcmd("page IDLE");
 					dstarrepeater_restart();
+					sendcmd("page IDLE");
 				}
 
 				break;
@@ -202,27 +207,40 @@ printf("%s    %s   %d\n", usercmd, concallpre, st.mode);
 
 			default:
 
-				/* 指定リピータに接続する */
-				i = 0;
-				system("systemctl restart auto_repmon.service");
-				usleep(atoi(nx.microsec) * 10000);	// リスト読み込み完了を確実にするウェイト
-				for (i = 0; i < num; i++)
+				/* dmonitorの時 */
+				if (st.mode == 1)
 				{
-					if (strncmp(linkdata[i].call, usercmd, 8) == 0)
+					/* 指定リピータに接続する */
+					i = 0;
+					system("systemctl restart auto_repmon.service");
+					usleep(atoi(nx.microsec) * 10000);	// リスト読み込み完了を確実にするウェイト
+					for (i = 0; i < num; i++)
 					{
-						/* 現在稼働中のdmonitor をKILL */
-						system("killall -q -s 2 dmonitor");
-						system("rm /var/run/dmonitor.pid");
-						system("rig_port_check");
+						if (strncmp(linkdata[i].call, usercmd, 8) == 0)
+						{
+							/* 現在稼働中のdmonitor をKILL */
+							system("killall -q -s 2 dmonitor");
+							system("rm /var/run/dmonitor.pid");
+							system("rig_port_check");
 
-						/* 接続コマンドの実行 */
-						sprintf(command, "dmonitor '%s' %s %s '%s' '%s'", nx.station, linkdata[i].addr, linkdata[i].port, linkdata[i].call, linkdata[i].zone);
-//						sendcmd("page DMON");
-						system(command);
-						break;
+							/* 接続コマンドの実行 */
+							sprintf(command, "dmonitor '%s' %s %s '%s' '%s'", nx.station, linkdata[i].addr, linkdata[i].port, linkdata[i].call, linkdata[i].zone);
+//							sendcmd("page DMON");
+							system(command);
+							break;
+						}
 					}
+					sendcmd("page DMON");
 				}
+
+				/* DStarRepeaterの時 */
+				if (st.mode == 2)
+				{
+					sendcmd("page IDLE");
+				}
+
 			}
+			reflesh_pages();
 			flag = 0;
 		}
 
