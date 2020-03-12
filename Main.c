@@ -76,6 +76,9 @@ int main(void)
 		/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
 		if ((strlen(usercmd) > 1) && (strcmp(usercmd, chkusercmd) != 0))
 		{
+			/* 比較後、保存変数をクリア */
+			chkusercmd[0] = '\0';
+
 			/* 現在の返り値を保存 */
 			strcpy(chkusercmd, usercmd);
 
@@ -93,6 +96,8 @@ int main(void)
 				dstarrepeater();
 			}
 		}
+		reflesh_pages();
+		flag = 0;
 
 
 		/*
