@@ -29,8 +29,10 @@ void getconfig(void)
 	{							// 構造体 nextion_ini へ保存
 		if ((ret = strstr(line, "STATION"))     != NULL) sscanf(line, "STATION=%[^\n]",		nx.station);
 		if ((ret = strstr(line, "DEFAULT_RPT")) != NULL) sscanf(line, "DEFAULT_RPT=%[^\n]",	nx.default_rpt);
-		if ((ret = strstr(line, "SLEEPTIME"))   != NULL) sscanf(line, "SLEEPTIME=%d",		nx.microsec);
-		if ((ret = strstr(line, "DEBUG"))       != NULL) sscanf(line, "DEBUG=%d",		nx.debug);
+//		if ((ret = strstr(line, "SLEEPTIME"))   != NULL) sscanf(line, "SLEEPTIME=%d",		nx.microsec);
+//		if ((ret = strstr(line, "DEBUG"))       != NULL) sscanf(line, "DEBUG=%d",		nx.debug);
+		if ((ret = strstr(line, "SLEEPTIME"))   != NULL) sscanf(line, "SLEEPTIME=%s",		nx.microsec);
+		if ((ret = strstr(line, "DEBUG"))       != NULL) sscanf(line, "DEBUG=%s",		nx.debug);
 	}
 
 	/* ファイルクローズ */
@@ -75,6 +77,13 @@ void getconfig(void)
 	sendcmd(command);
 	sprintf(command, "IDLE.type.txt=\"%s\"", ds.modemtype);
 	sendcmd(command);
+
+
+/// Test ///
+printf("station: %s | default: %s | microsec: %s | debug: %s\n\n", nx.station, nx.default_rpt, nx.microsec, nx.debug);
+printf("station: %s | ipaddress: %s | port: %s | modem: %s\n\n", ds.station, ds.ipaddress, ds.localport, ds.modemtype);
+
+
 
 	return;
 }

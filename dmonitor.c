@@ -23,8 +23,8 @@
 ////////////////////////////////////////////////////////////////////////
 // 	D-STAR  Nextion display for ICOM Terminal/Access Mode
 //
-//	ファイル名	Main.c 
-//			2020.03.05 - 
+//	ファイル名	dmonitor.c
+//			2020.03.05 -
 //
 //	機能	Multi_Forwardが搭載されているリピータリストを取得して
 //		「接続可能リピータ」としてdmonitor用ディスプレイに表示。
@@ -73,6 +73,11 @@ void dmonitor(void)
 		sendcmd(command);
 		sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i, linkdata[i].call);
 		sendcmd(command);
+
+printf("%s\n", nx.microsec);
+
+usleep(atoi(nx.microsec) * 10);
+
 	}
 
 	/* チェックしたIPアドレスをSYSTEM pageに表示 */

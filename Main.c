@@ -88,7 +88,7 @@ printf("usercmd: %s  chk: %s\n", usercmd, chkusercmd);
 			if (strncmp(usercmd, "dmonitor", 8) == 0)
 			{
 				st.mode = 1;
-				dispstatus_dmon();
+//				dispstatus_dmon();
 				dmonitor();
 			}
 			if (strncmp(usercmd, "dstarrpt", 8) == 0)
