@@ -20,6 +20,7 @@
  *****************************************************************/
 int 	getlinkdata(void)
 {
+	FILE	*fp;
 	char	*ptrcall;	// リピータのコールサイン用ポインタ
 	char	*ptraddr;	// アドレス用ポインタ
 	char	*ptrport;	// ポート用ポインタ
@@ -27,7 +28,6 @@ int 	getlinkdata(void)
 	char	*ptrstat;
 	char	line[512]	= {'\0'};
 	int	i = 0;
-	FILE	*fp;
 
 	/* d-star.info からリピータリストを取得してテーブルを作成する */
 	system("cd /tmp; rm repeater.json*; wget http://hole-punchd.d-star.info:30011/repeater.json; cd");
@@ -35,7 +35,7 @@ int 	getlinkdata(void)
 	/* テーブルをオープンする */
 	if ((fp = fopen(RPTSTBL, "r")) == NULL)
 	{
-		printf("File open error!\n");
+		printf("Repeater List file open error!\n");
 		return (EXIT_FAILURE);
 	}
 
@@ -86,7 +86,7 @@ int 	getlinkdata(void)
 	/* Test */
 //	int j = 0;
 //	for (j = 0; j < i; j++) {
-//		printf("%3d | %s | %s | %s | %s\n", j + 1, linkdata[j].call, linkdata[j].addr, linkdata[j].port, linkdata[j].zone);
+//		printf("%3d | %s | %15s | %5s | %s\n", j + 1, linkdata[j].call, linkdata[j].addr, linkdata[j].port, linkdata[j].zone);
 //	}
 
 	/* 軒数を返す */
@@ -94,10 +94,10 @@ int 	getlinkdata(void)
 }
 
 
+
 /*****************************************************************
  *	表示ページを前ページへ戻す
  *****************************************************************/
-
 void	previous_page(int num)
 {
 	int 	i 		= 0;

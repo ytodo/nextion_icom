@@ -95,14 +95,13 @@ void recvdata(char *touchcmd)
 	{
 		for (i = 0; i < len; i++)
 		{
-            		if (buf[i] >= 30 && buf[i] <= 122 || buf[i] == 20)
+            		if (buf[i] >= 30 && buf[i] <= 122)
 			{
-    				sprintf(&touchcmd[i], "%c", buf[i]);
+    				sprintf(&touchcmd[j], "%c", buf[i]);
 				j++;
 			}
-usleep(atoi(nx.microsec));
 		}
-		touchcmd[i] = '\0';
+		touchcmd[j] = '\0';
 	}
 	return;
 }

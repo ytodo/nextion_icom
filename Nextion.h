@@ -123,10 +123,10 @@ extern	char	rptcallpre[32];
 extern	char	statpre[32];
 
 /* Functions */
-int	dmonitor(void);
-int	dstarrepeater(void);
 int	openport(char *devicename, long baudrate);
 int	getlinkdata(void);
+void	dmonitor(void);
+void	dstarrepeater(void);
 void	getusers(void);
 void	getconfig(void);
 void	dispstatus_dmon(void);

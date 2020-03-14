@@ -30,12 +30,12 @@
 //		アドオンとして常駐し状況をNextionに表示したり
 //		Nextionコマンドによりリフレクタの接続を変更し、
 //		また、システムコマンドを実行する。
-//		
+//
 ////////////////////////////////////////////////////////////////////////
 #include	"Nextion.h"
 #define		WAITTIME 0.5  // sec
 
-int dstarrepeater(void)
+void dstarrepeater(void)
 {
 	int	fd;
     	int	i;
@@ -45,19 +45,22 @@ int dstarrepeater(void)
     	char	tmpstr[32]	= {'\0'};
 
 	/* GPIO シリアルポートのオープン*/
-	fd = openport(SERIALPORT, BAUDRATE);
+//	fd = openport(SERIALPORT, BAUDRATE);
 
 	/* 環境設定ファイルの読み取り */
-	getconfig();
+//	getconfig();
+
+
 
 	/* グローバル変数の初期設定 */
 	sprintf(command, "IDLE.station.txt=\"%s\"", ds.station);	// ノードコールサイン
 	sendcmd(command);
-	sendcmd("IDLE.status.txt=IDLE.ref.txt");		// ステータス
+	sendcmd("IDLE.status.txt=IDLE.ref.txt");			// ステータス
 	sprintf(command, "IDLE.ipaddr.txt=\"%s\"", ds.ipaddress);	// IPアドレス
 	sendcmd(command);
-	sprintf(command, "IDLE.type.txt=\"%s\"", ds.modemtype);	// リピータ形式
+	sprintf(command, "IDLE.type.txt=\"%s\"", ds.modemtype);		// リピータ形式
 	sendcmd(command);
+	sendcmd("page IDLE");
 
 	/* グローバル変数の値を画面表示 */
 	reflesh_pages();						// IDLE 画面の表示ルーティン
@@ -73,9 +76,10 @@ int dstarrepeater(void)
 		recvdata(usercmd);
 
 		/* コマンドをスイッチに振り分ける */
-		if (strncmp(usercmd, "restart", 7) == 0) flag = 1;
-		if (strncmp(usercmd, "reboot",  6) == 0) flag = 2;
-		if (strncmp(usercmd, "shutdown",8) == 0) flag = 3;
+		if (strncmp(usercmd, "restart",  7) == 0) flag = 1;
+		if (strncmp(usercmd, "reboot",   6) == 0) flag = 2;
+		if (strncmp(usercmd, "shutdown", 8) == 0) flag = 3;
+		if (strncmp(usercmd, "return",   6) == 0) flag = 9;
 
 		switch (flag)
 		{
@@ -98,6 +102,9 @@ int dstarrepeater(void)
 				system("sudo shutdown -h now");
 				break;
 
+			case 9:
+				return;
+
 			default:
 				break;
 		}
@@ -117,6 +124,6 @@ int dstarrepeater(void)
 
 	/* GPIO シリアルポートのクローズ*/
 	close(fd);
-	return (EXIT_SUCCESS);
+	return;
 }
 

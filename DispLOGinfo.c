@@ -285,7 +285,7 @@ void	dispstatus_dmon(void)
 	strcpy(cmdline, "tail -n3 /var/log/dmonitor.log");
 	if ((fp = popen(cmdline, "r")) == NULL)
 	{
-		printf("File open error!\n");
+		printf("dmonitor.log file open error!\n");
 		return;
 	}
 
@@ -308,16 +308,16 @@ void	dispstatus_dmon(void)
 				status[24] = '\0';
 
 				/* JST 時刻の算出 */
-				jstimer = time(NULL);
-				jstimeptr = localtime(&jstimer);
+//				jstimer = time(NULL);
+//				jstimeptr = localtime(&jstimer);
 
 				/* LastheardとしてMAINページに表示 */
-				strftime(tmpstr, sizeof(tmpstr), "%m.%d %H:%M ", jstimeptr);
-				strncat(tmpstr, tmpptr - 9, 8);
-				tmpstr[20] = '\0';
-				sprintf(command, "MAIN.status_dmon.txt=\"%s\"", tmpstr);
-				sendcmd(command);
-				sendcmd("MAIN.t0.txt=MAIN.status_dmon.txt");
+//				strftime(tmpstr, sizeof(tmpstr), "%m.%d %H:%M ", jstimeptr);
+//				strncat(tmpstr, tmpptr - 9, 8);
+//				tmpstr[20] = '\0';
+//				sprintf(command, "MAIN.status_dmon.txt=\"%s\"", tmpstr);
+//				sendcmd(command);
+//				sendcmd("MAIN.t0.txt=MAIN.status_dmon.txt");
 				stat = 0;
 
 			}
@@ -333,7 +333,6 @@ void	dispstatus_dmon(void)
 			if ((stat == 1) && (nx.debug == "1") && (strstr(line, "Last packet wrong") != NULL))
 			{
 				strcpy(status, "Last packet wrong...");
-				break;
 			}
 		}
 
@@ -381,7 +380,7 @@ void	dispstatus_dmon(void)
 	/* 接続先の表示*/
 	if ((strncmp(rptcall, "", 1) != 0) && (strncmp(rptcall, rptcallpre, 8) != 0))
 	{
-		strcpy(rptcallpre, rptcall);
+		strncpy(rptcallpre, rptcall, 8);
 		sprintf(command, "DMON.t1.txt=\"LINK TO : %s\"", rptcall);
 		sendcmd(command);
 		sprintf(command, "DMON.link.txt=\"LINK TO : %s\"", rptcall);
@@ -394,15 +393,15 @@ void	dispstatus_dmon(void)
 		strcpy(statpre, status);
 
 		/* STATUS1 => STATUS2 */
-//		sendcmd("DMON.stat2.txt=DMON.stat1.txt");
+		sendcmd("DMON.stat2.txt=DMON.stat1.txt");
 
 		/* 取得ステイタス=> STATUS1 */
 		sprintf(command, "DMON.stat1.txt=\"%s\"", status);
 		sendcmd(command);
-//		sendcmd("DMON.t2.txt=DMON.stat1.txt");
-//		sendcmd("DMON.t3.txt=DMON.stat2.txt");
-//		sendcmd("USERS.t8.txt=DMON.stat1.txt");
-//		sendcmd("USERS.t9.txt=DMON.stat2.txt");
+		sendcmd("DMON.t2.txt=DMON.stat1.txt");
+		sendcmd("DMON.t3.txt=DMON.stat2.txt");
+		sendcmd("USERS.t8.txt=DMON.stat1.txt");
+		sendcmd("USERS.t9.txt=DMON.stat2.txt");
 
 		/* statusをクリアする */
 		status[0] = '\0';

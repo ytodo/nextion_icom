@@ -50,9 +50,14 @@ int main(void)
 	fd = openport(SERIALPORT, BAUDRATE);
 
 	/* 環境設定ファイルの読み取り */
-	sendcmd("page MAIN");
 	getconfig();
+	sendcmd("page MAIN");
 
+        /* チェックしたIPアドレスをSYSTEM pageに表示 */
+//        sprintf(command, "SYSTEM.va0.txt=\"%s\"", ds.ipaddress);
+//        sendcmd(command);
+
+	dispipaddr();
 	reflesh_pages();
 
 
@@ -67,48 +72,43 @@ int main(void)
 		/* タッチパネルのデータを読み込む */
 		recvdata(usercmd);
 
-		/* もしタッチデータが選択されていない場合、初回のみデフォルトリピータをセットする */
-		if ((strlen(usercmd) == 0) && (strlen(nx.default_rpt) != 0))
-		{
-			strcpy(usercmd, nx.default_rpt);
-		}
-
 		/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
-		if ((strlen(usercmd) > 1) && (strcmp(usercmd, chkusercmd) != 0))
+		if ((strlen(usercmd) > 4) && (strncmp(usercmd, chkusercmd, 8) != 0))
 		{
 			/* 比較後、保存変数をクリア */
 			chkusercmd[0] = '\0';
 
 			/* 現在の返り値を保存 */
-			strcpy(chkusercmd, usercmd);
+			strncpy(chkusercmd, usercmd, 8);
+
+printf("usercmd: %s  chk: %s\n", usercmd, chkusercmd);
+
 
 			/* MAINのモードスイッチの状態を保存 */
 			if (strncmp(usercmd, "dmonitor", 8) == 0)
 			{
 				st.mode = 1;
-				sendcmd("page DMON");
+				dispstatus_dmon();
 				dmonitor();
 			}
 			if (strncmp(usercmd, "dstarrpt", 8) == 0)
 			{
 				st.mode = 2;
-				sendcmd("page IDLE")
+				dispstatus_ref();
 				dstarrepeater();
 			}
 		}
-		reflesh_pages();
-		flag = 0;
+//		reflesh_pages();
+//		flag = 0;
 
 
 		/*
 		 *	送信処理
 		 */
 
-		///// MAINページ /////
-
 		/* MAINへの簡易ラストハード表示 */
-		dispstatus_dmon();
-		dispstatus_ref();
+//		dispstatus_dmon();
+//		dispstatus_ref();
 
 		/* 日付･時刻表示 */
 		jstimer = time(NULL);
@@ -120,5 +120,6 @@ int main(void)
 
 	/* GPIO シリアルポートのクローズ */
 	close(fd);
+
 	return(EXIT_SUCCESS);
 }

@@ -52,7 +52,7 @@ void dispipaddr(void)
 		sprintf(command, "IDLE.ipaddr.txt=\"%s:%s\"", ifname, ifaddr);
 		sendcmd(command);
 	}
-	sendcmd("IDLE.t3.txt=ipaddr.txt");
+//	sendcmd("IDLE.t3.txt=IDLE.ipaddr.txt");
 
 	return;
 }

@@ -35,7 +35,7 @@
 #include	"Nextion.h"
 #define		WAITTIME	0.5	// sec
 
-int dmonitor(void)
+void dmonitor(void)
 {
 	int	num;				// 返り値のi を受ける（件数）
 	int	arraycount;
@@ -46,30 +46,24 @@ int dmonitor(void)
 	char	chkusercmd[8]	= {'\0'};
 	char	tmpstr[32]	= {'\0'};
 
-	/* 環境設定ファイルの読み取り */
-	
-	getconfig();
-	
 	/* 現在利用可能なリピータリストの取得*/
 	num = getlinkdata();
-
-	/* GPIO シリアルポートのオープン*/
-	fd = openport(SERIALPORT, BAUDRATE);
 
 	/* メインスクリーンの初期設定 */
 	sendcmd("dim=dims");
 	sendcmd("page DMON");
+
 	sprintf(command, "DMON.station.txt=\"STATION : %s\"", nx.station);
 	sendcmd(command);
-	sprintf(command, "t0.txt=\"STATION : %s\"",nx.station);
-	sendcmd(command);
-	sendcmd("t1.txt=\"LINK TO : NONE\"");
-	sendcmd("link.txt=\"LINK TO : NONE\"");
+//	sprintf(command, "t0.txt=\"STATION : %s\"",nx.station);
+//	sendcmd(command);
+//	sendcmd("t1.txt=\"LINK TO : NONE\"");
+//	sendcmd("link.txt=\"LINK TO : NONE\"");
 
 	/* 読み込んだリピータの総数を表示 */
 	sprintf(command, "DMON.stat1.txt=\"Read %d Repeaters\"", num);
 	sendcmd(command);
-	sendcmd("DMON.t2.txt=DMON.stat1.txt");
+//	sendcmd("DMON.t2.txt=DMON.stat1.txt");
 	sendcmd("DMON.t3.txt=\"\"");
 
 	/* 全リストを空にした後リピータ数分の文字配列にコールサインを格納 */
@@ -85,14 +79,11 @@ int dmonitor(void)
 	sprintf(command, "SYSTEM.va0.txt=\"%s\"", ds.ipaddress);
 	sendcmd(command);
 
+//	reflesh_pages();
 
 	/* 送・受信ループ */
 	while (1)
 	{
-		/*
-		 * 受信処理
-		 */
-
 		/* タッチパネルのデータを読み込む */
 		recvdata(usercmd);
 
@@ -105,62 +96,69 @@ int dmonitor(void)
 		/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
 		if ((strlen(usercmd) > 1) && (strncmp(usercmd, chkusercmd, 8) != 0))
 		{
+                        /* 比較後、保存変数をクリア */
+                        chkusercmd[0] = '\0';
+
 			/* 現在の返り値を保存 */
 			strncpy(chkusercmd, usercmd, 8);
 
+printf("usercmd: %s  chk: %s\n", usercmd, chkusercmd);
+
 			/* コマンドをスイッチに振り分ける */
-			if (strncmp(usercmd, "restart",	 7) == 0) flag = 1;
-			if (strncmp(usercmd, "reboot",	 6) == 0) flag = 2;
-			if (strncmp(usercmd, "poweroff", 8) == 0) flag = 3;
-			if (strncmp(usercmd, "update",	 6) == 0) flag = 4;
-			if (strncmp(usercmd, "UP",	 2) == 0) flag = 5;
-			if (strncmp(usercmd, "DWN",	 3) == 0) flag = 6;
-			if (strncmp(usercmd, "USERS",	 5) == 0) flag = 7;
-			if (strncmp(usercmd, "next",	 4) == 0) flag = 8;
-			if (strncmp(usercmd, "previous", 8) == 0) flag = 9;
+			if (strncmp(usercmd, "restart",	 7) == 0) flag =  1;
+			if (strncmp(usercmd, "reboot",	 6) == 0) flag =  2;
+			if (strncmp(usercmd, "poweroff", 8) == 0) flag =  3;
+			if (strncmp(usercmd, "update",	 6) == 0) flag =  4;
+			if (strncmp(usercmd, "UP",	 2) == 0) flag =  5;
+			if (strncmp(usercmd, "DWN",	 3) == 0) flag =  6;
+			if (strncmp(usercmd, "USERS",	 5) == 0) flag =  7;
+			if (strncmp(usercmd, "next",	 4) == 0) flag =  8;
+			if (strncmp(usercmd, "previous", 8) == 0) flag =  9;
+			if (strncmp(usercmd, "return",	 6) == 0) flag = 10;
 
 			switch (flag) {
 			case 1:						// nextionドライバのリスタート
 				sendcmd("dim=10");
-				system("killall -q -s 2 dmonitor");
-				system("rm /var/run/dmonitor.pid");
-				system("systemctl restart nextion.service");
+				system("sudo killall -q -s 2 dmonitor");
+				system("sudo rm /var/run/dmonitor.pid");
+				system("sudo systemctl restart nextion.service");
+				sendcmd("dim=dims");
 				break;
 
 			case 2:						// 再起動
 				sendcmd("dim=10");
-				system("killall -q -s 2 dmonitor");
-				system("rm /var/run/dmonitor.pid");
-				system("shutdown -r now");
+				system("sudo killall -q -s 2 dmonitor");
+				system("sudo rm /var/run/dmonitor.pid");
+				system("sudo shutdown -r now");
 				break;
 
 			case 3:						// シャットダウン
 				sendcmd("dim=10");
-				system("killall -q -s 2 dmonitor");
-				system("rm /var/run/dmonitor.pid");
-				system("shutdown -h now");
+				system("sudo killall -q -s 2 dmonitor");
+				system("sudo rm /var/run/dmonitor.pid");
+				system("sudo shutdown -h now");
 				break;
 
 			case 4:						// OS及びdmonitorのアップデート
 				/* システムコマンドの実行 */
-				system("killall -q -s 2 dmonitor");
-				system("rm /var/run/dmonitor.pid");
-				system("apt clean && apt update && apt install dmonitor");
+				system("sudo killall -q -s 2 dmonitor");
+				system("sudo rm /var/run/dmonitor.pid");
+				system("sudo apt clean && apt update && apt install dmonitor");
 
 				sendcmd("dim=10");
-				system("systemctl restart nextion.service");
+				system("sudo systemctl restart nextion.service");
 				break;
 
 			case 5:						// バッファの増加
-				if (strncmp(concall, "up", 2) == 0) break;
-				strcpy(concall, "up");
-				system("killall -q -s SIGUSR1 dmonitor");
+				if (strncmp(usercmd, "up", 2) == 0) break;
+				strcpy(usercmd, "up");
+				system("sudo killall -q -s SIGUSR1 dmonitor");
 				break;
 
 			case 6:						// バッファの減少
-				if (strncmp(concall, "dwn", 3) == 0) break;
-				strcpy(concall, "dwn");
-				system("killall -q -s SIGUSR2 dmonitor");
+				if (strncmp(usercmd, "dwn", 3) == 0) break;
+				strcpy(usercmd, "dwn");
+				system("sudo killall -q -s SIGUSR2 dmonitor");
 				break;
 
 			case 7:						// Remote Usersパネルへ接続ユーザ表示
@@ -168,7 +166,7 @@ int dmonitor(void)
 				sprintf(command, "USERS.b0.txt=\"LINKED USERS on %s\"", rptcallpre);
 				sendcmd(command);
 				getusers();
-				strcpy(concall, "Return");
+				strcpy(usercmd, "Return");
 				break;
 
 			case 8:
@@ -178,47 +176,50 @@ int dmonitor(void)
 				previous_page(num);
 				break;
 
+			case 10:
+				system("sudo killall -q -s 2 dmonitor");
+				system("sudo rm /var/run/dmonitor.pid");
+				sendcmd("page MAIN");
+				return;
+
 			default:
 
 				/* 指定リピータに接続する */
 				i = 0;
-				system("systemctl restart auto_repmon.service");
-				usleep(nx.microsec * 100);		// リスト読み込み完了を確実にするウェイト
-				num = getlinkdata();
+//				system("systemctl restart auto_repmon.service");
+//				usleep(atoi(nx.microsec) * 100);		// リスト読み込み完了を確実にするウェイト
+//				num = getlinkdata();
 				for (i = 0; i < num; i++)
 				{
-					if (strncmp(linkdata[i].call, concall, 8) == 0)
+					if (strncmp(linkdata[i].call, usercmd, 8) == 0)
 					{
 						/* 現在稼働中のdmonitor をKILL */
-						system("killall -q -s 2 dmonitor");
-						system("rm /var/run/dmonitor.pid");
+						system("sudo killall -q -s 2 dmonitor");
+						system("sudo rm /var/run/dmonitor.pid");
 						system("sudo rig_port_check");
 
 						/* 接続コマンドの実行 */
-						sprintf(command, "dmonitor '%s' %s %s '%s' '%s'", nx.station, linkdata[i].addr, linkdata[i].port, linkdata[i].call, linkdata[i].zone);
-						sendcmd("page DMON");
-
+						sprintf(command, "sudo dmonitor '%s' %s %s '%s' '%s'", nx.station, linkdata[i].addr, linkdata[i].port, linkdata[i].call, linkdata[i].zone);
+printf("%s\n", command);
 						/* killした後、disconnectの表示を待って再接続 */
-						usleep(nx.microsec * 50);
+						usleep(atoi(nx.microsec) * 100);
 						system(command);
-						break;
 					}
 				}
 			}
 			flag = 0;
 		}
 
-		/*
-		 * 送信処理
-		 */
-
 		/* ステータス・ラストハードの読み取り */
 		dispstatus_dmon();
+//		reflesh_pages();
+
+
 	}		// Loop
 
 
 	/* GPIO シリアルポートのクローズ*/
 	close(fd);
 
-	return (EXIT_SUCCESS);
+	return;
 }

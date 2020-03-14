@@ -21,7 +21,7 @@ void getconfig(void)
 	/* nextion.iniをオープンする */
         if ((fp = fopen(INIFILE, "r")) == NULL)
         {
-                printf("File open error!\n");
+                printf("Nextion.ini file open error!\n");
                 return;
         }
 
@@ -41,7 +41,7 @@ void getconfig(void)
         /* dstarrepeater(設定ファイル)をオープンする */
         if ((fp = fopen(CONFFILE, "r")) == NULL)
         {
-                printf("File open error!\n");
+                printf("dstarrepeater file open error!\n");
                 return;
         }
 
