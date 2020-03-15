@@ -80,8 +80,6 @@ void dispstatus_ref(void)
 				sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
 				sendcmd(command);
 				sendcmd("IDLE.t2.txt=status2.txt");
-				sendcmd("MAIN.status_ref.txt=IDLE.status2.txt");
-				sendcmd("MAIN.t1.txt=MAIN.status_ref.txt");
 			}
 		}
 
@@ -221,18 +219,18 @@ void dispstatus_ref(void)
 		 */
 		if ((tmpptr = strstr(line, "AMBE for")) != NULL && rf_flag == 1)
 		{
-			if (strncmp(line, chkstat2, 60) != 0)
-			{
+//			if (strncmp(line, chkstat2, 60) != 0)
+//			{
 				/* 一旦ダブりチェック用変数をクリアして新たに代入 */
-				chkstat2[0] = '\0';
-				strncpy(chkstat2, line, 60);
+//				chkstat2[0] = '\0';
+//				strncpy(chkstat2, line, 60);
 
 				/* TX Hang */
 				sleep(TXHANG);
 
 				/* IDLE 画面に戻る */
-				reflesh_pages();
-			}
+				sendcmd("page IDLE");
+//			}
 			rf_flag = 0;
 		}
 

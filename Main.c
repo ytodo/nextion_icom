@@ -65,9 +65,12 @@ int main(void)
 	/* 送・受信ループ */
 	while(1)
 	{
-		/*
-		 *	受信処理
-		 */
+		/* MAINへの簡易ラストハード表示 */
+//		dispstatus_dmon();
+//		dispstatus_ref();
+
+		/* 日付･時刻表示 */
+		dispclock();
 
 		/* タッチパネルのデータを読み込む */
 		recvdata(usercmd);
@@ -94,28 +97,13 @@ printf("usercmd: %s  chk: %s\n", usercmd, chkusercmd);
 			if (strncmp(usercmd, "dstarrpt", 8) == 0)
 			{
 				st.mode = 2;
-				dispstatus_ref();
+//				dispstatus_ref();
 				dstarrepeater();
 			}
 		}
 //		reflesh_pages();
 //		flag = 0;
 
-
-		/*
-		 *	送信処理
-		 */
-
-		/* MAINへの簡易ラストハード表示 */
-//		dispstatus_dmon();
-//		dispstatus_ref();
-
-		/* 日付･時刻表示 */
-		jstimer = time(NULL);
-		jstimeptr = localtime(&jstimer);
-		strftime(tmpstr, sizeof(tmpstr), "%Y.%m.%d %H:%M:%S ", jstimeptr);
-		sprintf(command, "MAIN.t2.txt=\"%s\"", tmpstr);
-		sendcmd(command);
 	}
 
 	/* GPIO シリアルポートのクローズ */

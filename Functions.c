@@ -177,4 +177,20 @@ void modem_stop(void)
 	system("sudo systemctl stop dstarrepeater.service");
 	system("sudo systemctl stop ircddbgateway.service");
 	system("sudo systemctl stop nextion.service");
+	return;
+}
+
+void dispclock(void)
+{
+	char	tmpstr[20] = {'\0'};
+
+	/* 日付･時刻表示 */
+	jstimer = time(NULL);
+	jstimeptr = localtime(&jstimer);
+	strftime(tmpstr, sizeof(tmpstr), "%Y.%m.%d %H:%M:%S ", jstimeptr);
+	tmpstr[19] = '\0';
+	sprintf(command, "MAIN.t2.txt=\"%s\"", tmpstr);
+	sendcmd(command);
+
+	return;
 }

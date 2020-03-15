@@ -46,12 +46,15 @@ void dmonitor(void)
 	char	chkusercmd[8]	= {'\0'};
 	char	tmpstr[32]	= {'\0'};
 
-	/* 現在利用可能なリピータリストの取得*/
-	num = getlinkdata();
+        /* GPIO シリアルポートのオープン*/
+        fd = openport(SERIALPORT, BAUDRATE);
 
 	/* メインスクリーンの初期設定 */
 	sendcmd("dim=dims");
 	sendcmd("page DMON");
+
+	/* 現在利用可能なリピータリストの取得*/
+	num = getlinkdata();
 
 	sprintf(command, "DMON.station.txt=\"STATION : %s\"", nx.station);
 	sendcmd(command);
@@ -69,14 +72,11 @@ void dmonitor(void)
 	/* 全リストを空にした後リピータ数分の文字配列にコールサインを格納 */
 	for (i = 0; i < 21; i++)
 	{
-		sprintf(command, "RPTLIST.va%d.txt=\"\"", i);
-		sendcmd(command);
+		sprintf(command, "RPTLIST.va0.txt=\"%s\"", linkdata[0].call);
+//		sprintf(command, "RPTLIST.va%d.txt=\"\"", i);
+//		sendcmd(command);
 		sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i, linkdata[i].call);
 		sendcmd(command);
-
-printf("%s\n", nx.microsec);
-
-usleep(atoi(nx.microsec) * 10);
 
 	}
 

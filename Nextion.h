@@ -142,5 +142,6 @@ void	previous_page(int num);
 void	dmonitor_restart(void);
 void	dstarrepeater_restart(void);
 void	modem_stop(void);
+void	dispclock(void);
 
 #endif // __NEXTION_H__

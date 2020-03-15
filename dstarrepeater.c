@@ -45,25 +45,22 @@ void dstarrepeater(void)
     	char	tmpstr[32]	= {'\0'};
 
 	/* GPIO シリアルポートのオープン*/
-//	fd = openport(SERIALPORT, BAUDRATE);
+	fd = openport(SERIALPORT, BAUDRATE);
 
 	/* 環境設定ファイルの読み取り */
 //	getconfig();
-
-
 
 	/* グローバル変数の初期設定 */
 	sprintf(command, "IDLE.station.txt=\"%s\"", ds.station);	// ノードコールサイン
 	sendcmd(command);
 	sendcmd("IDLE.status.txt=IDLE.ref.txt");			// ステータス
-	sprintf(command, "IDLE.ipaddr.txt=\"%s\"", ds.ipaddress);	// IPアドレス
-	sendcmd(command);
+//        dispipaddr();							// IPアドレス
 	sprintf(command, "IDLE.type.txt=\"%s\"", ds.modemtype);		// リピータ形式
 	sendcmd(command);
-	sendcmd("page IDLE");
 
 	/* グローバル変数の値を画面表示 */
-	reflesh_pages();						// IDLE 画面の表示ルーティン
+	sendcmd("page IDLE");
+//	reflesh_pages();						// IDLE 画面の表示ルーティン
 
 	/* 送・受信ループ */
 	while (1) {
@@ -83,29 +80,35 @@ void dstarrepeater(void)
 
 		switch (flag)
 		{
-			case 1:
+			case 1:				// restart
 				sendcmd("dim=10");
-				sendcmd("page IDLE");
 				system("sudo systemctl restart nextion.service");
-				system("sudo systemctl restart dstarrepeater.service");
+				system("sudo systemctl stop dstarrepeater.service");
+				system("sudo systemctl start dstarrepeater.service");
+				sendcmd("page IDLE");
+
 				break;
 
-			case 2:
+			case 2:				// reboot
 				sendcmd("dim=10");
-				sendcmd("page IDLE");
 				system("sudo shutdown -r now");
 				break;
 
-			case 3:
+			case 3:				// shutdown
 				sendcmd("dim=10");
-				sendcmd("page IDLE");
 				system("sudo shutdown -h now");
 				break;
 
-			case 9:
+			case 9:				// return
+				system("sudo systemctl stop dstarrepeater.service");
+				sendcmd("page MAIN");
 				return;
 
 			default:
+				system("sudo systemctl stop dstarrepeater.service");
+				system("sudo systemctl start dstarrepeater.service");
+//				system("sudo systemctl stop ircddbgateway.service");
+//				system("sudo systemctl start ircddbgateway.service");
 				break;
 		}
 
