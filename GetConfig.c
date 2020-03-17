@@ -65,7 +65,7 @@ void getconfig(void)
 
 
 	/*
-	 *	取得した設定値をNextionにグローバル変数に保存
+	 *	取得した設定値をNextionのグローバル変数に保存
 	 */
 
 	///// dmonitor /////
@@ -80,8 +80,8 @@ void getconfig(void)
 
 
 /// Test ///
-printf("station: %s | default: %s | microsec: %s | debug: %s\n\n", nx.station, nx.default_rpt, nx.microsec, nx.debug);
-printf("station: %s | ipaddress: %s | port: %s | modem: %s\n\n", ds.station, ds.ipaddress, ds.localport, ds.modemtype);
+//printf("station: %s | default: %s | microsec: %s | debug: %s\n\n", nx.station, nx.default_rpt, nx.microsec, nx.debug);
+//printf("station: %s | ipaddress: %s | port: %s | modem: %s\n\n", ds.station, ds.ipaddress, ds.localport, ds.modemtype);
 
 
 

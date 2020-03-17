@@ -20,8 +20,8 @@ void dispstatus_ref(void)
 {
 	char	line2[256]		= {'\0'};
 	char	fname[32]		= {'\0'};	// ファイル名
-	char	mycall[8]		= {'\0'};
-	char	urcall[8]		= {'\0'};
+	char	mycall[14]		= {'\0'};
+	char	urcall[9]		= {'\0'};
 	char	dstarlogpath[32]	= {'\0'};	// D-STAR Repeater ログのフルパス
 	char	status2[32] 		= {'\0'};
 	/*
@@ -35,7 +35,7 @@ void dispstatus_ref(void)
 	sprintf(dstarlogpath, "%s%s", LOGDIR, fname);
 
 	/* コマンドの標準出力オープン */
-	sprintf(cmdline, "tail -n2 %s", dstarlogpath);
+	sprintf(cmdline, "tail -n2 %s | egrep -v 'Invalid|RTI_DATA_NAK'", dstarlogpath);
 	if ((fp = popen(cmdline, "r")) != NULL )
 	{
 
@@ -110,7 +110,8 @@ void dispstatus_ref(void)
 				sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
 				sendcmd(command);
 
-				reflesh_pages();
+				sendcmd("IDLE.t1.txt=IDLE.status.txt");
+				sendcmd("IDLE.t2.txt=IDLE.status2.txt");
 			}
 		}
 
@@ -124,6 +125,7 @@ void dispstatus_ref(void)
 			if (strncmp(line, chkstat2, 60) != 0)
 			{
 				sendcmd("page DSTAR");
+				rf_flag = 1;
 
 				/* 一旦ダブりチェック用変数をクリアして新たに代入 */
 				chkstat2[0] = '\0';
@@ -142,12 +144,12 @@ void dispstatus_ref(void)
 				/* ログよりコールサインMY, UR を取得 */
 				strncpy(mycall, tmpptr + 27, 13);
 				mycall[13] = '\0';
-				strncpy(urcall, tmpptr + 48, 8);
-				urcall[8] = '\0';
 				strcat(status2, mycall);
 				status2[23] = '\0';
+				strncpy(urcall, tmpptr + 48, 8);
+				urcall[8] = '\0';
 
-				/* ステータス２の表示 */
+				/* ステータスの表示 */
 				sprintf(command, "DSTAR.t0.txt=\"R %s\"", mycall);
 				sendcmd(command);
 				sprintf(command, "DSTAR.t1.txt=\"%s\"", urcall);
@@ -157,9 +159,9 @@ void dispstatus_ref(void)
 				/* ステータス2 を保存 */
 				sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
 				sendcmd(command);
+				sendcmd("IDLE.t2.txt=\"IDLE.status2.txt");
 
 			}
-			rf_flag = 1;
 		}
 
 
@@ -194,10 +196,10 @@ void dispstatus_ref(void)
 				/* ログよりコールサインMY, UR を取得 */
 				strncpy(mycall, tmpptr + 30, 13);
 				mycall[13] = '\0';
-				strncpy(urcall, tmpptr + 51, 8);
-				urcall[8] = '\0';
 				strcat(status2, mycall);
 				status2[23] = '\0';
+				strncpy(urcall, tmpptr + 51, 8);
+				urcall[8] = '\0';
 
 				/* ステータス２の表示 */
 				sprintf(command, "DSTAR.t0.txt=\"N %s\"", mycall);
@@ -209,8 +211,8 @@ void dispstatus_ref(void)
 				/* ステータス2 を保存 */
 				sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
 				sendcmd(command);
+				sendcmd("IDLE.t2.txt=\"IDLE.status2.txt");
 			}
-			net_flag = 1;
 		}
 
 
@@ -219,19 +221,20 @@ void dispstatus_ref(void)
 		 */
 		if ((tmpptr = strstr(line, "AMBE for")) != NULL && rf_flag == 1)
 		{
-//			if (strncmp(line, chkstat2, 60) != 0)
-//			{
+			if (strncmp(line, chkstat2, 60) != 0)
+			{
+
 				/* 一旦ダブりチェック用変数をクリアして新たに代入 */
-//				chkstat2[0] = '\0';
-//				strncpy(chkstat2, line, 60);
+				chkstat2[0] = '\0';
+				strncpy(chkstat2, line, 60);
 
 				/* TX Hang */
 				sleep(TXHANG);
 
 				/* IDLE 画面に戻る */
+				rf_flag = 0;
 				sendcmd("page IDLE");
-//			}
-			rf_flag = 0;
+			}
 		}
 
 
@@ -250,9 +253,9 @@ void dispstatus_ref(void)
 				sleep(TXHANG);
 
 				/* IDLE 画面に戻る */
-				reflesh_pages();
+				net_flag = 0;
+				sendcmd("page IDLE");
 			}
-			net_flag = 0;
 		}
 
 		/* 標準出力クローズ */

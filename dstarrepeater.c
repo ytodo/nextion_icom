@@ -47,8 +47,9 @@ void dstarrepeater(void)
 	/* GPIO シリアルポートのオープン*/
 	fd = openport(SERIALPORT, BAUDRATE);
 
-	/* 環境設定ファイルの読み取り */
-//	getconfig();
+	/* DStarRepeaterを再起動する */
+//	system("sudo systemctl restart dstarrepeater.service");
+//	system("sudo systemctl restart ircddbgateway.service");
 
 	/* グローバル変数の初期設定 */
 	sprintf(command, "IDLE.station.txt=\"%s\"", ds.station);	// ノードコールサイン
@@ -60,7 +61,8 @@ void dstarrepeater(void)
 
 	/* グローバル変数の値を画面表示 */
 	sendcmd("page IDLE");
-//	reflesh_pages();						// IDLE 画面の表示ルーティン
+
+	reflesh_pages();						// IDLE 画面の表示ルーティン
 
 	/* 送・受信ループ */
 	while (1) {
@@ -105,8 +107,6 @@ void dstarrepeater(void)
 				return;
 
 			default:
-				system("sudo systemctl stop dstarrepeater.service");
-				system("sudo systemctl start dstarrepeater.service");
 //				system("sudo systemctl stop ircddbgateway.service");
 //				system("sudo systemctl start ircddbgateway.service");
 				break;

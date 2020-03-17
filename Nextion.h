@@ -58,11 +58,8 @@
 #define	BAUDRATE	B9600
 #define	LISTSIZE	512			// 最大リピータ数
 #define	SLEEPCOUNT	200			// コマンド実行待ちカウント
-#define	TXHANG		2			// ラストパケット検出後のハングタイム（秒）
-#define	TXDELAY		1			// 実際の送信開始に対する表示開始の遅れ（秒）
-
-#define	TRUE		1
-#define FALSE		0
+#define	TXHANG		0.5			// ラストパケット検出後のハングタイム（秒）
+#define	TXDELAY		0			// 実際の送信開始に対する表示開始の遅れ（秒）
 
 /* 日付表示関連 */
 time_t	timer;
