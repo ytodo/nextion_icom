@@ -189,19 +189,20 @@ void syscmdswitch(void)
 		switch (st.mode) {
 		case 0:	// MAIN
 			sendcmd("dim=10");
-			system("sudo systemctl stop ircddbgateway.service");
 			system("sudo systemctl stop dstarrepeater.service");
 			system("sudo killall -q -s 2 dmonitor");
 			system("sudo rm /var/run/dmonitor.pid");
 			system("sudo killall -q -s 9 sleep");
 			sendcmd("page MAIN");
+			sendcmd("dim=dims");
 			break;
 
 		case 1:	// dmonitor
 			sendcmd("dim=10");
 			system("sudo killall -q -s 2 dmonitor");
 			system("sudo rm /var/run/dmonitor.pid");
-			system("sudo systemctl restart nextion.service");
+			dmonitor();
+			sendcmd("page DMON");
 			sendcmd("dim=dims");
 			break;
 
@@ -209,8 +210,9 @@ void syscmdswitch(void)
 			sendcmd("dim=10");
 			system("sudo systemctl stop dstarrepeater.service");
 			system("sudo systemctl start dstarrepeater.service");
-			system("sudo systemctl restart nextion.service");
+			dstarrepeater();
 			sendcmd("page IDLE");
+			sendcmd("dim=dims");
 			break;
 
 		default:

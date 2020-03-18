@@ -83,7 +83,6 @@ int main(void)
 	                /* コマンドをスイッチに振り分ける */
 			syscmdswitch();
 		}
-
 	}
 
 	/* GPIO シリアルポートのクローズ */

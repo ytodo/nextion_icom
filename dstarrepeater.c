@@ -19,22 +19,17 @@ void dstarrepeater(void)
     	int	i;
     	int	flag;
     	char	command[64]	= {'\0'};
-    	char	usercmd[32]	= {'\0'};
+//    	char	usercmd[32]	= {'\0'};
 	char	chkusercmd[32]	= {'\0'};
     	char	tmpstr[32]	= {'\0'};
 
 	/* GPIO シリアルポートのオープン*/
 	fd = openport(SERIALPORT, BAUDRATE);
 
-	/* DStarRepeaterを再起動する */
-//	system("sudo systemctl restart dstarrepeater.service");
-//	system("sudo systemctl restart ircddbgateway.service");
-
 	/* グローバル変数の初期設定 */
 	sprintf(command, "IDLE.station.txt=\"%s\"", ds.station);	// ノードコールサイン
 	sendcmd(command);
 	sendcmd("IDLE.status.txt=IDLE.ref.txt");			// ステータス
-//        dispipaddr();							// IPアドレス
 	sprintf(command, "IDLE.type.txt=\"%s\"", ds.modemtype);		// リピータ形式
 	sendcmd(command);
 
