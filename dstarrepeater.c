@@ -1,25 +1,3 @@
-/*
- *  Copyright (C) 2018-2020 by Yosh Todo JE3HCZ
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- *
- *  本プログラムはD-STAR Network の一部の機能を実現するための物で、
- *  アマチュア無線の技術習得とその本来の用途以外では使用しないでください。
- *
- */
-
 ////////////////////////////////////////////////////////////////////////
 // 	D-STAR  Nextion display for ICOM Terminal/Access Mode
 //
@@ -42,6 +20,7 @@ void dstarrepeater(void)
     	int	flag;
     	char	command[64]	= {'\0'};
     	char	usercmd[32]	= {'\0'};
+	char	chkusercmd[32]	= {'\0'};
     	char	tmpstr[32]	= {'\0'};
 
 	/* GPIO シリアルポートのオープン*/
@@ -74,42 +53,17 @@ void dstarrepeater(void)
 		/* タッチパネルのデータを読み込む */
 		recvdata(usercmd);
 
-		/* コマンドをスイッチに振り分ける */
-		if (strncmp(usercmd, "restart",  7) == 0) flag = 1;
-		if (strncmp(usercmd, "reboot",   6) == 0) flag = 2;
-		if (strncmp(usercmd, "shutdown", 8) == 0) flag = 3;
-		if (strncmp(usercmd, "return",   6) == 0) flag = 9;
+                /* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
+                if ((strlen(usercmd) > 4) && (strncmp(usercmd, chkusercmd, 8) != 0))
+                {
+                        /* 比較後、保存変数をクリア */
+                        chkusercmd[0] = '\0';
 
-		switch (flag)
-		{
-			case 1:				// restart
-				sendcmd("dim=10");
-				system("sudo systemctl restart nextion.service");
-				system("sudo systemctl stop dstarrepeater.service");
-				system("sudo systemctl start dstarrepeater.service");
-				sendcmd("page IDLE");
+                        /* 現在の返り値を保存 */
+                        strncpy(chkusercmd, usercmd, 8);
 
-				break;
-
-			case 2:				// reboot
-				sendcmd("dim=10");
-				system("sudo shutdown -r now");
-				break;
-
-			case 3:				// shutdown
-				sendcmd("dim=10");
-				system("sudo shutdown -h now");
-				break;
-
-			case 9:				// return
-				system("sudo systemctl stop dstarrepeater.service");
-				sendcmd("page MAIN");
-				return;
-
-			default:
-//				system("sudo systemctl stop ircddbgateway.service");
-//				system("sudo systemctl start ircddbgateway.service");
-				break;
+			/* コマンドをスイッチに振り分ける */
+			syscmdswitch();
 		}
 
 		/*
@@ -122,7 +76,6 @@ void dstarrepeater(void)
 		/* ログステータスの読み取り */
 		dispstatus_ref();
 
-//		sleep(WAITTIME);
 	}
 
 	/* GPIO シリアルポートのクローズ*/

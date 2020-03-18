@@ -98,14 +98,14 @@ int 	getlinkdata(void)
 /*****************************************************************
  *	表示ページを前ページへ戻す
  *****************************************************************/
-void	previous_page(int num)
+void	previous_page(void)
 {
 	int 	i 		= 0;
 	int	pages		= 0;
 	int	lastpagenum	= 0;
 
-	pages 		= num % 21;
-	lastpagenum	= num - pages * 21;
+	pages 		= st.num % 21;
+	lastpagenum	= st.num - pages * 21;
 
 	/* 現在の表示が最初のページの時 */
 	if (st.selected_page == 0)
@@ -143,3 +143,6 @@ void	previous_page(int num)
 /*****************************************************************
  *	表示ページを次ページへ送る
  *****************************************************************/
+void	next_page(void)
+{
+}

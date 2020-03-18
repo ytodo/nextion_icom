@@ -96,6 +96,7 @@ extern	dstarrepeater_t	ds;			// dstarrepeaterの設定内容
 typedef struct {
 	int	mode;				// 使用中のモード
 	int	selected_page;			// 表示されているページ (num % 21)
+	int	num;				// 読み込み済みリピータ数
 } status_t;
 extern	status_t	st;			// Nextionの使用状況まとめ
 
@@ -134,11 +135,9 @@ void	disptemp(void);
 void	sendcmd(char *cmd);
 void	reflesh_pages(void);
 void	recvdata(char *touchcmd);
-void	next_page(int num);
-void	previous_page(int num);
-void	dmonitor_restart(void);
-void	dstarrepeater_restart(void);
-void	modem_stop(void);
+void	next_page(void);
+void	previous_page(void);
 void	dispclock(void);
+void	syscmdswitch(void);
 
 #endif // __NEXTION_H__

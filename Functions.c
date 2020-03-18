@@ -137,49 +137,10 @@ void reflesh_pages(void)
 	return;
 }
 
-void dmonitor_restart(void)
-{
-	/* DStarRepeater を止める */
-	system("sudo systemctl stop dstarrepeater.service");
 
-	/* dmonitor を再起動する */
-	system("sudo killall -q -s 2 dmonitor");
-	system("sudo rm /var/run/dmonitor.pid");
-	system("sudo systemctl restart nextion.service");
-	system("sudo systemctl restart lighttpd.service");
-	system("sudo systemctl restart auto_repmon.service");
-	system("sudo rig_port_check");
-
-	return;
-}
-
-void dstarrepeater_restart(void)
-{
-	/* dmonitor を止める */
-	system("sudo systemctl stop auto_repmon.service");
-	system("sudo /usr/bin/killall -q -s 9 repeater_scan");
-	system("sudo /usr/bin/killall -q -s 2 repeater_mon");
-	system("sudo /usr/bin/killall -q -s 2 dmonitor");
-	system("sudo rm /var/run/dmonitor.pid");
-	system("sudo /usr/bin/killall -q -s 2  sleep");
-	system("sudo systemctl stop lighttpd.service");
-
-	/* DStarRepeater を再起動する */
-	system("sudo systemctl restart dstarrepeater.service");
-
-	return;
-}
-
-void modem_stop(void)
-{
-	system("killall -q -s 2 dmonitor");
-	system("rm /var/run/dmonitor.pid");
-	system("sudo systemctl stop dstarrepeater.service");
-	system("sudo systemctl stop ircddbgateway.service");
-	system("sudo systemctl stop nextion.service");
-	return;
-}
-
+/*********************************************
+ * 日付と時刻の表示
+ *********************************************/
 void dispclock(void)
 {
 	char	tmpstr[20] = {'\0'};
@@ -191,6 +152,202 @@ void dispclock(void)
 	tmpstr[19] = '\0';
 	sprintf(command, "MAIN.t2.txt=\"%s\"", tmpstr);
 	sendcmd(command);
+
+	return;
+}
+
+
+/*********************************************
+ * システムコマンドを選択する
+ *********************************************/
+void syscmdswitch(void)
+{
+	int flag = 0;
+
+	/* 共通 */
+	if (strncmp(usercmd, "restart",  7) == 0) flag =  1;
+	if (strncmp(usercmd, "reboot",   6) == 0) flag =  2;
+	if (strncmp(usercmd, "shutdown", 8) == 0) flag =  3;
+
+	/* MAINのみ */
+	if (strncmp(usercmd, "dmonitor", 8) == 0) flag =  4;
+	if (strncmp(usercmd, "dstarrpt", 8) == 0) flag =  5;
+
+	/* dmonitorのみ */
+	if (strncmp(usercmd, "update",   6) == 0) flag =  6;
+	if (strncmp(usercmd, "UP",       2) == 0) flag =  7;
+	if (strncmp(usercmd, "DWN",      3) == 0) flag =  8;
+	if (strncmp(usercmd, "USERS",    5) == 0) flag =  9;
+	if (strncmp(usercmd, "next",     4) == 0) flag = 10;
+	if (strncmp(usercmd, "previous", 8) == 0) flag = 11;
+
+	/* dmonitor, dstarrepeater共通 */
+	if (strncmp(usercmd, "return",   6) == 0) flag = 12;
+
+	switch (flag) {
+	case 1:                                         // restart
+		switch (st.mode) {
+		case 0:	// MAIN
+			sendcmd("dim=10");
+			system("sudo systemctl stop ircddbgateway.service");
+			system("sudo systemctl stop dstarrepeater.service");
+			system("sudo killall -q -s 2 dmonitor");
+			system("sudo rm /var/run/dmonitor.pid");
+			system("sudo killall -q -s 9 sleep");
+			sendcmd("page MAIN");
+			break;
+
+		case 1:	// dmonitor
+			sendcmd("dim=10");
+			system("sudo killall -q -s 2 dmonitor");
+			system("sudo rm /var/run/dmonitor.pid");
+			system("sudo systemctl restart nextion.service");
+			sendcmd("dim=dims");
+			break;
+
+		case 2:	// dstarrepeater
+			sendcmd("dim=10");
+			system("sudo systemctl stop dstarrepeater.service");
+			system("sudo systemctl start dstarrepeater.service");
+			system("sudo systemctl restart nextion.service");
+			sendcmd("page IDLE");
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 2:                                         // reboot
+		switch (st.mode) {
+		case 0:	// MAIN
+			sendcmd("dim=10");
+			system("sudo systemctl stop ircddbgateway.service");
+			system("sudo systemctl stop dstarrepeater.service");
+			system("sudo killall -q -s 2 dmonitor");
+			system("sudo rm /var/run/dmonitor.pid");
+			system("sudo killall -q -s 9 sleep");
+			system("sudo shutdown -r now");
+			break;
+
+		case 1:	//dmonitor
+			sendcmd("dim=10");
+			system("sudo killall -q -s 2 dmonitor");
+			system("sudo rm /var/run/dmonitor.pid");
+			system("sudo shutdown -r now");
+			break;
+
+		case 2:	// dstarrepeater
+			sendcmd("dim=10");
+			system("sudo shutdown -r now");
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 3:                                         // shutdown
+		switch (st.mode) {
+		case 0:
+			sendcmd("dim=10");
+			system("sudo systemctl stop ircddbgateway.service");
+			system("sudo systemctl stop dstarrepeater.service");
+			system("sudo killall -q -s 2 dmonitor");
+			system("sudo rm /var/run/dmonitor.pid");
+			system("sudo killall -q -s 9 sleep");
+			system("sudo shutdown -h now");
+			break;
+
+		case 1:	// dmonitor
+			sendcmd("dim=10");
+			system("sudo killall -q -s 2 dmonitor");
+			system("sudo rm /var/run/dmonitor.pid");
+			system("sudo shutdown -h now");
+			break;
+
+		case 2:	// dstarrepeater
+			sendcmd("dim=10");
+			system("sudo shutdown -h now");
+			break;
+
+		default:
+			break;
+		}
+		break;
+
+	case 4:						// dmonitor 起動
+		st.mode = 1;
+		dmonitor();
+		break;
+
+	case 5:						// dstarrepeater 起動
+		st.mode = 2;
+		system("sudo systemctl restart dstarrepeater.service");
+		system("sudo systemctl restart ircddbgateway.service");
+		dstarrepeater();
+		break;
+
+	case 6:                                         // updage
+		system("sudo killall -q -s 2 dmonitor");
+		system("sudo rm /var/run/dmonitor.pid");
+		system("sudo apt clean && apt update && apt install dmonitor");
+
+		sendcmd("dim=10");
+		system("sudo systemctl restart nextion.service");
+		break;
+
+	case 7:						// バッファの増加
+		if (strncmp(usercmd, "up", 2) == 0) break;
+		strcpy(usercmd, "up");
+		system("sudo killall -q -s SIGUSR1 dmonitor");
+		break;
+
+	case 8:                                         // バッファの減少
+		if (strncmp(usercmd, "dwn", 3) == 0) break;
+		strcpy(usercmd, "dwn");
+		system("sudo killall -q -s SIGUSR2 dmonitor");
+		break;
+
+	case 9:                                         // Remote Usersパネルへ接続ユーザ表示
+		sendcmd("page USERS");
+		sprintf(command, "USERS.b0.txt=\"LINKED USERS on %s\"", rptcallpre);
+		sendcmd(command);
+		getusers();
+		strcpy(usercmd, "Return");
+		break;
+
+	case 10:					// リピータリスト次ページ
+		next_page();
+		break;
+
+	case 11:					// リピータリスト前ページ
+		previous_page();
+		break;
+
+	case 12:					// return
+		switch (st.mode) {
+		case 1:	// dmonitor
+			st.mode = 0;
+			system("sudo killall -q -s 2 dmonitor");
+			system("sudo rm /var/run/dmonitor.pid");
+			sendcmd("page MAIN");
+			break;
+
+		case 2:	// dstarrepeater
+			st.mode = 0;
+			system("sudo systemctl stop dstarrepeater.service");
+			sendcmd("page MAIN");
+			break;
+
+		default:
+			break;
+		}
+
+	default:
+		break;
+
+	}
 
 	return;
 }
