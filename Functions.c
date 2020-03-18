@@ -149,7 +149,7 @@ void dispclock(void)
 	jstimer = time(NULL);
 	jstimeptr = localtime(&jstimer);
 	strftime(tmpstr, sizeof(tmpstr), "%Y.%m.%d %H:%M:%S ", jstimeptr);
-	tmpstr[19] = '\0';
+//	tmpstr[20] = '\0';
 	sprintf(command, "MAIN.t2.txt=\"%s\"", tmpstr);
 	sendcmd(command);
 

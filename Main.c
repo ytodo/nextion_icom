@@ -33,16 +33,16 @@
 //              状態表示もし、双方を切れ替えて使用する
 ////////////////////////////////////////////////////////////////////////
 #include        "Nextion.h"
-#define         WAITTIME        0.5     // sec
+#define         WAITTIME        100000     // μsec（0.1秒）
 
 int main(void)
 {
 	int	num;				// 返り値のi を受ける（件数）
 	int	arraycount;
 	int	fd;
-	int	i;
-	int	flag;
-	int	bufcnt;
+	int	i = 0;
+//	int	flag;
+//	int	bufcnt;
 	char	chkusercmd[32]	= {'\0'};
 	char	tmpstr[32]	= {'\0'};
 
@@ -67,6 +67,7 @@ int main(void)
 
 		/* 日付･時刻表示 */
 		dispclock();
+		usleep(WAITTIME * 5);		// 0.5秒
 
 		/* タッチパネルのデータを読み込む */
 		recvdata(usercmd);
@@ -83,6 +84,9 @@ int main(void)
 	                /* コマンドをスイッチに振り分ける */
 			syscmdswitch();
 		}
+		printf("%4d ", i);
+		i++;
+
 	}
 
 	/* GPIO シリアルポートのクローズ */
