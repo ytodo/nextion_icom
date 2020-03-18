@@ -6,7 +6,6 @@
 //		システムコマンドを実行することによってデータを取得
 ////////////////////////////////////////////////////////////////////////////////////////
 #include	"Nextion.h"
-#define		SLEEPTIME	300000	/* micro sec (default 0.3秒=300000) */
 
 FILE	*fp;
 
@@ -52,7 +51,6 @@ void dispipaddr(void)
 		sprintf(command, "IDLE.ipaddr.txt=\"%s:%s\"", ifname, ifaddr);
 		sendcmd(command);
 	}
-//	sendcmd("IDLE.t3.txt=IDLE.ipaddr.txt");
 
 	return;
 }
@@ -80,7 +78,7 @@ void disptemp(void)
 	if ((fp = popen(cmdline, "r")) != NULL)
 	{
 		fgets(line, sizeof(line), fp);
-		usleep(SLEEPTIME);		// 完全に返り値を取得するまで待つ
+		usleep(WAITTIME * 3);		// 完全に返り値を取得するまで待つ
        		line[strlen(line) - 1] = '\0';
 		strcpy(cputemp, &line[5]);	// 先頭の不要文字をカットする
 

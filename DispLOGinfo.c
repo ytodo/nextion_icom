@@ -77,6 +77,7 @@ void dispstatus_ref(void)
 				sendcmd(command);
 				sprintf(command, "IDLE.status.txt=\"%s\"", linkref);
 				sendcmd(command);
+				sendcmd("IDLE.t1.pco=65535");
 				sendcmd("IDLE.t1.txt=status.txt");
 
 				/* ステータス２の表示 */

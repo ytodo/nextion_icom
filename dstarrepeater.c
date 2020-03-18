@@ -11,7 +11,6 @@
 //
 ////////////////////////////////////////////////////////////////////////
 #include	"Nextion.h"
-#define		WAITTIME 0.5  // sec
 
 void dstarrepeater(void)
 {
@@ -19,24 +18,24 @@ void dstarrepeater(void)
     	int	i;
     	int	flag;
     	char	command[64]	= {'\0'};
-//    	char	usercmd[32]	= {'\0'};
 	char	chkusercmd[32]	= {'\0'};
     	char	tmpstr[32]	= {'\0'};
 
 	/* GPIO シリアルポートのオープン*/
 	fd = openport(SERIALPORT, BAUDRATE);
 
+        /* メインスクリーンの初期設定 */
+        sendcmd("dim=dims");
+        sendcmd("page IDLE");
+
 	/* グローバル変数の初期設定 */
 	sprintf(command, "IDLE.station.txt=\"%s\"", ds.station);	// ノードコールサイン
 	sendcmd(command);
-	sendcmd("IDLE.status.txt=IDLE.ref.txt");			// ステータス
+	sendcmd("t1.pco=2016");
+	sendcmd("t1.txt=\"Linking...\"");
 	sprintf(command, "IDLE.type.txt=\"%s\"", ds.modemtype);		// リピータ形式
 	sendcmd(command);
 
-	/* グローバル変数の値を画面表示 */
-	sendcmd("page IDLE");
-
-	reflesh_pages();						// IDLE 画面の表示ルーティン
 
 	/* 送・受信ループ */
 	while (1) {
@@ -51,7 +50,7 @@ void dstarrepeater(void)
                 /* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
                 if ((strlen(usercmd) > 4) && (strncmp(usercmd, chkusercmd, 8) != 0))
                 {
-                        /* 比較後、保存変数をクリア */
+                      /* 比較後、保存変数をクリア */
                         chkusercmd[0] = '\0';
 
                         /* 現在の返り値を保存 */

@@ -33,7 +33,6 @@
 //              状態表示もし、双方を切れ替えて使用する
 ////////////////////////////////////////////////////////////////////////
 #include        "Nextion.h"
-#define         WAITTIME        100000     // μsec（0.1秒）
 
 int main(void)
 {
@@ -41,29 +40,26 @@ int main(void)
 	int	arraycount;
 	int	fd;
 	int	i = 0;
-//	int	flag;
-//	int	bufcnt;
 	char	chkusercmd[32]	= {'\0'};
 	char	tmpstr[32]	= {'\0'};
 
 	/* GPIO シリアルポートのオープン*/
 	fd = openport(SERIALPORT, BAUDRATE);
 
-	/* 環境設定ファイルの読み取り */
-	getconfig();
-
+        /* メインスクリーンの初期設定 */
+        sendcmd("dim=dims");
 	sendcmd("page MAIN");
+
+        /* 設定項目の取得と表示 */
+	getconfig();
 	dispipaddr();
-	reflesh_pages();
-
-
 
 	/* 送・受信ループ */
 	while(1)
 	{
 		/* MAINへの簡易ラストハード表示 */
-//		dispstatus_dmon();
-//		dispstatus_ref();
+		dispstatus_dmon();
+		dispstatus_ref();
 
 		/* 日付･時刻表示 */
 		dispclock();
@@ -84,9 +80,6 @@ int main(void)
 	                /* コマンドをスイッチに振り分ける */
 			syscmdswitch();
 		}
-		printf("%4d ", i);
-		i++;
-
 	}
 
 	/* GPIO シリアルポートのクローズ */

@@ -149,7 +149,7 @@ void dispclock(void)
 	jstimer = time(NULL);
 	jstimeptr = localtime(&jstimer);
 	strftime(tmpstr, sizeof(tmpstr), "%Y.%m.%d %H:%M:%S ", jstimeptr);
-//	tmpstr[20] = '\0';
+	tmpstr[20] = '\0';
 	sprintf(command, "MAIN.t2.txt=\"%s\"", tmpstr);
 	sendcmd(command);
 
@@ -201,18 +201,20 @@ void syscmdswitch(void)
 			sendcmd("dim=10");
 			system("sudo killall -q -s 2 dmonitor");
 			system("sudo rm /var/run/dmonitor.pid");
-			dmonitor();
+			usercmd[0] = '\0';
 			sendcmd("page DMON");
 			sendcmd("dim=dims");
+			dmonitor();
 			break;
 
 		case 2:	// dstarrepeater
 			sendcmd("dim=10");
 			system("sudo systemctl stop dstarrepeater.service");
 			system("sudo systemctl start dstarrepeater.service");
-			dstarrepeater();
+			usercmd[0] = '\0';
 			sendcmd("page IDLE");
 			sendcmd("dim=dims");
+			dstarrepeater();
 			break;
 
 		default:
@@ -279,11 +281,13 @@ void syscmdswitch(void)
 		break;
 
 	case 4:						// dmonitor 起動
+		usercmd[0] = '\0';
 		st.mode = 1;
 		dmonitor();
 		break;
 
 	case 5:						// dstarrepeater 起動
+		usercmd[0] = '\0';
 		st.mode = 2;
 		system("sudo systemctl restart dstarrepeater.service");
 		system("sudo systemctl restart ircddbgateway.service");
@@ -333,12 +337,14 @@ void syscmdswitch(void)
 			st.mode = 0;
 			system("sudo killall -q -s 2 dmonitor");
 			system("sudo rm /var/run/dmonitor.pid");
+			system("sudo systemctl restart nextion.service");
 			sendcmd("page MAIN");
 			break;
 
 		case 2:	// dstarrepeater
 			st.mode = 0;
 			system("sudo systemctl stop dstarrepeater.service");
+			system("sudo systemctl restart nextion.service");
 			sendcmd("page MAIN");
 			break;
 
