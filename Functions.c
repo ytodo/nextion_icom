@@ -185,13 +185,13 @@ void syscmdswitch(void)
 	if (strncmp(usercmd, "return",   6) == 0) flag = 12;
 
 	/* リフレクタ専用コマンド*/
-	if ((strncmp(usercmd,  "REF", 3)
-	 || strncmp(usercmd,  "XLX", 3)
-	 || strncmp(usercmd,  "DCS", 3)
-	 || strncmp(usercmd,  "XRF", 3)
-	 || strncmp(usercmd[7], "U", 1)
-	 || strncmp(usercmd[7], "I", 1)
-	 || strncmp(usercmd[7],	"E", 1) == 0) && st.mode == 2) flag =13; 
+	if ((strncmp(usercmd,	"REF", 3)
+	 || strncmp(usercmd,	"XLX", 3)
+	 || strncmp(usercmd,	"DCS", 3)
+	 || strncmp(usercmd,	"XRF", 3)
+	 || strncmp(&usercmd[7],  "U", 1)
+	 || strncmp(&usercmd[7],  "I", 1)
+	 || strncmp(&usercmd[7],  "E", 1) == 0) && st.mode == 2) flag =13;
 
 	switch (flag) {
 	case 1:                                         // restart
@@ -363,10 +363,12 @@ void syscmdswitch(void)
 
 	case 13:					// リフレクタコマンド
 		printf("%s\n", usercmd);
-		// remotecontrold 
-		sendcmd("page IDLE")
+		// remotecontrold
+		sendcmd("page IDLE");
 
+		break;
 	default:
+
 		break;
 
 	}
