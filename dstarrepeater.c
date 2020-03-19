@@ -76,4 +76,3 @@ void dstarrepeater(void)
 	close(fd);
 	return;
 }
-
