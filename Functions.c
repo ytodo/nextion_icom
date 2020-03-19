@@ -193,8 +193,8 @@ void syscmdswitch(void)
 			system("sudo killall -q -s 2 dmonitor");
 			system("sudo rm /var/run/dmonitor.pid");
 			system("sudo killall -q -s 9 sleep");
-			sendcmd("page MAIN");
 			sendcmd("dim=dims");
+			sendcmd("page MAIN");
 			break;
 
 		case 1:	// dmonitor
@@ -202,8 +202,8 @@ void syscmdswitch(void)
 			system("sudo killall -q -s 2 dmonitor");
 			system("sudo rm /var/run/dmonitor.pid");
 			usercmd[0] = '\0';
-			sendcmd("page DMON");
 			sendcmd("dim=dims");
+			sendcmd("page DMON");
 			dmonitor();
 			break;
 
@@ -212,8 +212,8 @@ void syscmdswitch(void)
 			system("sudo systemctl stop dstarrepeater.service");
 			system("sudo systemctl start dstarrepeater.service");
 			usercmd[0] = '\0';
-			sendcmd("page IDLE");
 			sendcmd("dim=dims");
+			sendcmd("page IDLE");
 			dstarrepeater();
 			break;
 
