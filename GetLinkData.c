@@ -104,37 +104,45 @@ void	previous_page(void)
 	int	pages		= 0;
 	int	lastpagenum	= 0;
 
-	pages 		= st.num % 21;
-	lastpagenum	= st.num - pages * 21;
+	pages 		= st.num / 21;
+	lastpagenum	= st.num % 21;
 
 	/* 現在の表示が最初のページの時 */
 	if (st.selected_page == 0)
 	{
 		for (i = 0; i < 21; i++)
 		{
-			if (i >= lastpagenum )	// データが21に満たない場合残りをクリアする
+			if (i < lastpagenum )		// 実在するデータ分を代入
 			{
-				sprintf(command, "RPTLIST.va%d.txt=\"\"", i);
+				sprintf(command, "RPTLIST.t%d.txt=\"%s\"",  i + 100, linkdata[i + 21 * pages].call);
+				sendcmd(command);
+				sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i, 	     linkdata[i + 21 * pages].call);
+				sendcmd(command);
 			}
-			else			// 実在するデータ分を代入
+			else				// データが21に満たない場合残りをクリアする
 			{
-				sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i, linkdata[i + 21 * pages + 1]);
+				sprintf(command, "RPTLIST.t%d.txt=\"        \"",  i + 100);
+				sendcmd(command);
+				sprintf(command, "RPTLIST.va%d.txt=\"\"", i);
+				sendcmd(command);
 			}
 		}
-		st.selected_page = pages;       // 表示した最後のページを保存
+		st.selected_page = pages;       	// 表示した最後のページを保存
 	}
+
 	/* 現在のページが最初のページではない場合 */
 	else
 	{
+		st.selected_page -= 1;
+
 		for (i = 0; i < 21; i++)
 		{
-			sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i, linkdata[i + 21 * (st.selected_page - 1) + 1]);
+			sprintf(command, "RPTLIST.t%d.txt=\"%s\"",  i + 100, linkdata[i + 21 * st.selected_page].call);
+			sendcmd(command);
+			sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i      , linkdata[i + 21 * st.selected_page].call);
+			sendcmd(command);
 		}
-		st.selected_page -= 1;
 	}
-
-	/* Nextionに書き込む */
-	sendcmd(command);
 
 	return;
 }
@@ -145,4 +153,49 @@ void	previous_page(void)
  *****************************************************************/
 void	next_page(void)
 {
+	int 	i 		= 0;
+	int	pages		= 0;
+	int	lastpagenum	= 0;
+
+	pages 		= st.num / 21;
+	lastpagenum	= st.num % 21;
+
+	/* 現在の表示が最後のページの時 */
+	if (st.selected_page == pages)
+	{
+                for (i = 0; i < 21; i++)
+                {
+                        if (i < lastpagenum )           // 実在するデータ分を代入
+                        {
+                                sprintf(command, "RPTLIST.t%d.txt=\"%s\"",  i + 100, linkdata[i + 21 * pages].call);
+                                sendcmd(command);
+                                sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i,       linkdata[i + 21 * pages].call);
+                                sendcmd(command);
+                        }
+                        else                            // データが21に満たない場合残りをクリアする
+                        {
+                                sprintf(command, "RPTLIST.t%d.txt=\"        \"",  i + 100);
+                                sendcmd(command);
+                                sprintf(command, "RPTLIST.va%d.txt=\"\"", i);
+                                sendcmd(command);
+                        }
+                }
+		st.selected_page = 0;
+	}
+
+        /* 現在のページが最後のページではない場合 */
+        else
+        {
+                st.selected_page += 1;
+
+                for (i = 0; i < 21; i++)
+                {
+                        sprintf(command, "RPTLIST.t%d.txt=\"%s\"",  i + 100, linkdata[i + 21 * st.selected_page].call);
+                        sendcmd(command);
+                        sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i      , linkdata[i + 21 * st.selected_page].call);
+                        sendcmd(command);
+                }
+        }
+
+	return;
 }

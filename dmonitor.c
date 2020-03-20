@@ -18,7 +18,6 @@ void dmonitor(void)
 	int	fd;
 	int	i;
 	int	flag;
-	int	bufcnt;
 	char	chkusercmd[8]	= {'\0'};
 	char	tmpstr[32]	= {'\0'};
 
@@ -43,10 +42,8 @@ void dmonitor(void)
 	/* 全リストを空にした後リピータ数分の文字配列にコールサインを格納 */
 	for (i = 0; i < 21; i++)
 	{
-		sprintf(command, "RPTLIST.va0.txt=\"%s\"", linkdata[0].call);
 		sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i, linkdata[i].call);
 		sendcmd(command);
-
 	}
 
 	/* チェックしたIPアドレスをSYSTEM pageに表示 */
@@ -99,6 +96,15 @@ void dmonitor(void)
 			if (flag != 1) syscmdswitch();		// リピータ接続でなかった時 SYSTEM COMMANDへ
 
 		}
+
+		if ((strncmp(usercmd, "next", 4) == 0) || (strncmp(usercmd, "previous", 8) == 0))
+		{
+			syscmdswitch();
+		}
+
+
+
+
 
 		/* ステータス・ラストハードの読み取り */
 		dispstatus_dmon();

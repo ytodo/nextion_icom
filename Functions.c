@@ -334,10 +334,12 @@ void syscmdswitch(void)
 
 	case 10:					// リピータリスト次ページ
 		next_page();
+		usercmd[0] = '\0';
 		break;
 
 	case 11:					// リピータリスト前ページ
 		previous_page();
+		usercmd[0] = '\0';
 		break;
 
 	case 12:					// return
@@ -361,12 +363,15 @@ void syscmdswitch(void)
 			break;
 		}
 
+		break;
+
 	case 13:					// リフレクタコマンド
 		printf("%s\n", usercmd);
 		// remotecontrold
 		sendcmd("page IDLE");
 
 		break;
+
 	default:
 
 		break;
