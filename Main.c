@@ -49,6 +49,7 @@ int main(void)
         /* メインスクリーンの初期設定 */
         sendcmd("dim=dims");
 	sendcmd("page MAIN");
+	usercmd[0] = '\0';
 
         /* 設定項目の取得と表示 */
 	getconfig();

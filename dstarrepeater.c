@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////
 // 	D-STAR  Nextion display for ICOM Terminal/Access Mode
 //
-//	ファイル名	dstarrepeater.c 
-//			2020.03.05 - 
+//	ファイル名	dstarrepeater.c
+//			2020.03.05 -
 //
 //	機能	ircDDBGatewayとDStarRepeaterによるシステムに
 //		アドオンとして常駐し状況をNextionに表示したり
@@ -27,6 +27,7 @@ void dstarrepeater(void)
         /* メインスクリーンの初期設定 */
         sendcmd("dim=dims");
         sendcmd("page IDLE");
+	usercmd[0] = '\0';
 
 	/* グローバル変数の初期設定 */
 	sprintf(command, "IDLE.station.txt=\"%s\"", ds.station);	// ノードコールサイン
@@ -35,7 +36,6 @@ void dstarrepeater(void)
 	sendcmd("t1.txt=\"Linking...\"");
 	sprintf(command, "IDLE.type.txt=\"%s\"", ds.modemtype);		// リピータ形式
 	sendcmd(command);
-
 
 	/* 送・受信ループ */
 	while (1) {

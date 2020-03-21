@@ -27,6 +27,7 @@ void dmonitor(void)
 	/* メインスクリーンの初期設定 */
 	sendcmd("dim=dims");
 	sendcmd("page DMON");
+	usercmd[0] = '\0';
 
 	/* 現在利用可能なリピータリストの取得*/
 	st.num = getlinkdata();
@@ -93,18 +94,16 @@ void dmonitor(void)
 					flag = 1;		// リピータ接続だった時 1 となる
 				}
 			}
-			if (flag != 1) syscmdswitch();		// リピータ接続でなかった時 SYSTEM COMMANDへ
 
+			/* リピータ接続でなかった時 */
+			if (flag != 1) syscmdswitch();
 		}
 
+		/* ページめくりの時は繰り返しを許す */
 		if ((strncmp(usercmd, "next", 4) == 0) || (strncmp(usercmd, "previous", 8) == 0))
 		{
 			syscmdswitch();
 		}
-
-
-
-
 
 		/* ステータス・ラストハードの読み取り */
 		dispstatus_dmon();

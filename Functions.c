@@ -8,7 +8,7 @@
 //		dmonitor_restart	dmonitorのrestart用システムコマンド
 //		dstarrepeater_restart	DStarRepeaterのrestart用システムコマンド
 //		modem_stop		reboot/shutdown前にサービスを止める
-//		基本的なファンクション・コマンドのツールボックス    
+//		基本的なファンクション・コマンドのツールボックス
 ///////////////////////////////////////////////////////////////////////////////////////
 #include "Nextion.h"
 
@@ -113,26 +113,26 @@ void recvdata(char *touchcmd)
 void reflesh_pages(void)
 {
 	/* 明るさをバー指定値に設定 */
-	sendcmd("dim=dims");
+//	sendcmd("dim=dims");
 
 	/* MAIN reflesh */
-	sendcmd("MAIN.t0.txt=MAIN.status_dmon.txt");
-	sendcmd("MAIN.t1.txt=MAIN.status_ref.txt");
+//	sendcmd("MAIN.t0.txt=MAIN.status_dmon.txt");
+//	sendcmd("MAIN.t1.txt=MAIN.status_ref.txt");
 
 	/* IDLE reflesh */
-	sendcmd("IDLE.t0.txt=IDLE.station.txt");
-	sendcmd("IDLE.status.txt=IDLE.ref.txt");
-	sendcmd("IDLE.t1.txt=IDLE.status.txt");
-	sendcmd("IDLE.t2.txt=IDLE.status2.txt");
-	sendcmd("IDLE.t3.txt=IDLE.ipaddr.txt");
-	sendcmd("IDLE.t30.txt=IDLE.type.txt");
-	dispipaddr();
+//	sendcmd("IDLE.t0.txt=IDLE.station.txt");
+//	sendcmd("IDLE.status.txt=IDLE.ref.txt");
+//	sendcmd("IDLE.t1.txt=IDLE.status.txt");
+//	sendcmd("IDLE.t2.txt=IDLE.status2.txt");
+//	sendcmd("IDLE.t3.txt=IDLE.ipaddr.txt");
+//	sendcmd("IDLE.t30.txt=IDLE.type.txt");
+//	dispipaddr();
 
 	/* DMON reflesh */
-	sendcmd("DMON.t0.txt=DMON.station.txt");
-	sendcmd("DMON.t1.txt=DMON.link.txt");
-	sendcmd("DMON.t2.txt=DMON.stat1.txt");
-	sendcmd("DMON.t3.txt=DMON.stat2.txt");
+//	sendcmd("DMON.t0.txt=DMON.station.txt");
+//	sendcmd("DMON.t1.txt=DMON.link.txt");
+//	sendcmd("DMON.t2.txt=DMON.stat1.txt");
+//	sendcmd("DMON.t3.txt=DMON.stat2.txt");
 
 	return;
 }
@@ -185,13 +185,10 @@ void syscmdswitch(void)
 	if (strncmp(usercmd, "return",   6) == 0) flag = 12;
 
 	/* リフレクタ専用コマンド*/
-	if ((strncmp(usercmd,	"REF", 3)
-	 || strncmp(usercmd,	"XLX", 3)
-	 || strncmp(usercmd,	"DCS", 3)
-	 || strncmp(usercmd,	"XRF", 3)
-	 || strncmp(&usercmd[7],  "U", 1)
-	 || strncmp(&usercmd[7],  "I", 1)
-	 || strncmp(&usercmd[7],  "E", 1) == 0) && st.mode == 2) flag =13;
+	if (((strncmp(usercmd, "REF", 3) == 0
+	   || strncmp(usercmd, "XLX", 3) == 0
+	   || strncmp(usercmd, "DCS", 3) == 0
+	   || strncmp(usercmd, "XRF", 3) == 0)) && st.mode == 2) flag = 13;
 
 	switch (flag) {
 	case 1:                                         // restart
@@ -290,13 +287,11 @@ void syscmdswitch(void)
 		break;
 
 	case 4:						// dmonitor 起動
-		usercmd[0] = '\0';
 		st.mode = 1;
 		dmonitor();
 		break;
 
 	case 5:						// dstarrepeater 起動
-		usercmd[0] = '\0';
 		st.mode = 2;
 		system("sudo systemctl restart dstarrepeater.service");
 		system("sudo systemctl restart ircddbgateway.service");
@@ -333,30 +328,30 @@ void syscmdswitch(void)
 		break;
 
 	case 10:					// リピータリスト次ページ
-		next_page();
 		usercmd[0] = '\0';
+		next_page();
 		break;
 
 	case 11:					// リピータリスト前ページ
-		previous_page();
 		usercmd[0] = '\0';
+		previous_page();
 		break;
 
 	case 12:					// return
 		switch (st.mode) {
 		case 1:	// dmonitor
-			st.mode = 0;
 			system("sudo killall -q -s 2 dmonitor");
 			system("sudo rm /var/run/dmonitor.pid");
 			system("sudo systemctl restart nextion.service");
+			st.mode = 0;
 			sendcmd("page MAIN");
 			break;
 
 		case 2:	// dstarrepeater
-			st.mode = 0;
 			system("sudo systemctl stop dstarrepeater.service");
 			system("sudo systemctl restart nextion.service");
 			sendcmd("page MAIN");
+			st.mode = 0;
 			break;
 
 		default:
@@ -366,7 +361,6 @@ void syscmdswitch(void)
 		break;
 
 	case 13:					// リフレクタコマンド
-		printf("%s\n", usercmd);
 		// remotecontrold
 		sendcmd("page IDLE");
 
