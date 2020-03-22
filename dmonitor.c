@@ -27,7 +27,6 @@ void dmonitor(void)
 	/* メインスクリーンの初期設定 */
 	sendcmd("dim=dims");
 	sendcmd("page DMON");
-	usercmd[0] = '\0';
 
 	/* 現在利用可能なリピータリストの取得*/
 	st.num = getlinkdata();
@@ -58,20 +57,31 @@ void dmonitor(void)
 		/* タッチパネルのデータを読み込む */
 		recvdata(usercmd);
 
+
 		/* もしタッチデータが選択されていない場合、初回のみデフォルトリピータをセットする */
-		if ((strlen(usercmd) == 0) && (strlen(nx.default_rpt) != 0))
+		if ((strlen(usercmd) == 0) && (strlen(chkusercmd) == 0) && (strlen(nx.default_rpt) != 0))
 		{
 			strcpy(usercmd, nx.default_rpt);
 		}
 
 		/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
-		if ((strlen(usercmd) > 1) && (strncmp(usercmd, chkusercmd, 8) != 0))
+		if ((strlen(usercmd) > 1 && strncmp(usercmd, chkusercmd, 8) != 0) || ((strncmp(usercmd, "next", 4) == 0) || (strncmp(usercmd, "previous", 8) == 0)))
 		{
+			if (((strncmp(usercmd, "next", 4) == 0) && (strncmp(chkusercmd, "next", 4) == 0)) ||
+				((strncmp(usercmd, "previous", 8) == 0) && (strncmp(chkusercmd, "previous", 8) == 0)))
+			{
+				strncpy(usercmd, "dummy", 5);
+				usercmd[5] = '\0';
+				continue;
+			}
+
                         /* 比較後、保存変数をクリア */
                         chkusercmd[0] = '\0';
 
 			/* 現在の返り値を保存 */
 			strncpy(chkusercmd, usercmd, 8);
+
+
 
 			/* 指定リピータに接続する */
 			i = 0;
@@ -87,22 +97,15 @@ void dmonitor(void)
 
 					/* 接続コマンドの実行 */
 					sprintf(command, "sudo dmonitor '%s' %s %s '%s' '%s'", nx.station, linkdata[i].addr, linkdata[i].port, linkdata[i].call, linkdata[i].zone);
-
-					/* killした後、disconnectの表示を待って再接続 */
-					usleep(atoi(nx.microsec) * 100);
 					system(command);
+					sendcmd("page DMON");
+					usleep(atoi(nx.microsec) * 3);
 					flag = 1;		// リピータ接続だった時 1 となる
 				}
 			}
 
 			/* リピータ接続でなかった時 */
-			if (flag != 1) syscmdswitch();
-		}
-
-		/* ページめくりの時は繰り返しを許す */
-		if ((strncmp(usercmd, "next", 4) == 0) || (strncmp(usercmd, "previous", 8) == 0))
-		{
-			syscmdswitch();
+			if (flag == 0) syscmdswitch();
 		}
 
 		/* ステータス・ラストハードの読み取り */
