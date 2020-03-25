@@ -19,7 +19,6 @@ char	tmpstr[32]	= {'\0'};		// 一時的文字列
  ********************************************************/
 void dispstatus_ref(void)
 {
-	char	line2[256]		= {'\0'};
 	char	fname[32]		= {'\0'};	// ファイル名
 	char	mycall[14]		= {'\0'};
 	char	urcall[9]		= {'\0'};
@@ -38,53 +37,48 @@ void dispstatus_ref(void)
 	sprintf(dstarlogpath, "%s%s", LOGDIR, fname);
 
 	/* コマンドの標準出力オープン */
-	sprintf(cmdline, "tail -n2 %s | egrep -v 'Invalid|RTI_DATA_NAK'", dstarlogpath);
+	sprintf(cmdline, "tail -n3 %s | egrep -v 'Invalid|RTI_DATA_NAK'", dstarlogpath);
 	if ((fp = popen(cmdline, "r")) != NULL )
 	{
 
-		/* 標準出力2行分を配列２つに取得し連結 */
+		/* 標準出力配列に取得 */
 		fgets(line,  sizeof(line),  fp);
-		fgets(line2, sizeof(line2), fp);
-		line[strlen(line) - 1]  = '\0';
-		line2[strlen(line2) -1] = '\0';
-		strcat(line, line2);
+
+
+		/* 一巡して全く同じ内容ならパス */
+		if (strcmp(line, chkstat) == 0)
+		{
+			return;
+		}
+		strcpy(chkstat, line);
 
 		/*
 		 * リフレクタへの接続情報の取得
 		 */
 		if ((tmpptr = strstr(line, "Linked")) != NULL)
 		{
+			/* リンク先リフレクタを取得 */
+			linkref[0] = '\0';
+			strncpy(linkref, tmpptr + 10, 8);
+			linkref[8] = '\0';
 
-			/* 一巡して全く同じ内容ならパス */
-			if (strncmp(tmpptr, chklink, 60) != 0)
-			{
-				/* 一旦ダブりチェック用変数をクリアして新たに代入 */
-        			chklink[0] = '\0';
-				strncpy(chklink, tmpptr, 60);
+			/* 接続時のログを取得 */
+			status2[0] = '\0';
+			strncpy(status2, tmpptr, 20);
+			status2[20] = '\0';
 
-				/* リンク先リフレクタを取得 */
-				linkref[0] = '\0';
-				strncpy(linkref, tmpptr + 10, 8);
-				linkref[8] = '\0';
+			/* Nextion グローバル変数ref に接続中のリフレクタを代入 */
+			sprintf(command, "IDLE.ref.txt=\"%s\"", linkref);
+			sendcmd(command);
+			sprintf(command, "IDLE.status.txt=\"%s\"", linkref);
+			sendcmd(command);
+			sendcmd("IDLE.t1.pco=65535");
+			sendcmd("IDLE.t1.txt=status.txt");
 
-				/* 接続時のログを取得 */
-				status2[0] = '\0';
-				strncpy(status2, tmpptr, 20);
-				status2[20] = '\0';
-
-				/* Nextion グローバル変数ref に接続中のリフレクタを代入 */
-				sprintf(command, "IDLE.ref.txt=\"%s\"", linkref);
-				sendcmd(command);
-				sprintf(command, "IDLE.status.txt=\"%s\"", linkref);
-				sendcmd(command);
-				sendcmd("IDLE.t1.pco=65535");
-				sendcmd("IDLE.t1.txt=status.txt");
-
-				/* ステータス２の表示 */
-				sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
-				sendcmd(command);
-				sendcmd("IDLE.t2.txt=status2.txt");
-			}
+			/* ステータス２の表示 */
+			sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
+			sendcmd(command);
+			sendcmd("IDLE.t2.txt=status2.txt");
 		}
 
 
@@ -93,173 +87,129 @@ void dispstatus_ref(void)
 		 */
 		if ((tmpptr = strstr(line, "Not linked")) != NULL)
 		{
-			/* 一巡して全く同じ内容ならパス */
-			if (strncmp(tmpptr, chklink2, 60) != 0)
-			{
-				/* 一旦ダブりチェック用変数をクリアして新たに代入 */
-				chklink2[0] = '\0';
-				strncpy(chklink2, tmpptr, 60);
+			/* リンク先リフレクタを取得 */
+			linkref[0] = '\0';
 
-				/* リンク先リフレクタを取得 */
-				linkref[0] = '\0';
+			/* 接続時のログを取得 */
+			status2[0] = '\0';
+			strncpy(status2, tmpptr, 20);
+			status2[20] = '\0';
 
-				/* 接続時のログを取得 */
-				status2[0] = '\0';
-				strncpy(status2, tmpptr, 20);
-				status2[20] = '\0';
+			/* Nextion グローバル変数に代入 */
+			sendcmd("IDLE.ref.txt=\"Not linked\"");
+			sendcmd("IDLE.status.txt=\"NODE IDLE\"");
+			sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
+			sendcmd(command);
 
-				/* Nextion グローバル変数に代入 */
-				sendcmd("IDLE.ref.txt=\"Not linked\"");
-				sendcmd("IDLE.status.txt=\"NODE IDLE\"");
-				sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
-				sendcmd(command);
-
-				sendcmd("IDLE.t1.txt=IDLE.status.txt");
-				sendcmd("IDLE.t2.txt=IDLE.status2.txt");
-			}
+			sendcmd("IDLE.t1.txt=IDLE.status.txt");
+			sendcmd("IDLE.t2.txt=IDLE.status2.txt");
 		}
 
 
 		/*
 		 * RF ヘッダーの取得
 		 */
-		if ((tmpptr = strstr(line, "Radio header")) != NULL && rf_flag == 0)
+		if ((tmpptr = strstr(line, "Radio header")) != NULL)
 		{
-			/* 取得ログとダブりチェック用保存ログとの比較（違っていれば）*/
-			if (strncmp(line, chkstat2, 60) != 0)
-			{
-				sendcmd("page DSTAR");
-				rf_flag = 1;
+			sendcmd("page DSTAR");
 
-				/* 一旦ダブりチェック用変数をクリアして新たに代入 */
-				chkstat2[0] = '\0';
-				strncpy(chkstat2, line, 60);
+			/* ヘッダーログを取得 */
+			status2[0] = '\0';
 
-				/* ヘッダーログを取得 */
-				status2[0] = '\0';
+			/* JST 時刻の算出 */
+			jstimer = time(NULL);
+			jstimeptr = localtime(&jstimer);
 
-				/* JST 時刻の算出 */
-				jstimer = time(NULL);
-				jstimeptr = localtime(&jstimer);
+			/* Radio header の場合RF を表示 */
+			strftime(status2, sizeof(status2), "RF  %H:%M ", jstimeptr);
 
-				/* Radio header の場合RF を表示 */
-				strftime(status2, sizeof(status2), "RF  %H:%M ", jstimeptr);
+			/* ログよりコールサインMY, UR を取得 */
+			strncpy(mycall, tmpptr + 27, 13);
+			mycall[13] = '\0';
+			strcat(status2, mycall);
+			status2[23] = '\0';
+			strncpy(urcall, tmpptr + 48, 8);
+			urcall[8] = '\0';
 
-				/* ログよりコールサインMY, UR を取得 */
-				strncpy(mycall, tmpptr + 27, 13);
-				mycall[13] = '\0';
-				strcat(status2, mycall);
-				status2[23] = '\0';
-				strncpy(urcall, tmpptr + 48, 8);
-				urcall[8] = '\0';
+			/* ステータスの表示 */
+			sprintf(command, "DSTAR.t0.txt=\"R %s\"", mycall);
+			sendcmd(command);
+			sprintf(command, "DSTAR.t1.txt=\"%s\"", urcall);
+			sendcmd(command);
+			sendcmd("DSTAR.t2.txt=IDLE.ref.txt");
 
-				/* ステータスの表示 */
-				sprintf(command, "DSTAR.t0.txt=\"R %s\"", mycall);
-				sendcmd(command);
-				sprintf(command, "DSTAR.t1.txt=\"%s\"", urcall);
-				sendcmd(command);
-				sendcmd("DSTAR.t2.txt=IDLE.ref.txt");
+			/* ステータス2 を保存 */
+			sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
+			sendcmd(command);
+			sendcmd("IDLE.t2.txt=\"IDLE.status2.txt");
 
-				/* ステータス2 を保存 */
-				sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
-				sendcmd(command);
-				sendcmd("IDLE.t2.txt=\"IDLE.status2.txt");
-
-			}
-		}
-
-
-		/*
-		 * ネットワーク ヘッダーの取得
-		 */
-		if ((tmpptr = strstr(line, "Network header")) != NULL && net_flag == 0 )
-		{
-			/* 取得ログとダブりチェック用保存ログとの比較（違っていれば）*/
-			if (strncmp(line, chkstat3, 60) != 0)
-			{
-				/* TX Delay */
-				sleep(TXDELAY);
-
-				sendcmd("page DSTAR");
-				net_flag = 1;
-
-				/* 一旦ダブりチェック用変数をクリアして新たに代入 */
-				chkstat3[0] = '\0';
-				strncpy(chkstat3, line, 60);
-
-				/* ヘッダーログを取得 */
-				status2[0] = '\0';
-
-				/* JST 時刻の算出 */
-				jstimer = time(NULL);
-				jstimeptr = localtime(&jstimer);
-
-				/* Network header の場合Net を表示 */
-				strftime(status2, sizeof(status2), "Net %H:%M ", jstimeptr);
-
-				/* ログよりコールサインMY, UR を取得 */
-				strncpy(mycall, tmpptr + 30, 13);
-				mycall[13] = '\0';
-				strcat(status2, mycall);
-				status2[23] = '\0';
-				strncpy(urcall, tmpptr + 51, 8);
-				urcall[8] = '\0';
-
-				/* ステータス２の表示 */
-				sprintf(command, "DSTAR.t0.txt=\"N %s\"", mycall);
-				sendcmd(command);
-				sprintf(command, "DSTAR.t1.txt=\"%s\"", urcall);
-				sendcmd(command);
-				sendcmd("DSTAR.t2.txt=IDLE.ref.txt");
-
-				/* ステータス2 を保存 */
-				sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
-				sendcmd(command);
-				sendcmd("IDLE.t2.txt=\"IDLE.status2.txt");
-			}
 		}
 
 
 		/*
 		 * RF ラストパケット
 		 */
-		if ((tmpptr = strstr(line, "AMBE for")) != NULL && rf_flag == 1)
+		if ((tmpptr = strstr(line, "AMBE for")) != NULL)
 		{
-			if (strncmp(line, chkstat2, 60) != 0)
-			{
+			/* TX Hang */
+			sleep(TXHANG);
 
-				/* 一旦ダブりチェック用変数をクリアして新たに代入 */
-				chkstat2[0] = '\0';
-				strncpy(chkstat2, line, 60);
+			/* IDLE 画面に戻る */
+			sendcmd("page IDLE");
+		}
 
-				/* TX Hang */
-				sleep(TXHANG);
 
-				/* IDLE 画面に戻る */
-				rf_flag = 0;
-				sendcmd("page IDLE");
-			}
+		/*
+		 * ネットワーク ヘッダーの取得
+		 */
+		if ((tmpptr = strstr(line, "Transmitting to")) != NULL)
+		{
+			/* TX Delay */
+			sleep(TXDELAY);
+			sendcmd("page DSTAR");
+
+			/* ヘッダーログを初期化 */
+			status2[0] = '\0';
+
+			/* JST 時刻の算出 */
+			jstimer = time(NULL);
+			jstimeptr = localtime(&jstimer);
+
+			/* Network header の場合Net を表示 */
+			strftime(status2, sizeof(status2), "Net %H:%M ", jstimeptr);
+
+			/* ログよりコールサインMY, UR を取得 */
+			strncpy(mycall, tmpptr + 22, 13);
+			mycall[13] = '\0';
+			strcat(status2, mycall);
+			status2[23] = '\0';
+			strncpy(urcall, tmpptr + 43, 8);
+			urcall[8] = '\0';
+
+			/* ステータス２の表示 */
+			sprintf(command, "DSTAR.t0.txt=\"N %s\"", mycall);
+			sendcmd(command);
+			sprintf(command, "DSTAR.t1.txt=\"%s\"", urcall);
+			sendcmd(command);
+			sendcmd("DSTAR.t2.txt=IDLE.ref.txt");
+
+			/* ステータス2 を保存 */
+			sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
+			sendcmd(command);
+			sendcmd("IDLE.t2.txt=\"IDLE.status2.txt");
 		}
 
 
 		/*
 		 * ネットワークラストパケット
 		 */
-		if ((tmpptr = strstr(line, "Stats for")) != NULL && net_flag == 1)
+		if ((tmpptr = strstr(line, "Stats for")) != NULL)
 		{
-			if (strncmp(line, chkstat3, 60) != 0)
-			{
-				/* 一旦ダブりチェック用変数をクリアして新たに代入 */
-				chkstat3[0] = '\0';
-				strncpy(chkstat3, line, 60);
+			/* TX Hang */
+			sleep(TXHANG);
 
-				/* TX Hang */
-				sleep(TXHANG);
-
-				/* IDLE 画面に戻る */
-				net_flag = 0;
-				sendcmd("page IDLE");
-			}
+			/* IDLE 画面に戻る */
+			sendcmd("page IDLE");
 		}
 
 		/* 標準出力クローズ */
@@ -357,21 +307,21 @@ void	dispstatus_dmon(void)
 		}
 
 		/* 接続解除を取得 */
-		if ((nx.debug == "1") && (strstr(line, "dmonitor end") != NULL))
+		if ((atoi(nx.debug) == 1) && (strstr(line, "dmonitor end") != NULL))
 		{
 			memset(&status[0], '\0', sizeof(status));
 			strcpy(status, "Disconnected");
 		}
 
 		/* 無線機の接続状況 */
-		if ((nx.debug == "1") && (strstr(line, "init/re-init") != NULL))
+		if ((atoi(nx.debug) == 1) && (strstr(line, "init/re-init") != NULL))
 		{
 			memset(&status[0], '\0', sizeof(status));
 			strcpy(status, "Initializing RIG is done.");
 		}
 
 		/* ドロップパケット比の表示 */
-		if ((nx.debug == "1") && ((tmpptr = strstr(line, "drop")) != NULL))
+		if ((atoi(nx.debug) == 1) && ((tmpptr = strstr(line, "drop")) != NULL))
 		{
 			memset(&status[0], '\0', sizeof(status));
 			strcpy(status, "Drop PKT ");

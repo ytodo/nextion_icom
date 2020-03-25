@@ -258,6 +258,7 @@ void syscmdswitch(void)
 
 	case 4:						// dmonitor 起動
 		st.mode = 1;
+		usercmd[0] = '\0';
 		dmonitor();
 		break;
 
@@ -265,6 +266,7 @@ void syscmdswitch(void)
 		st.mode = 2;
 		system("sudo systemctl restart dstarrepeater.service");
 		system("sudo systemctl restart ircddbgateway.service");
+		usercmd[0] = '\0';
 		dstarrepeater();
 		break;
 
