@@ -182,8 +182,6 @@ void syscmdswitch(void)
                         sendcmd("dim=10");
                         system("sudo killall -q -s 2 dmonitor");
                         system("sudo rm /var/run/dmonitor.pid");
-                        sendcmd("dim=dims");
-                        sendcmd("page DMON");
                         dmonitor();
                         break;
 
@@ -264,19 +262,16 @@ void syscmdswitch(void)
 
         case 4:                                         // dmonitor 起動
                 st.mode = 1;
-                usercmd[0] = '\0';
                 dmonitor();
                 break;
 
         case 5:                                         // dstarrepeater 起動
                 st.mode = 2;
                 system("sudo systemctl restart dstarrepeater.service");
-                system("sudo systemctl restart ircddbgateway.service");
-                usercmd[0] = '\0';
-                dstarrepeater();
+		dstarrepeater();
                 break;
 
-        case 6:                                         // updage
+        case 6:                                         // update
                 system("sudo killall -q -s 2 dmonitor");
                 system("sudo rm /var/run/dmonitor.pid");
                 system("sudo apt clean && apt update && apt install dmonitor");
@@ -337,6 +332,7 @@ void syscmdswitch(void)
                 break;
 
         case 13:                                        // リフレクタコマンド
+
 		/* XLXリフレクタはDCSプロトコルに変換する */
 		if (strncmp(usercmd, "XLX", 3) == 0)
 		{
@@ -348,8 +344,8 @@ void syscmdswitch(void)
 		else
 		{
 			strncpy(refcall, usercmd, 6);
-                        strcat(refcall, "_");
-                        strncat(refcall, &usercmd[6], 1);
+			strcat(refcall, "_");
+			strncat(refcall, &usercmd[6], 1);
 		}
 
 		/* ノードコールサインの整形 */
@@ -364,10 +360,10 @@ void syscmdswitch(void)
 
 
 		sprintf(command, "remotecontrold %s link never %s", nodecall, refcall);
+
 printf("%s\n", command);
+
 		system(command);
-
-
                 sendcmd("page IDLE");
 
                 break;

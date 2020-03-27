@@ -27,7 +27,6 @@ void dstarrepeater(void)
         /* メインスクリーンの初期設定 */
         sendcmd("dim=dims");
         sendcmd("page IDLE");
-	usercmd[0] = '\0';
 
 	/* グローバル変数の初期設定 */
 	sprintf(command, "IDLE.station.txt=\"%s\"", ds.station);	// ノードコールサイン
@@ -36,6 +35,9 @@ void dstarrepeater(void)
 	sendcmd("t1.txt=\"Linking...\"");
 	sprintf(command, "IDLE.type.txt=\"%s\"", ds.modemtype);		// リピータ形式
 	sendcmd(command);
+
+	usercmd[0] = '\0';
+	usleep(WAITTIME * 30);
 
 	/* 送・受信ループ */
 	while (1) {
@@ -47,6 +49,17 @@ void dstarrepeater(void)
 		/* タッチパネルのデータを読み込む */
 		recvdata(usercmd);
 
+		/* もしタッチデータが選択されていない場合、初回のみデフォルトリフレクタをセットする */
+		if ((strlen(usercmd) == 0) && (strlen(chkusercmd) == 0) && (strlen(nx.default_ref) != 0))
+		{
+			/* ircDDBGateway コマンド形式に変換 */
+			strncpy(usercmd, nx.default_ref, 6);
+			usercmd[6] = '\0';
+			strncat(usercmd, &nx.default_ref[7], 1);
+			strcat(usercmd, "L");
+			usercmd[8] = '\0';
+		}
+
                 /* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
                 if ((strlen(usercmd) > 4) && (strncmp(usercmd, chkusercmd, 8) != 0))
                 {
@@ -55,6 +68,8 @@ void dstarrepeater(void)
 
                         /* 現在の返り値を保存 */
                         strncpy(chkusercmd, usercmd, 8);
+
+printf("usercmd= %s\n", usercmd);
 
 			/* コマンドをスイッチに振り分ける */
 			syscmdswitch();

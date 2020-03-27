@@ -24,12 +24,16 @@ void dmonitor(void)
         /* GPIO シリアルポートのオープン*/
         fd = openport(SERIALPORT, BAUDRATE);
 
-	/* メインスクリーンの初期設定 */
-	sendcmd("dim=dims");
-	sendcmd("page DMON");
-
 	/* 現在利用可能なリピータリストの取得*/
 	st.num = getlinkdata();
+
+	/* メインスクリーンの初期設定 */
+	sendcmd("dim=dims");
+	sendcmd("DMON.station.txt=\"\"");
+	sendcmd("DMON.link.txt=\"\"");
+	sendcmd("DMON.stat1.txt=\"\"");
+	sendcmd("DMON.stat2.txt=\"\"");
+	usercmd[0] = '\0';
 
 	sprintf(command, "DMON.station.txt=\"STATION : %s\"", nx.station);
 	sendcmd(command);
@@ -37,7 +41,8 @@ void dmonitor(void)
 	/* 読み込んだリピータの総数を表示 */
 	sprintf(command, "DMON.stat1.txt=\"Read %d Repeaters\"", st.num);
 	sendcmd(command);
-	sendcmd("DMON.t3.txt=\"\"");
+	sendcmd("page DMON");
+	sleep(2);
 
 	/* 全リストを空にした後リピータ数分の文字配列にコールサインを格納 */
 	for (i = 0; i < 21; i++)
