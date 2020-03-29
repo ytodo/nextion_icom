@@ -25,12 +25,12 @@ void	getusers(void)
 		recvdata(ret);
 		if ((strncmp(ret, "Return", 6)) == 0) break;
 
-		/* コマンドの標準出力オープン */
-		if ((fp = fopen(users_tbl, "r")) == NULL)
-		{
-			printf("File open error!\n");
-			return;
-		}
+                /* コマンドの標準出力オープン */
+                if ((fp = fopen(users_tbl, "r")) == NULL)
+                {
+                        printf("File open error!\n");
+                        return;
+                }
 
 		/* ファイルを一行ずつ読み最終行まで繰り返す  */
 		i = 0;

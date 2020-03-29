@@ -21,9 +21,6 @@ void dstarrepeater(void)
 	char	chkusercmd[32]	= {'\0'};
     	char	tmpstr[32]	= {'\0'};
 
-	/* GPIO シリアルポートのオープン*/
-	fd = openport(SERIALPORT, BAUDRATE);
-
         /* メインスクリーンの初期設定 */
         sendcmd("dim=dims");
         sendcmd("page IDLE");
@@ -69,8 +66,6 @@ void dstarrepeater(void)
                         /* 現在の返り値を保存 */
                         strncpy(chkusercmd, usercmd, 8);
 
-printf("usercmd= %s\n", usercmd);
-
 			/* コマンドをスイッチに振り分ける */
 			syscmdswitch();
 		}
@@ -87,7 +82,5 @@ printf("usercmd= %s\n", usercmd);
 
 	}
 
-	/* GPIO シリアルポートのクローズ*/
-	close(fd);
 	return;
 }

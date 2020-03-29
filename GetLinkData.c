@@ -81,6 +81,7 @@ int 	getlinkdata(void)
 		}
 	}
 
+	/* ファイルのクローズ*/
 	fclose(fp);
 
 	/* Test */
@@ -127,7 +128,7 @@ void	previous_page(void)
 				sendcmd(command);
 			}
 		}
-		st.selected_page = pages;       	// 表示した最後のページを保存
+		st.selected_page = pages + 1;       	// 表示した最後のページを保存
 	}
 
 	/* 現在のページが最初のページではない場合 */
@@ -160,7 +161,7 @@ void	next_page(void)
 	pages 		= st.num / 21;
 	lastpagenum	= st.num % 21;
 
-	/* 現在の表示が最後のページの時 */
+	/* 現在の表示が最後のページより一つ前の時 */
 	if (st.selected_page == pages)
 	{
                 for (i = 0; i < 21; i++)
@@ -180,13 +181,20 @@ void	next_page(void)
                                 sendcmd(command);
                         }
                 }
-		st.selected_page = 0;
+		st.selected_page = pages + 1;
 	}
 
-        /* 現在のページが最後のページではない場合 */
+        /* 現在のページが最後のページより一つ前ではない場合 */
         else
         {
-                st.selected_page += 1;
+		if (st.selected_page == pages + 1)
+		{
+			st.selected_page = 0;
+		}
+		else
+		{
+	                st.selected_page += 1;
+		}
 
                 for (i = 0; i < 21; i++)
                 {

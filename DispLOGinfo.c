@@ -37,7 +37,7 @@ void dispstatus_ref(void)
 	sprintf(dstarlogpath, "%s%s", LOGDIR, fname);
 
 	/* コマンドの標準出力オープン */
-	sprintf(cmdline, "tail -n3 %s | egrep -v 'Invalid|RTI_DATA_NAK'", dstarlogpath);
+	sprintf(cmdline, "tail -n1 %s | egrep -v 'Invalid|RTI_DATA_NAK'", dstarlogpath);
 	if ((fp = popen(cmdline, "r")) != NULL )
 	{
 
@@ -216,6 +216,14 @@ void dispstatus_ref(void)
 		pclose(fp);
 
 	}
+	else
+	{
+		exit(EXIT_FAILURE);
+	}
+
+	/* 標準出力クローズ */
+	pclose(fp);
+
 	return;
 }
 
@@ -329,8 +337,12 @@ void	dispstatus_dmon(void)
 			status[strlen(status) - 1] = '\0';
 			stat = 1;
 		}
+
 	}
+
+	/* 標準出力クローズ */
 	pclose(fp);
+
 
 	/* 接続先の表示*/
 	if ((strncmp(rptcall, "", 1) != 0) && (strncmp(rptcall, rptcallpre, 8) != 0))

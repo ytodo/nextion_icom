@@ -24,10 +24,10 @@ void dispipaddr(void)
 	{
 		fgets(ifname, sizeof(ifname), fp);
 		ifname[strlen(ifname) - 1] = '\0';
-
-		/* 標準出力クローズ */
-		pclose(fp);
 	}
+
+	/* 標準出力クローズ */
+	pclose(fp);
 
 	/* コマンドの標準出力オープン（IPアドレスの取得）*/
 	strcpy(cmdline, "hostname -I | cut -f1 -d' '");
@@ -35,10 +35,10 @@ void dispipaddr(void)
 	{
 		fgets(ifaddr, sizeof(ifaddr), fp);
 		ifaddr[strlen(ifaddr) - 1] = '\0';
-
-		/* 標準出力クローズ */
-		pclose(fp);
 	}
+
+	/* 標準出力クローズ */
+	pclose(fp);
 
 	/* 設定IP アドレスと実際のIP アドレスの比較 */
 	if (strcmp(ifaddr, ds.ipaddress) == 0 ) //&& strcmp(ds.ipaddress, "127.0.0.1") == 0)
@@ -82,9 +82,6 @@ void disptemp(void)
        		line[strlen(line) - 1] = '\0';
 		strcpy(cputemp, &line[5]);	// 先頭の不要文字をカットする
 
-       		/* 標準出力クローズ */
-		pclose(fp);
-
 		/* CPU 温度の表示*/
 		sprintf(command, "IDLE.temp.txt=\"%s\"", cputemp);
 		sendcmd(command);
@@ -115,5 +112,9 @@ void disptemp(void)
 			sendcmd("IDLE.t20.bco=63488");
 		}
 	}
+
+	/* 標準出力クローズ */
+	pclose(fp);
+
 	return;
 }

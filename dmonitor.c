@@ -21,16 +21,13 @@ void dmonitor(void)
 	char	chkusercmd[8]	= {'\0'};
 	char	tmpstr[32]	= {'\0'};
 
-        /* GPIO シリアルポートのオープン*/
-        fd = openport(SERIALPORT, BAUDRATE);
-
 	/* 現在利用可能なリピータリストの取得*/
 	st.num = getlinkdata();
 
 	/* メインスクリーンの初期設定 */
 	sendcmd("dim=dims");
 	sendcmd("DMON.station.txt=\"\"");
-	sendcmd("DMON.link.txt=\"\"");
+	sendcmd("DMON.link.txt=\"LINK TO :\"");
 	sendcmd("DMON.stat1.txt=\"\"");
 	sendcmd("DMON.stat2.txt=\"\"");
 	usercmd[0] = '\0';
@@ -86,8 +83,6 @@ void dmonitor(void)
 			/* 現在の返り値を保存 */
 			strncpy(chkusercmd, usercmd, 8);
 
-
-
 			/* 指定リピータに接続する */
 			i = 0;
 			flag = 0;
@@ -117,10 +112,6 @@ void dmonitor(void)
 		dispstatus_dmon();
 
 	}		// Loop
-
-
-	/* GPIO シリアルポートのクローズ*/
-	close(fd);
 
 	return;
 }

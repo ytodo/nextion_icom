@@ -165,7 +165,8 @@ void syscmdswitch(void)
            || strncmp(usercmd, "DCS", 3) == 0
            || strncmp(usercmd, "XRF", 3) == 0)) && st.mode == 2) flag = 13;
 
-        switch (flag) {
+        switch (flag)
+	{
         case 1:                                         // restart
                 switch (st.mode) {
                 case 0: // MAIN
@@ -178,7 +179,7 @@ void syscmdswitch(void)
                         sendcmd("page MAIN");
                         break;
 
-                case 1: // dmonitor
+		case 1: // dmonitor
                         sendcmd("dim=10");
                         system("sudo killall -q -s 2 dmonitor");
                         system("sudo rm /var/run/dmonitor.pid");
@@ -187,78 +188,33 @@ void syscmdswitch(void)
 
                 case 2: // dstarrepeater
                         sendcmd("dim=10");
-                        system("sudo systemctl stop dstarrepeater.service");
-                        system("sudo systemctl start dstarrepeater.service");
+                        system("sudo systemctl restart dstarrepeater.service");
                         sendcmd("dim=dims");
                         sendcmd("page IDLE");
                         dstarrepeater();
                         break;
-
-                default:
-                        break;
-
                 }
                 break;
 
         case 2:                                         // reboot
-                switch (st.mode) {
-                case 0: // MAIN
-                        sendcmd("dim=10");
-                        system("sudo systemctl stop ircddbgateway.service");
-                        system("sudo systemctl stop dstarrepeater.service");
-                        system("sudo killall -q -s 2 dmonitor");
-                        system("sudo rm /var/run/dmonitor.pid");
-                        system("sudo killall -q -s 9 sleep");
-                        system("sudo shutdown -r now");
-                        break;
-
-                case 1: //dmonitor
-                        sendcmd("dim=10");
-                        system("sudo killall -q -s 2 dmonitor");
-                        system("sudo rm /var/run/dmonitor.pid");
-                        system("sudo shutdown -r now");
-                        break;
-
-                case 2: // dstarrepeater
-                        sendcmd("dim=10");
-                        system("sudo shutdown -r now");
-                        break;
-
-                default:
-                        break;
-
-                }
-                break;
+		sendcmd("dim=10");
+		system("sudo systemctl stop ircddbgateway.service");
+		system("sudo systemctl stop dstarrepeater.service");
+		system("sudo killall -q -s 2 dmonitor");
+		system("sudo rm /var/run/dmonitor.pid");
+		system("sudo killall -q -s 9 sleep");
+		system("sudo shutdown -r now");
+		break;
 
         case 3:                                         // shutdown
-                switch (st.mode) {
-                case 0:
-                        sendcmd("dim=10");
-                        system("sudo systemctl stop ircddbgateway.service");
-                        system("sudo systemctl stop dstarrepeater.service");
-                        system("sudo killall -q -s 2 dmonitor");
-                        system("sudo rm /var/run/dmonitor.pid");
-                        system("sudo killall -q -s 9 sleep");
-                        system("sudo shutdown -h now");
-                        break;
-
-                case 1: // dmonitor
-                        sendcmd("dim=10");
-                        system("sudo killall -q -s 2 dmonitor");
-                        system("sudo rm /var/run/dmonitor.pid");
-                        system("sudo shutdown -h now");
-                        break;
-
-                case 2: // dstarrepeater
-                        sendcmd("dim=10");
-                        system("sudo shutdown -h now");
-                        break;
-
-                default:
-                        break;
-
-                }
-                break;
+		sendcmd("dim=10");
+		system("sudo systemctl stop ircddbgateway.service");
+		system("sudo systemctl stop dstarrepeater.service");
+		system("sudo killall -q -s 2 dmonitor");
+		system("sudo rm /var/run/dmonitor.pid");
+		system("sudo killall -q -s 9 sleep");
+		system("sudo shutdown -h now");
+		break;
 
         case 4:                                         // dmonitor 起動
                 st.mode = 1;
@@ -310,24 +266,19 @@ void syscmdswitch(void)
 
         case 12:                                        // return
                 switch (st.mode) {
+		case 0:	// MAIN
+			sendcmd("page MAIN");
+			break;
+
                 case 1: // dmonitor
-                        system("sudo killall -q -s 2 dmonitor");
-                        system("sudo rm /var/run/dmonitor.pid");
-                        system("sudo systemctl restart nextion.service");
                         st.mode = 0;
                         sendcmd("page MAIN");
                         break;
 
                 case 2: // dstarrepeater
-                        system("sudo systemctl stop dstarrepeater.service");
-                        system("sudo systemctl restart nextion.service");
                         sendcmd("page MAIN");
                         st.mode = 0;
                         break;
-
-                default:
-                        break;
-
                 }
                 break;
 
@@ -358,19 +309,14 @@ void syscmdswitch(void)
 			}
 		}
 
-
 		sprintf(command, "remotecontrold %s link never %s", nodecall, refcall);
-
-printf("%s\n", command);
-
 		system(command);
+
                 sendcmd("page IDLE");
-
                 break;
 
-
-        default:
-                break;
+	default:
+		break;
 
         }
         return;
