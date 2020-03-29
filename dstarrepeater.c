@@ -20,6 +20,8 @@ void dstarrepeater(void)
     	char	command[64]	= {'\0'};
 	char	chkusercmd[32]	= {'\0'};
     	char	tmpstr[32]	= {'\0'};
+	char	refcall[9]	= {'\0'};
+	char	nodecall[9]	= {'\0'};
 
         /* メインスクリーンの初期設定 */
         sendcmd("dim=dims");
@@ -67,8 +69,7 @@ void dstarrepeater(void)
                         strncpy(chkusercmd, usercmd, 8);
 
 			/* リフレクタ接続 */
-			if (strncmp(usercmd, "REF", 3) == 0 || strncmp(usercmd, "XLX", 3) == 0
-			   || strncmp(usercmd, "DCS", 3) == 0 || strncmp(usercmd, "XRF", 3) == 0)
+			if (strncmp(usercmd, "REF", 3) == 0 || strncmp(usercmd, "XLX", 3) == 0 || strncmp(usercmd, "DCS", 3) == 0 || strncmp(usercmd, "XRF", 3) == 0)
 			{
 
 				/* XLXリフレクタはDCSプロトコルに変換する */
@@ -103,7 +104,7 @@ void dstarrepeater(void)
 			}
 
 			/* リフレクタ接続でなかった時 */
-			if (flag == 0) syscmdswitch();			
+			if (flag == 0) syscmdswitch();
 		}
 
 
