@@ -66,9 +66,46 @@ void dstarrepeater(void)
                         /* 現在の返り値を保存 */
                         strncpy(chkusercmd, usercmd, 8);
 
-			/* コマンドをスイッチに振り分ける */
-			syscmdswitch();
+			/* リフレクタ接続 */
+			if (strncmp(usercmd, "REF", 3) == 0 || strncmp(usercmd, "XLX", 3) == 0
+			   || strncmp(usercmd, "DCS", 3) == 0 || strncmp(usercmd, "XRF", 3) == 0)
+			{
+
+				/* XLXリフレクタはDCSプロトコルに変換する */
+				if (strncmp(usercmd, "XLX", 3) == 0)
+				{
+					strcpy(refcall, "DCS");
+					strncat(&refcall[3], &usercmd[3], 3);
+					strcat(refcall, "_");
+					strncat(refcall, &usercmd[6], 1);
+				}
+				else
+				{
+					strncpy(refcall, usercmd, 6);
+					strcat(refcall, "_");
+					strncat(refcall, &usercmd[6], 1);
+				}
+
+				/* ノードコールサインの整形 */
+				strncpy(nodecall, ds.station, 8);
+				for (i = 0; i < 8; i++)
+				{
+					if (strncmp(&nodecall[i], " ", 1) == 0)
+					{
+						strncpy(&nodecall[i], "_", 1);
+					}
+				}
+
+				sprintf(command, "remotecontrold %s link never %s", nodecall, refcall);
+				system(command);
+				sendcmd("page IDLE");
+				flag = 1;
+			}
+
+			/* リフレクタ接続でなかった時 */
+			if (flag == 0) syscmdswitch();			
 		}
+
 
 		/*
 		 * 送信処理

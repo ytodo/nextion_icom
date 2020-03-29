@@ -273,8 +273,8 @@ void	dispstatus_dmon(void)
 				/* JST 時刻の算出 */
 //				jstimer = time(NULL);
 //				jstimeptr = localtime(&jstimer);
-
-				/* LastheardとしてMAINページに表示 */
+//
+//				/* LastheardとしてMAINページに表示 */
 //				strftime(tmpstr, sizeof(tmpstr), "%m.%d %H:%M ", jstimeptr);
 //				strncat(tmpstr, tmpptr - 9, 8);
 //				tmpstr[20] = '\0';

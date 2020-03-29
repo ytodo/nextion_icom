@@ -133,70 +133,64 @@ void dispclock(void)
  *********************************************/
 void syscmdswitch(void)
 {
-        int 	flag 		= 0;
+	int	flag		= 0;
 	int	i		= 0;
 	char	nodecall[9]	= {'\0'};
 	char	refcall[9]	= {'\0'};
 
 
-        /* 共通 */
-        if (strncmp(usercmd, "restart",  7) == 0) flag =  1;
-        if (strncmp(usercmd, "reboot",   6) == 0) flag =  2;
-        if (strncmp(usercmd, "shutdown", 8) == 0) flag =  3;
+	/* 共通 */
+	if (strncmp(usercmd, "restart",  7) == 0) flag =  1;
+	if (strncmp(usercmd, "reboot",   6) == 0) flag =  2;
+	if (strncmp(usercmd, "shutdown", 8) == 0) flag =  3;
 
-        /* MAINのみ */
-        if (strncmp(usercmd, "dmonitor", 8) == 0) flag =  4;
-        if (strncmp(usercmd, "dstarrpt", 8) == 0) flag =  5;
+	/* MAINのみ */
+	if (strncmp(usercmd, "dmonitor", 8) == 0) flag =  4;
+	if (strncmp(usercmd, "dstarrpt", 8) == 0) flag =  5;
 
-        /* dmonitorのみ */
-        if (strncmp(usercmd, "update",   6) == 0) flag =  6;
-        if (strncmp(usercmd, "UP",       2) == 0) flag =  7;
-        if (strncmp(usercmd, "DWN",      3) == 0) flag =  8;
-        if (strncmp(usercmd, "USERS",    5) == 0) flag =  9;
-        if (strncmp(usercmd, "next",     4) == 0) flag = 10;
-        if (strncmp(usercmd, "previous", 8) == 0) flag = 11;
+	/* dmonitorのみ */
+	if (strncmp(usercmd, "update",   6) == 0) flag =  6;
+	if (strncmp(usercmd, "UP",       2) == 0) flag =  7;
+	if (strncmp(usercmd, "DWN",      3) == 0) flag =  8;
+	if (strncmp(usercmd, "USERS",    5) == 0) flag =  9;
+	if (strncmp(usercmd, "next",     4) == 0) flag = 10;
+	if (strncmp(usercmd, "previous", 8) == 0) flag = 11;
 
-        /* dmonitor, dstarrepeater共通 */
-        if (strncmp(usercmd, "return",   6) == 0) flag = 12;
+	/* dmonitor, dstarrepeater共通 */
+	if (strncmp(usercmd, "return",   6) == 0) flag = 12;
 
-        /* リフレクタ専用コマンド*/
-        if (((strncmp(usercmd, "REF", 3) == 0
-           || strncmp(usercmd, "XLX", 3) == 0
-           || strncmp(usercmd, "DCS", 3) == 0
-           || strncmp(usercmd, "XRF", 3) == 0)) && st.mode == 2) flag = 13;
-
-        switch (flag)
+	switch (flag)
 	{
-        case 1:                                         // restart
-                switch (st.mode) {
-                case 0: // MAIN
-                        sendcmd("dim=10");
-                        system("sudo systemctl stop dstarrepeater.service");
-                        system("sudo killall -q -s 2 dmonitor");
-                        system("sudo rm /var/run/dmonitor.pid");
-                        system("sudo killall -q -s 9 sleep");
-                        sendcmd("dim=dims");
-                        sendcmd("page MAIN");
-                        break;
+	case 1:						// restart
+		switch (st.mode) {
+		case 0: // MAIN
+			sendcmd("dim=10");
+			system("sudo systemctl stop dstarrepeater.service");
+			system("sudo killall -q -s 2 dmonitor");
+			system("sudo rm /var/run/dmonitor.pid");
+			system("sudo killall -q -s 9 sleep");
+			sendcmd("dim=dims");
+			sendcmd("page MAIN");
+			break;
 
 		case 1: // dmonitor
-                        sendcmd("dim=10");
-                        system("sudo killall -q -s 2 dmonitor");
-                        system("sudo rm /var/run/dmonitor.pid");
-                        dmonitor();
-                        break;
+			sendcmd("dim=10");
+			system("sudo killall -q -s 2 dmonitor");
+			system("sudo rm /var/run/dmonitor.pid");
+			dmonitor();
+			break;
 
-                case 2: // dstarrepeater
-                        sendcmd("dim=10");
-                        system("sudo systemctl restart dstarrepeater.service");
-                        sendcmd("dim=dims");
-                        sendcmd("page IDLE");
-                        dstarrepeater();
-                        break;
-                }
-                break;
+		case 2: // dstarrepeater
+			sendcmd("dim=10");
+			system("sudo systemctl restart dstarrepeater.service");
+			sendcmd("dim=dims");
+			sendcmd("page IDLE");
+			dstarrepeater();
+			break;
+		}
+		break;
 
-        case 2:                                         // reboot
+	case 2:						// reboot
 		sendcmd("dim=10");
 		system("sudo systemctl stop ircddbgateway.service");
 		system("sudo systemctl stop dstarrepeater.service");
@@ -206,7 +200,7 @@ void syscmdswitch(void)
 		system("sudo shutdown -r now");
 		break;
 
-        case 3:                                         // shutdown
+	case 3:						// shutdown
 		sendcmd("dim=10");
 		system("sudo systemctl stop ircddbgateway.service");
 		system("sudo systemctl stop dstarrepeater.service");
@@ -216,104 +210,71 @@ void syscmdswitch(void)
 		system("sudo shutdown -h now");
 		break;
 
-        case 4:                                         // dmonitor 起動
-                st.mode = 1;
-                dmonitor();
-                break;
+	case 4:						// dmonitor 起動
+		st.mode = 1;
+		dmonitor();
+		break;
 
-        case 5:                                         // dstarrepeater 起動
-                st.mode = 2;
-                system("sudo systemctl restart dstarrepeater.service");
+	case 5:						// dstarrepeater 起動
+		st.mode = 2;
+		system("sudo systemctl restart dstarrepeater.service");
 		dstarrepeater();
-                break;
+		break;
 
-        case 6:                                         // update
-                system("sudo killall -q -s 2 dmonitor");
-                system("sudo rm /var/run/dmonitor.pid");
-                system("sudo apt clean && apt update && apt install dmonitor");
+	case 6:						// update
+		system("sudo killall -q -s 2 dmonitor");
+		system("sudo rm /var/run/dmonitor.pid");
+		system("sudo apt clean && apt update && apt install dmonitor");
 
-                sendcmd("dim=10");
-                system("sudo systemctl restart nextion.service");
-                break;
+		sendcmd("dim=10");
+		system("sudo systemctl restart nextion.service");
+		break;
 
-        case 7:                                         // バッファの増加
-                if (strncmp(usercmd, "up", 2) == 0) break;
-                strcpy(usercmd, "up");
-                system("sudo killall -q -s SIGUSR1 dmonitor");
-                break;
+	case 7:						// バッファの増加
+		if (strncmp(usercmd, "up", 2) == 0) break;
+		strcpy(usercmd, "up");
+		system("sudo killall -q -s SIGUSR1 dmonitor");
+		break;
 
-        case 8:                                         // バッファの減少
-                if (strncmp(usercmd, "dwn", 3) == 0) break;
-                strcpy(usercmd, "dwn");
-                system("sudo killall -q -s SIGUSR2 dmonitor");
-                break;
+	case 8:						// バッファの減少
+		if (strncmp(usercmd, "dwn", 3) == 0) break;
+		strcpy(usercmd, "dwn");
+		system("sudo killall -q -s SIGUSR2 dmonitor");
+		break;
 
-        case 9:                                         // Remote Usersパネルへ接続ユーザ表示
-                sendcmd("page USERS");
-                sprintf(command, "USERS.b0.txt=\"LINKED USERS on %s\"", rptcallpre);
-                sendcmd(command);
-                getusers();
-                strcpy(usercmd, "Return");
-                break;
+	case 9:						// Remote Usersパネルへ接続ユーザ表示
+		sendcmd("page USERS");
+		sprintf(command, "USERS.b0.txt=\"LINKED USERS on %s\"", rptcallpre);
+		sendcmd(command);
+		getusers();
+		strcpy(usercmd, "Return");
+		break;
 
-        case 10:                                        // リピータリスト次ページ
-                next_page();
-                break;
+	case 10:					// リピータリスト次ページ
+		next_page();
+		break;
 
-        case 11:                                        // リピータリスト前ページ
-                previous_page();
-                break;
+	case 11:					// リピータリスト前ページ
+		previous_page();
+		break;
 
-        case 12:                                        // return
-                switch (st.mode) {
+	case 12:					// return
+		switch (st.mode) {
 		case 0:	// MAIN
 			sendcmd("page MAIN");
 			break;
 
-                case 1: // dmonitor
-                        st.mode = 0;
-                        sendcmd("page MAIN");
-                        break;
+		case 1:	// dmonitor
+			st.mode = 0;
+			sendcmd("page MAIN");
+			break;
 
-                case 2: // dstarrepeater
-                        sendcmd("page MAIN");
-                        st.mode = 0;
-                        break;
-                }
-                break;
-
-        case 13:                                        // リフレクタコマンド
-
-		/* XLXリフレクタはDCSプロトコルに変換する */
-		if (strncmp(usercmd, "XLX", 3) == 0)
-		{
-			strcpy(refcall, "DCS");
-			strncat(&refcall[3], &usercmd[3], 3);
-			strcat(refcall, "_");
-			strncat(refcall, &usercmd[6], 1);
+		case 2:	// dstarrepeater
+			sendcmd("page MAIN");
+			st.mode = 0;
+			break;
 		}
-		else
-		{
-			strncpy(refcall, usercmd, 6);
-			strcat(refcall, "_");
-			strncat(refcall, &usercmd[6], 1);
-		}
-
-		/* ノードコールサインの整形 */
-		strncpy(nodecall, ds.station, 8);
-		for (i = 0; i < 8; i++)
-		{
-			if (strncmp(&nodecall[i], " ", 1) == 0)
-			{
-				strncpy(&nodecall[i], "_", 1);
-			}
-		}
-
-		sprintf(command, "remotecontrold %s link never %s", nodecall, refcall);
-		system(command);
-
-                sendcmd("page IDLE");
-                break;
+		break;
 
 	default:
 		break;
