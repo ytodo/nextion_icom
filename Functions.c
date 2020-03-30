@@ -135,9 +135,6 @@ void syscmdswitch(void)
 {
 	int	flag		= 0;
 	int	i		= 0;
-	char	nodecall[9]	= {'\0'};
-	char	refcall[9]	= {'\0'};
-
 
 	/* 共通 */
 	if (strncmp(usercmd, "restart",  7) == 0) flag =  1;
