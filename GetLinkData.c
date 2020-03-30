@@ -164,46 +164,46 @@ void	next_page(void)
 	/* 現在の表示が最後のページより一つ前の時 */
 	if (st.selected_page == pages)
 	{
-                for (i = 0; i < 21; i++)
-                {
-                        if (i < lastpagenum )           // 実在するデータ分を代入
+		for (i = 0; i < 21; i++)
+		{
+			if (i < lastpagenum )		// 実在するデータ分を代入
                         {
-                                sprintf(command, "RPTLIST.t%d.txt=\"%s\"",  i + 100, linkdata[i + 21 * pages].call);
-                                sendcmd(command);
-                                sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i,       linkdata[i + 21 * pages].call);
-                                sendcmd(command);
-                        }
-                        else                            // データが21に満たない場合残りをクリアする
-                        {
-                                sprintf(command, "RPTLIST.t%d.txt=\"        \"",  i + 100);
-                                sendcmd(command);
-                                sprintf(command, "RPTLIST.va%d.txt=\"\"", i);
-                                sendcmd(command);
-                        }
-                }
+				sprintf(command, "RPTLIST.t%d.txt=\"%s\"",  i + 100, linkdata[i + 21 * pages].call);
+				sendcmd(command);
+				sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i,       linkdata[i + 21 * pages].call);
+				sendcmd(command);
+			}
+			else				// データが21に満たない場合残りをクリアする
+			{
+				sprintf(command, "RPTLIST.t%d.txt=\"        \"",  i + 100);
+				sendcmd(command);
+				sprintf(command, "RPTLIST.va%d.txt=\"\"", i);
+				sendcmd(command);
+			}
+		}
 		st.selected_page = pages + 1;
 	}
 
-        /* 現在のページが最後のページより一つ前ではない場合 */
-        else
-        {
+	/* 現在のページが最後のページより一つ前ではない場合 */
+	else
+	{
 		if (st.selected_page == pages + 1)
 		{
 			st.selected_page = 0;
 		}
 		else
 		{
-	                st.selected_page += 1;
+			st.selected_page += 1;
 		}
 
-                for (i = 0; i < 21; i++)
-                {
-                        sprintf(command, "RPTLIST.t%d.txt=\"%s\"",  i + 100, linkdata[i + 21 * st.selected_page].call);
-                        sendcmd(command);
-                        sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i      , linkdata[i + 21 * st.selected_page].call);
-                        sendcmd(command);
-                }
-        }
+		for (i = 0; i < 21; i++)
+		{
+			sprintf(command, "RPTLIST.t%d.txt=\"%s\"",  i + 100, linkdata[i + 21 * st.selected_page].call);
+			sendcmd(command);
+			sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i      , linkdata[i + 21 * st.selected_page].call);
+			sendcmd(command);
+		}
+	}
 
 	return;
 }

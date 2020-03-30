@@ -279,6 +279,6 @@ void syscmdswitch(void)
 	default:
 		break;
 
-        }
-        return;
+	}
+	return;
 }

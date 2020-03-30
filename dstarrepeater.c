@@ -69,7 +69,8 @@ void dstarrepeater(void)
                         strncpy(chkusercmd, usercmd, 8);
 
 			/* リフレクタ接続 */
-			if (strncmp(usercmd, "REF", 3) == 0 || strncmp(usercmd, "XLX", 3) == 0 || strncmp(usercmd, "DCS", 3) == 0 || strncmp(usercmd, "XRF", 3) == 0)
+			if (strncmp(usercmd, "REF", 3) == 0 || strncmp(usercmd, "XLX", 3) == 0 ||
+			    strncmp(usercmd, "DCS", 3) == 0 || strncmp(usercmd, "XRF", 3) == 0)
 			{
 
 				/* XLXリフレクタはDCSプロトコルに変換する */
@@ -100,11 +101,12 @@ void dstarrepeater(void)
 				sprintf(command, "remotecontrold %s link never %s", nodecall, refcall);
 				system(command);
 				sendcmd("page IDLE");
-				flag = 1;
 			}
-
-			/* リフレクタ接続でなかった時 */
-			if (flag == 0) syscmdswitch();
+			else
+			{
+				/* リフレクタ接続でなかった時 */
+				syscmdswitch();
+			}
 		}
 
 

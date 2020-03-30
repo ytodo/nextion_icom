@@ -19,10 +19,10 @@ void getconfig(void)
 	///// dmonitor /////
 	/* nextion.iniをオープンする */
         if ((fp = fopen(INIFILE, "r")) == NULL)
-        {
-                printf("Nextion.ini file open error!\n");
-                return;
-        }
+	{
+		printf("Nextion.ini file open error!\n");
+		return;
+	}
 
 	while ((fgets(line, sizeof(line), fp)) != NULL)
 	{							// 構造体 nextion_ini へ保存
@@ -34,16 +34,16 @@ void getconfig(void)
 	}
 
 	/* ファイルクローズ */
-        fclose(fp);
+	fclose(fp);
 
 
 	///// DStarRepeater /////
-        /* dstarrepeater(設定ファイル)をオープンする */
-        if ((fp = fopen(CONFFILE, "r")) == NULL)
-        {
-                printf("dstarrepeater file open error!\n");
-                return;
-        }
+	/* dstarrepeater(設定ファイル)をオープンする */
+	if ((fp = fopen(CONFFILE, "r")) == NULL)
+	{
+		printf("dstarrepeater file open error!\n");
+		return;
+	}
 
 	while ((fgets(line, sizeof(line), fp)) != NULL)
 	{							// 構造体 dstarrepeater へ保存

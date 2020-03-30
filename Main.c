@@ -46,12 +46,12 @@ int main(void)
 	/* GPIO シリアルポートのオープン*/
 	fd = openport(SERIALPORT, BAUDRATE);
 
-        /* メインスクリーンの初期設定 */
-        sendcmd("dim=dims");
+	/* メインスクリーンの初期設定 */
+	sendcmd("dim=dims");
 	sendcmd("page MAIN");
 	usercmd[0] = '\0';
 
-        /* 設定項目の取得と表示 */
+	/* 設定項目の取得と表示 */
 	getconfig();
 	dispipaddr();
 
@@ -78,7 +78,7 @@ int main(void)
 			/* 現在の返り値を保存 */
 			strncpy(chkusercmd, usercmd, 8);
 
-	                /* コマンドをスイッチに振り分ける */
+			/* コマンドをスイッチに振り分ける */
 			syscmdswitch();
 		}
 	}
