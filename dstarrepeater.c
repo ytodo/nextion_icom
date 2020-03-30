@@ -92,15 +92,15 @@ void dstarrepeater(void)
 				strncpy(nodecall, ds.station, 8);
 				for (i = 0; i < 8; i++)
 				{
-					if (strncmp(&nodecall[i], " ", 1) == 0)
+					if (!strncmp(&nodecall[i], " ", 1))
 					{
-						strncpy(&nodecall[i], "_", 1);
+						nodecall[i] = '_';
 					}
 				}
 
 				sprintf(command, "remotecontrold %s link never %s", nodecall, refcall);
 				system(command);
-				sendcmd("page IDLE");
+//				sendcmd("page IDLE");
 			}
 			else
 			{
