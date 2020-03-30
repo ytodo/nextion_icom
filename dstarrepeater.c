@@ -98,8 +98,8 @@ void dstarrepeater(void)
 					}
 				}
 
-				sprintf(command, "remotecontrold %s link never %s", nodecall, refcall);
-				system(command);
+				sprintf(cmdline, "remotecontrold %s link never %s", nodecall, refcall);
+				system(cmdline);
 				sendcmd("page IDLE");
 			}
 			else
