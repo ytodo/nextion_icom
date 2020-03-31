@@ -60,7 +60,7 @@ int main(void)
 	{
 		/* MAINへの簡易ラストハード表示 */
 		dispstatus_dmon();
-//		dispstatus_ref();
+		dispstatus_ref();
 
 		/* 日付･時刻表示 */
 		dispclock();

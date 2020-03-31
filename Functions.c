@@ -12,7 +12,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 #include "Nextion.h"
 
-int fd;
+int	fd;
 
 /*********************************************
  * シリアルポートのオープン
@@ -162,19 +162,21 @@ void syscmdswitch(void)
 		switch (st.mode) {
 		case 0: // MAIN
 			sendcmd("dim=10");
+			system("sudo systemctl restart ircddbgateway.service");
 			system("sudo systemctl stop dstarrepeater.service");
 			system("sudo killall -q -s 2 dmonitor");
 			system("sudo rm /var/run/dmonitor.pid");
 			system("sudo killall -q -s 9 sleep");
-			sendcmd("dim=dims");
-			sendcmd("page MAIN");
+			system("sudo systemctl restart nextion");
 			break;
 
 		case 1: // dmonitor
 			sendcmd("dim=10");
 			system("sudo killall -q -s 2 dmonitor");
 			system("sudo rm /var/run/dmonitor.pid");
-			dmonitor();
+			system("sudo killall -q -s 9 sleep");
+			sendcmd("dim=dims");
+			sendcmd("page DMON");
 			break;
 
 		case 2: // dstarrepeater
@@ -182,7 +184,6 @@ void syscmdswitch(void)
 			system("sudo systemctl restart dstarrepeater.service");
 			sendcmd("dim=dims");
 			sendcmd("page IDLE");
-			dstarrepeater();
 			break;
 		}
 		break;
@@ -258,17 +259,21 @@ void syscmdswitch(void)
 	case 12:					// return
 		switch (st.mode) {
 		case 0:	// MAIN
+			system("sudo killall -q -s 2 dmonitor");
+			system("sudo systemctl stop dstarrepeater.service");
 			sendcmd("page MAIN");
 			break;
 
 		case 1:	// dmonitor
+			system("sudo killall -q -s 2 dmonitor");
 			st.mode = 0;
 			sendcmd("page MAIN");
 			break;
 
 		case 2:	// dstarrepeater
-			sendcmd("page MAIN");
+			system("sudo systemctl stop dstarrepeater.service");
 			st.mode = 0;
+			sendcmd("page MAIN");
 			break;
 		}
 		break;

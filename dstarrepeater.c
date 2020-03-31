@@ -17,9 +17,7 @@ void dstarrepeater(void)
 	int	fd;
     	int	i;
     	int	flag;
-    	char	command[64]	= {'\0'};
 	char	chkusercmd[32]	= {'\0'};
-    	char	tmpstr[32]	= {'\0'};
 	char	refcall[9]	= {'\0'};
 	char	nodecall[9]	= {'\0'};
 
@@ -30,16 +28,29 @@ void dstarrepeater(void)
 	/* グローバル変数の初期設定 */
 	sprintf(command, "IDLE.station.txt=\"%s\"", ds.station);	// ノードコールサイン
 	sendcmd(command);
+	sendcmd("t20.txt=\"\"");
 	sendcmd("t1.pco=2016");
 	sendcmd("t1.txt=\"Linking...\"");
 	sprintf(command, "IDLE.type.txt=\"%s\"", ds.modemtype);		// リピータ形式
 	sendcmd(command);
 
 	usercmd[0] = '\0';
-	usleep(WAITTIME * 30);
+	usleep(WAITTIME * 30);	// 3secs
 
 	/* 送・受信ループ */
 	while (1) {
+
+		/*
+		 * 送信処理
+		 */
+
+		/* CPU 温度の表示 */
+		disptemp();
+
+		/* ログステータスの読み取り */
+		dispstatus_ref();
+
+
 
 		/*
 		 * 受信処理
@@ -108,19 +119,7 @@ void dstarrepeater(void)
 				syscmdswitch();
 			}
 		}
-
-
-		/*
-		 * 送信処理
-		 */
-
-		/* CPU 温度の表示 */
-		disptemp();
-
-		/* ログステータスの読み取り */
-		dispstatus_ref();
-
-	}
+	}// Loop
 
 	return;
 }

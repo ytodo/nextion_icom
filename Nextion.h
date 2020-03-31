@@ -32,7 +32,7 @@
 //		また、同様にターミナルモードのDStarRepeaterの接続と、
 //		状態表示もし、双方を切れ替えて使用する
 ////////////////////////////////////////////////////////////////////////
- 
+
 #ifndef __NEXTION_H__
 #define __NEXTION_H__
 
@@ -54,10 +54,8 @@
 #define	LOGDIR		"/var/log/"
 #define	DUMPFILE	"/tmp/tcpdump.dstar"
 #define	USBPORT		"/dev/IDxxPlus"
-
 #define	BAUDRATE	B9600
 #define	LISTSIZE	512			// 最大リピータ数
-//#define	SLEEPCOUNT	200			// コマンド実行待ちカウント
 #define	TXHANG		2			// ラストパケット検出後のハングタイム（秒）
 #define	TXDELAY		1			// 実際の送信開始に対する表示開始の遅れ（秒）
 #define	WAITTIME	100000			// 単位microsec（0.1秒）
@@ -114,31 +112,26 @@ extern	char	station_dstar[9];		// リフレクタ接続用コールサイン
 extern	char	chklink[16];			// ループ内の多重処理禁止用
 extern	char	chklink2[16];			// ループ内の多重処理禁止用
 extern	char	chkstat[256];			// ループ内の多重処理禁止用
-extern	char	chkstat2[256];			// ループ内の多重処理禁止用
-extern	char	chkstat3[256];			// ループ内の多重処理禁止用
-extern	int	cnt_temp;			// 温度測定間隔調整用カウンタ
-extern	int	net_flag;			// ネット側ストリームon/off状態
-extern	int	rf_flag;			// RF 側ストリームon/off状態
 extern	char	rptcallpre[32];
 extern	char	statpre[32];
 
 /* Functions */
 int	openport(char *devicename, long baudrate);
-int	getlinkdata(void);
-void	dmonitor(void);
-void	dstarrepeater(void);
-void	getusers(void);
-void	getconfig(void);
-void	dispstatus_dmon(void);
-void	dispstatus_ref(void);
-void	dispstreaminfo(void);
-void	dispipaddr(void);
-void	disptemp(void);
-void	sendcmd(char *cmd);
-void	recvdata(char *touchcmd);
-void	next_page(void);
-void	previous_page(void);
-void	dispclock(void);
-void	syscmdswitch(void);
+int	getlinkdata(void);			// GetLinkData.c
+void	next_page(void);			//	〃
+void	previous_page(void);			//	〃
+void	dmonitor(void);				// dmonitor.c
+void	dstarrepeater(void);			// dstarrepeater.c
+void	getusers(void);				// GetUsers.c
+void	getconfig(void);			// GetConfig.c
+void	dispstatus_dmon(void);			// DispLOGinfo.c
+void	dispstatus_ref(void);			//	〃
+void	dispstreaminfo(void);			// 	予備
+void	dispipaddr(void);			// DispCMDinfo.c
+void	disptemp(void);				//	〃
+void	sendcmd(char *cmd);			// Functions.c
+void	recvdata(char *touchcmd);		//	〃
+void	dispclock(void);			//	〃
+void	syscmdswitch(void);			//	〃
 
 #endif // __NEXTION_H__

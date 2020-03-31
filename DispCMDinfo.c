@@ -7,7 +7,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 #include	"Nextion.h"
 
-FILE	*fp;
 
 /********************************************************
  * Main から呼び出されIPアドレスをシステムコマンドで
@@ -15,6 +14,7 @@ FILE	*fp;
  ********************************************************/
 void dispipaddr(void)
 {
+	FILE	*fp;
 	char	ifname[16]	= {'\0'};
 	char	ifaddr[32]	= {'\0'};
 
@@ -41,7 +41,7 @@ void dispipaddr(void)
 	pclose(fp);
 
 	/* 設定IP アドレスと実際のIP アドレスの比較 */
-	if (strcmp(ifaddr, ds.ipaddress) == 0 ) //&& strcmp(ds.ipaddress, "127.0.0.1") == 0)
+	if (!strcmp(ifaddr, ds.ipaddress) && !strcmp(ds.ipaddress, "127.0.0.1"))
 	{
 		sprintf(command, "IDLE.ipaddr.txt=\"%s\"", "Different IP set!");
 		sendcmd(command);
@@ -62,6 +62,7 @@ void dispipaddr(void)
  ********************************************************/
 void disptemp(void)
 {
+	FILE	*fp;
 	char	*tmpptr;
 	char	tmpstr[32]	= {'\0'};
 	char	line[512]	= {'\0'};

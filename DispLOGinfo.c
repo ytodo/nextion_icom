@@ -37,192 +37,187 @@ void dispstatus_ref(void)
 	sprintf(dstarlogpath, "%s%s", LOGDIR, fname);
 
 	/* コマンドの標準出力オープン */
-	sprintf(cmdline, "tail -n1 %s | egrep -v 'Invalid|RTI_DATA_NAK'", dstarlogpath);
-	if ((fp = popen(cmdline, "r")) != NULL )
+	sprintf(cmdline, "tail -n2 %s | egrep -v 'Invalid|RTI_DATA_NAK'", dstarlogpath);
+	if ((fp = popen(cmdline, "r")) == NULL )
 	{
-
-		/* 標準出力配列に取得 */
-		fgets(line,  sizeof(line),  fp);
-
-
-		/* 一巡して全く同じ内容ならパス */
-		if (strcmp(line, chkstat) == 0)
-		{
-			return;
-		}
-		strcpy(chkstat, line);
-
-		/*
-		 * リフレクタへの接続情報の取得
-		 */
-		if ((tmpptr = strstr(line, "Linked")) != NULL)
-		{
-			/* リンク先リフレクタを取得 */
-			linkref[0] = '\0';
-			strncpy(linkref, tmpptr + 10, 8);
-			linkref[8] = '\0';
-
-			/* 接続時のログを取得 */
-			status2[0] = '\0';
-			strncpy(status2, tmpptr, 20);
-			status2[20] = '\0';
-
-			/* Nextion グローバル変数ref に接続中のリフレクタを代入 */
-			sprintf(command, "IDLE.ref.txt=\"%s\"", linkref);
-			sendcmd(command);
-			sprintf(command, "IDLE.status.txt=\"%s\"", linkref);
-			sendcmd(command);
-			sendcmd("IDLE.t1.pco=65535");
-			sendcmd("IDLE.t1.txt=status.txt");
-
-			/* ステータス２の表示 */
-			sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
-			sendcmd(command);
-			sendcmd("IDLE.t2.txt=status2.txt");
-		}
-
-
-		/*
-		 * リフレクタへのdisconnect を取得
-		 */
-		if ((tmpptr = strstr(line, "Not linked")) != NULL)
-		{
-			/* リンク先リフレクタを取得 */
-			linkref[0] = '\0';
-
-			/* 接続時のログを取得 */
-			status2[0] = '\0';
-			strncpy(status2, tmpptr, 20);
-			status2[20] = '\0';
-
-			/* Nextion グローバル変数に代入 */
-			sendcmd("IDLE.ref.txt=\"Not linked\"");
-			sendcmd("IDLE.status.txt=\"NODE IDLE\"");
-			sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
-			sendcmd(command);
-
-			sendcmd("IDLE.t1.txt=IDLE.status.txt");
-			sendcmd("IDLE.t2.txt=IDLE.status2.txt");
-		}
-
-
-		/*
-		 * RF ヘッダーの取得
-		 */
-		if ((tmpptr = strstr(line, "Radio header")) != NULL)
-		{
-			sendcmd("page DSTAR");
-
-			/* ヘッダーログを取得 */
-			status2[0] = '\0';
-
-			/* JST 時刻の算出 */
-			jstimer = time(NULL);
-			jstimeptr = localtime(&jstimer);
-
-			/* Radio header の場合RF を表示 */
-			strftime(status2, sizeof(status2), "RF  %H:%M ", jstimeptr);
-
-			/* ログよりコールサインMY, UR を取得 */
-			strncpy(mycall, tmpptr + 27, 13);
-			mycall[13] = '\0';
-			strcat(status2, mycall);
-			status2[23] = '\0';
-			strncpy(urcall, tmpptr + 48, 8);
-			urcall[8] = '\0';
-
-			/* ステータスの表示 */
-			sprintf(command, "DSTAR.t0.txt=\"R %s\"", mycall);
-			sendcmd(command);
-			sprintf(command, "DSTAR.t1.txt=\"%s\"", urcall);
-			sendcmd(command);
-			sendcmd("DSTAR.t2.txt=IDLE.ref.txt");
-
-			/* ステータス2 を保存 */
-			sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
-			sendcmd(command);
-			sendcmd("IDLE.t2.txt=\"IDLE.status2.txt");
-
-		}
-
-
-		/*
-		 * RF ラストパケット
-		 */
-		if ((tmpptr = strstr(line, "AMBE for")) != NULL)
-		{
-			/* TX Hang */
-			sleep(TXHANG);
-
-			/* IDLE 画面に戻る */
-			sendcmd("page IDLE");
-		}
-
-
-		/*
-		 * ネットワーク ヘッダーの取得
-		 */
-		if ((tmpptr = strstr(line, "Transmitting to")) != NULL)
-		{
-			/* TX Delay */
-			sleep(TXDELAY);
-			sendcmd("page DSTAR");
-
-			/* ヘッダーログを初期化 */
-			status2[0] = '\0';
-
-			/* JST 時刻の算出 */
-			jstimer = time(NULL);
-			jstimeptr = localtime(&jstimer);
-
-			/* Network header の場合Net を表示 */
-			strftime(status2, sizeof(status2), "Net %H:%M ", jstimeptr);
-
-			/* ログよりコールサインMY, UR を取得 */
-			strncpy(mycall, tmpptr + 22, 13);
-			mycall[13] = '\0';
-			strcat(status2, mycall);
-			status2[23] = '\0';
-			strncpy(urcall, tmpptr + 43, 8);
-			urcall[8] = '\0';
-
-			/* ステータス２の表示 */
-			sprintf(command, "DSTAR.t0.txt=\"N %s\"", mycall);
-			sendcmd(command);
-			sprintf(command, "DSTAR.t1.txt=\"%s\"", urcall);
-			sendcmd(command);
-			sendcmd("DSTAR.t2.txt=IDLE.ref.txt");
-
-			/* ステータス2 を保存 */
-			sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
-			sendcmd(command);
-			sendcmd("IDLE.t2.txt=\"IDLE.status2.txt");
-		}
-
-
-		/*
-		 * ネットワークラストパケット
-		 */
-		if ((tmpptr = strstr(line, "Stats for")) != NULL)
-		{
-			/* TX Hang */
-			sleep(TXHANG);
-
-			/* IDLE 画面に戻る */
-			sendcmd("page IDLE");
-		}
-
-		/* 標準出力クローズ */
-		pclose(fp);
-
-	}
-	else
-	{
+		printf("LOGinfo open error!!");
 		exit(EXIT_FAILURE);
 	}
 
+	/* 標準出力配列に取得 */
+	fgets(line,  sizeof(line),  fp);
+
 	/* 標準出力クローズ */
 	pclose(fp);
+
+
+
+	/* 一巡して全く同じ内容ならパス */
+	if (strcmp(line, chkstat) == 0)
+	{
+		return;
+	}
+	strcpy(chkstat, line);
+
+	/*
+	 * リフレクタへの接続情報の取得
+	 */
+	if ((tmpptr = strstr(line, "Linked")) != NULL)
+	{
+		/* リンク先リフレクタを取得 */
+		linkref[0] = '\0';
+		strncpy(linkref, tmpptr + 10, 8);
+		linkref[8] = '\0';
+
+		/* 接続時のログを取得 */
+		status2[0] = '\0';
+		strncpy(status2, tmpptr, 20);
+		status2[20] = '\0';
+
+		/* Nextion グローバル変数ref に接続中のリフレクタを代入 */
+		sprintf(command, "IDLE.ref.txt=\"%s\"", linkref);
+		sendcmd(command);
+		sprintf(command, "IDLE.status.txt=\"%s\"", linkref);
+		sendcmd(command);
+		sendcmd("IDLE.t1.pco=65535");
+		sendcmd("IDLE.t1.txt=status.txt");
+
+		/* ステータス２の表示 */
+		sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
+		sendcmd(command);
+		sendcmd("IDLE.t2.txt=status2.txt");
+	}
+
+
+	/*
+	 * リフレクタへのdisconnect を取得
+	 */
+	if ((tmpptr = strstr(line, "Not linked")) != NULL)
+	{
+		/* リンク先リフレクタを取得 */
+		linkref[0] = '\0';
+
+		/* 接続時のログを取得 */
+		status2[0] = '\0';
+		strncpy(status2, tmpptr, 20);
+		status2[20] = '\0';
+
+		/* Nextion グローバル変数に代入 */
+		sendcmd("IDLE.ref.txt=\"Not linked\"");
+		sendcmd("IDLE.status.txt=\"NODE IDLE\"");
+		sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
+		sendcmd(command);
+
+		sendcmd("IDLE.t1.txt=IDLE.status.txt");
+		sendcmd("IDLE.t2.txt=IDLE.status2.txt");
+	}
+
+
+	/*
+	 * RF ヘッダーの取得
+	 */
+	if ((tmpptr = strstr(line, "Radio header")) != NULL)
+	{
+		sendcmd("page DSTAR");
+
+		/* ヘッダーログを取得 */
+		status2[0] = '\0';
+
+		/* JST 時刻の算出 */
+		jstimer = time(NULL);
+		jstimeptr = localtime(&jstimer);
+
+		/* Radio header の場合RF を表示 */
+		strftime(status2, sizeof(status2), "RF  %H:%M ", jstimeptr);
+
+		/* ログよりコールサインMY, UR を取得 */
+		strncpy(mycall, tmpptr + 27, 13);
+		mycall[13] = '\0';
+		strcat(status2, mycall);
+		status2[23] = '\0';
+		strncpy(urcall, tmpptr + 48, 8);
+		urcall[8] = '\0';
+
+		/* ステータスの表示 */
+		sprintf(command, "DSTAR.t0.txt=\"R %s\"", mycall);
+		sendcmd(command);
+		sprintf(command, "DSTAR.t1.txt=\"%s\"", urcall);
+		sendcmd(command);
+		sendcmd("DSTAR.t2.txt=IDLE.ref.txt");
+
+		/* ステータス2 を保存 */
+		sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
+		sendcmd(command);
+		sendcmd("IDLE.t2.txt=\"IDLE.status2.txt");
+
+	}
+
+
+	/*
+	 * RF ラストパケット
+	 */
+	if ((tmpptr = strstr(line, "AMBE for")) != NULL)
+	{
+		/* TX Hang */
+		sleep(TXHANG);
+
+		/* IDLE 画面に戻る */
+		sendcmd("page IDLE");
+	}
+
+
+	/*
+	 * ネットワーク ヘッダーの取得
+	 */
+	if ((tmpptr = strstr(line, "Transmitting to")) != NULL)
+	{
+		/* TX Delay */
+		sleep(TXDELAY);
+		sendcmd("page DSTAR");
+
+		/* ヘッダーログを初期化 */
+		status2[0] = '\0';
+
+		/* JST 時刻の算出 */
+		jstimer = time(NULL);
+		jstimeptr = localtime(&jstimer);
+
+		/* Network header の場合Net を表示 */
+		strftime(status2, sizeof(status2), "Net %H:%M ", jstimeptr);
+
+		/* ログよりコールサインMY, UR を取得 */
+		strncpy(mycall, tmpptr + 22, 13);
+		mycall[13] = '\0';
+		strcat(status2, mycall);
+		status2[23] = '\0';
+		strncpy(urcall, tmpptr + 43, 8);
+		urcall[8] = '\0';
+
+		/* ステータス２の表示 */
+		sprintf(command, "DSTAR.t0.txt=\"N %s\"", mycall);
+		sendcmd(command);
+		sprintf(command, "DSTAR.t1.txt=\"%s\"", urcall);
+		sendcmd(command);
+		sendcmd("DSTAR.t2.txt=IDLE.ref.txt");
+
+		/* ステータス2 を保存 */
+		sprintf(command, "IDLE.status2.txt=\"%s\"", status2);
+		sendcmd(command);
+		sendcmd("IDLE.t2.txt=\"IDLE.status2.txt");
+	}
+
+
+	/*
+	 * ネットワークラストパケット
+	 */
+	if ((tmpptr = strstr(line, "Stats for")) != NULL)
+	{
+		/* TX Hang */
+		sleep(TXHANG);
+
+		/* IDLE 画面に戻る */
+		sendcmd("page IDLE");
+	}
 
 	return;
 }
