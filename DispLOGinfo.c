@@ -24,7 +24,7 @@ void dispstatus_ref(void)
 	char	urcall[9]		= {'\0'};
 	char	dstarlogpath[32]	= {'\0'};	// D-STAR Repeater ログのフルパス
 	char	status2[32] 		= {'\0'};
-
+	char	line2[128]		= {'\0'};
 
 	/*
 	 * ログファイルからリフレクタへのリンク情報を抽出する
@@ -37,27 +37,34 @@ void dispstatus_ref(void)
 	sprintf(dstarlogpath, "%s%s", LOGDIR, fname);
 
 	/* コマンドの標準出力オープン */
-	sprintf(cmdline, "tail -n2 %s | egrep -v 'Invalid|RTI_DATA_NAK'", dstarlogpath);
+	sprintf(cmdline, "tail -n3 %s | egrep -v 'RTI_DATA_NAK'", dstarlogpath);
 	if ((fp = popen(cmdline, "r")) == NULL )
 	{
 		printf("LOGinfo open error!!");
 		exit(EXIT_FAILURE);
 	}
 
-	/* 標準出力配列に取得 */
+	/* 標準出力を配列に取得 */
 	fgets(line,  sizeof(line),  fp);
+	line[strlen(line) - 1] = '\0';
+	fgets(line2, sizeof(line2), fp);
+	line[strlen(line2) - 1] = '\0';
+	strcat(line, line2);
 
 	/* 標準出力クローズ */
 	pclose(fp);
 
-
+	/* Transmitting to だけしかない行は省く */
+	if (strstr(line, "Transmitting to") != NULL && strstr(line, "Network header") == NULL) return;
 
 	/* 一巡して全く同じ内容ならパス */
-	if (strcmp(line, chkstat) == 0)
-	{
-		return;
-	}
+	if (!strncmp(line, chkstat, sizeof(line))) return;
+
+	/* 重複チェック */
 	strcpy(chkstat, line);
+
+
+printf("%s\n", line);
 
 	/*
 	 * リフレクタへの接続情報の取得
@@ -169,7 +176,7 @@ void dispstatus_ref(void)
 	/*
 	 * ネットワーク ヘッダーの取得
 	 */
-	if ((tmpptr = strstr(line, "Transmitting to")) != NULL)
+	if ((tmpptr = strstr(line, "Network header")) != NULL)
 	{
 		/* TX Delay */
 		sleep(TXDELAY);
@@ -186,11 +193,11 @@ void dispstatus_ref(void)
 		strftime(status2, sizeof(status2), "Net %H:%M ", jstimeptr);
 
 		/* ログよりコールサインMY, UR を取得 */
-		strncpy(mycall, tmpptr + 22, 13);
+		strncpy(mycall, tmpptr + 30, 13);
 		mycall[13] = '\0';
 		strcat(status2, mycall);
 		status2[23] = '\0';
-		strncpy(urcall, tmpptr + 43, 8);
+		strncpy(urcall, tmpptr + 51, 8);
 		urcall[8] = '\0';
 
 		/* ステータス２の表示 */
@@ -218,6 +225,9 @@ void dispstatus_ref(void)
 		/* IDLE 画面に戻る */
 		sendcmd("page IDLE");
 	}
+
+	line[0]  = '\0';
+	line2[0] = '\0';
 
 	return;
 }

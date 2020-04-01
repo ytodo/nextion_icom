@@ -56,8 +56,8 @@
 #define	USBPORT		"/dev/IDxxPlus"
 #define	BAUDRATE	B9600
 #define	LISTSIZE	512			// 最大リピータ数
-#define	TXHANG		2			// ラストパケット検出後のハングタイム（秒）
-#define	TXDELAY		1			// 実際の送信開始に対する表示開始の遅れ（秒）
+#define	TXHANG		1			// ラストパケット検出後のハングタイム（秒）
+#define	TXDELAY		0			// 実際の送信開始に対する表示開始の遅れ（秒）
 #define	WAITTIME	100000			// 単位microsec（0.1秒）
 
 /* 日付表示関連 */
@@ -112,6 +112,7 @@ extern	char	station_dstar[9];		// リフレクタ接続用コールサイン
 extern	char	chklink[16];			// ループ内の多重処理禁止用
 extern	char	chklink2[16];			// ループ内の多重処理禁止用
 extern	char	chkstat[256];			// ループ内の多重処理禁止用
+extern	char	chkstat2[256];
 extern	char	rptcallpre[32];
 extern	char	statpre[32];
 

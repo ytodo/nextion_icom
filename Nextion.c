@@ -23,5 +23,6 @@ char		modemtype[16]		= {'\0'};
 char		chklink[16]		= {'\0'};
 char		chklink2[16]		= {'\0'};
 char		chkstat[256]		= {'\0'};
+char		chkstat2[256]		= {'\0'};
 char		rptcallpre[32]		= {'\0'};
 char		statpre[32]		= {'\0'};
