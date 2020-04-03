@@ -127,7 +127,6 @@ void	getusers(void);				// GetUsers.c
 void	getconfig(void);			// GetConfig.c
 void	dispstatus_dmon(void);			// DispLOGinfo.c
 void	dispstatus_ref(void);			//	〃
-void	dispstreaminfo(void);			// 	予備
 void	dispipaddr(void);			// DispCMDinfo.c
 void	disptemp(void);				//	〃
 void	sendcmd(char *cmd);			// Functions.c

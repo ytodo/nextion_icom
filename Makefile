@@ -26,4 +26,4 @@ clean	:
 	$(RM)  $(PROGRAM) $(OBJECTS)
 
 # Dependency of Header Files
-$(OBJECTS)	: Nextion.h
+$(OBJECTS)		: Nextion.h
