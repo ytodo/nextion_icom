@@ -36,7 +36,7 @@ int 	getlinkdata(void)
 	if ((fp = fopen(RPTSTBL, "r")) == NULL)
 	{
 		printf("Repeater List file open error!\n");
-		return (EXIT_FAILURE);
+		return (i);
 	}
 
 	/* File sample
