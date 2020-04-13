@@ -91,12 +91,13 @@ void dmonitor(void)
 				if (strncmp(linkdata[i].call, usercmd, 8) == 0)
 				{
 					/* 現在稼働中のdmonitor をKILL */
+					system("sudo killall -q -s 9 repeater_scan");
 					system("sudo killall -q -s 2 dmonitor");
 					system("sudo rm /var/run/dmonitor.pid");
 					system("sudo rig_port_check");
 
 					/* 接続コマンドの実行 */
-					sprintf(command, "sudo dmonitor '%s' %s %s '%s' '%s'", nx.station, linkdata[i].addr, linkdata[i].port, linkdata[i].call, linkdata[i].zone);
+					sprintf(command, "sudo /usr/bin/dmonitor '%s' %s %s '%s' '%s'", nx.station, linkdata[i].addr, linkdata[i].port, linkdata[i].call, linkdata[i].zone);
 					system(command);
 					sendcmd("page DMON");
 					usleep(atoi(nx.microsec) * 3);
