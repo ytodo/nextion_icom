@@ -32,7 +32,11 @@
 //              また、同様にターミナルモードのDStarRepeaterの接続と、
 //              状態表示もし、双方を切れ替えて使用する
 ////////////////////////////////////////////////////////////////////////
-#include        "Nextion.h"
+#include "Nextion.h"
+#include <sys/types.h>  // fork
+#include <unistd.h>     // fork
+#include <err.h>
+#include <errno.h>
 
 int main(void)
 {
@@ -55,31 +59,46 @@ int main(void)
 	getconfig();
 	dispipaddr();
 
-	/* 送・受信ループ */
-	while(1)
+	pid_t	pid;
+	pid = fork ();
+
+	if (pid == -1)
 	{
-		/* MAINへの簡易ラストハード表示 */
-		dispstatus_dmon();
-		dispstatus_ref();
+		err (EXIT_FAILURE, "Can't fork");
+	}
+	else if (pid == 0)
+	{
+		printf("Child process");
+		dispcapture();
+	}
+	else
+	{
 
-		/* 日付･時刻表示 */
-		dispclock();
-		usleep(WAITTIME * 5);		// 0.5秒
-
-		/* タッチパネルのデータを読み込む */
-		recvdata(usercmd);
-
-		/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
-		if ((strlen(usercmd) > 4) && (strncmp(usercmd, chkusercmd, 8) != 0))
+		/* 送・受信ループ */
+		while(1)
 		{
-			/* 比較後、保存変数をクリア */
-			chkusercmd[0] = '\0';
+			/* MAINへの簡易ラストハード表示 */
+			dispstatus_dmon();
 
-			/* 現在の返り値を保存 */
-			strncpy(chkusercmd, usercmd, 8);
+			/* 日付･時刻表示 */
+			dispclock();
+			usleep(WAITTIME * 50);	//0.5sec
 
-			/* コマンドをスイッチに振り分ける */
-			syscmdswitch();
+			/* タッチパネルのデータを読み込む */
+			recvdata(usercmd);
+
+			/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
+			if ((strlen(usercmd) > 4) && (strncmp(usercmd, chkusercmd, 8) != 0))
+			{
+				/* 比較後、保存変数をクリア */
+				chkusercmd[0] = '\0';
+
+				/* 現在の返り値を保存 */
+				strncpy(chkusercmd, usercmd, 8);
+
+				/* コマンドをスイッチに振り分ける */
+				syscmdswitch();
+			}
 		}
 	}
 

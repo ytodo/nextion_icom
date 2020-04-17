@@ -64,8 +64,6 @@ void dispstatus_ref(void)
 	strcpy(chkstat, line);
 
 
-printf("%s\n", line);
-
 	/*
 	 * リフレクタへの接続情報の取得
 	 */

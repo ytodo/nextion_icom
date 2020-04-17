@@ -132,6 +132,7 @@ void	disptemp(void);				//	〃
 void	sendcmd(char *cmd);			// Functions.c
 void	recvdata(char *touchcmd);		//	〃
 void	dispclock(void);			//	〃
+void	dispcapture(void);			//      〃
 void	syscmdswitch(void);			//	〃
 
 #endif // __NEXTION_H__

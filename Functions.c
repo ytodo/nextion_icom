@@ -215,6 +215,7 @@ void syscmdswitch(void)
 
 	case 5:						// dstarrepeater 起動
 		st.mode = 2;
+		system("sudo killall -q -s 2 dmonitor");						// test
 		system("sudo systemctl restart dstarrepeater.service");
 		dstarrepeater();
 		break;
@@ -265,7 +266,7 @@ void syscmdswitch(void)
 			break;
 
 		case 1:	// dmonitor
-			system("sudo killall -q -s 2 dmonitor");
+//			system("sudo killall -q -s 2 dmonitor");					// test
 			st.mode = 0;
 			sendcmd("page MAIN");
 			break;
