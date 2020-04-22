@@ -12,7 +12,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 #include	"Nextion.h"
-#define		RPTSTBL	"/tmp/repeater.json"
+#define		RPTSTBL	"/var/tmp/repeater_mon.html"
 
 /*****************************************************************
  *	サーバよりmulti_forward のインストールされた
@@ -29,9 +29,6 @@ int 	getlinkdata(void)
 	char	line[512]	= {'\0'};
 	int	i = 0;
 
-	/* d-star.info からリピータリストを取得してテーブルを作成する */
-	system("cd /tmp; rm repeater.json*; wget http://hole-punchd.d-star.info:30011/repeater.json; cd");
-
 	/* テーブルをオープンする */
 	if ((fp = fopen(RPTSTBL, "r")) == NULL)
 	{
@@ -40,8 +37,8 @@ int 	getlinkdata(void)
 	}
 
 	/* File sample
-		{"callsign":"JL3ZBS A","ip_address":"xx.xx.xx.xx","port":51000,"status":"off", "area":"3","ur_call":"8SPCs ",
-		"my_call":"8SPCs","rpt1_call":"8SPCs ","rpt2_call":"8SPCs","zr_call":"JL3ZBS G"},
+	<td><tt><a href="/cgi-bin/monitor?ip_addr=183.177.205.139&port=51000&callsign='JK1ZRW B'&zr_call='JK1ZRW G'" target="cmd1">JK1ZRW&nbsp;B</a></tt></td><td></td>
+	<td><tt><a href="/cgi-bin/monitor?ip_addr=122.18.112.78&port=51000&callsign='JP1YCS A'&rep_name='大子430'&zr_call='JP1YCS G'" target="cmd1">JP1YCS&nbsp;A</a></tt></td><td>大子430</td>
 	*/
 
 	/* テーブルを読み込み構造体に格納する */
@@ -50,13 +47,12 @@ int 	getlinkdata(void)
 		/* Find out Callsign, IP Address and Port number */
 		if ((ptrcall = strstr(line, "callsign")) != NULL )
 		{
-			ptraddr = strstr(line, "ip_address");
+			ptraddr = strstr(line, "ip_addr");
 			ptrport = strstr(line, "port");
 			ptrzone = strstr(line, "zr_call");
-			ptrstat = strstr(line, "status");
 
 			/* コールサインの保存 */
-			strncpy(linkdata[i].call, ptrcall + 11, 8);
+			strncpy(linkdata[i].call, ptrcall + 10, 8);
 
 			/* 第八番目もじ（拡張子）が空白だったら「Ａ」とする */
 			if (strncmp(&linkdata[i].call[7], " ", 1) == 0)
@@ -66,15 +62,15 @@ int 	getlinkdata(void)
 			linkdata[i].call[8] = '\0';
 
 			/* ＩＰアドレスの保存 */
-			strncpy(linkdata[i].addr, ptraddr + 13, strlen(ptraddr) - strlen(ptrport) - 16);
-			linkdata[i].addr[strlen(ptraddr) - strlen(ptrport) - 16] = '\0';
+			strncpy(linkdata[i].addr, ptraddr + 8, strlen(ptraddr) - strlen(ptrport) - 8);
+			linkdata[i].addr[strlen(ptraddr) - strlen(ptrport) - 9] = '\0';
 
 			/* ポート番号の保存 */
-			strncpy(linkdata[i].port, (ptrport + 6), (strlen(ptrport) - strlen(ptrstat) - 8));
-			linkdata[i].port[strlen(ptrport) - strlen(ptrstat) - 8] = '\0';
+			strncpy(linkdata[i].port, (ptrport + 5), (strlen(ptrport) - strlen(ptrcall) - 6));
+			linkdata[i].port[strlen(ptrport) - strlen(ptrcall) - 6] = '\0';
 
 			/* ZR_CALLの取得 */
-			strncpy(linkdata[i].zone, (ptrzone + 10), 8);
+			strncpy(linkdata[i].zone, (ptrzone + 9), 8);
 			linkdata[i].zone[8] = '\0';
 
 			i++;

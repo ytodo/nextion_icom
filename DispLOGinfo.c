@@ -268,21 +268,23 @@ void	dispstatus_dmon(void)
 			/* 日付時間とコールサインをログとして出力 */
 			if ((strstr(line, "Connected") == NULL) && (strstr(line, "Last packet") == NULL))
 			{
+				/* Apr 23 05:55:41 ham06 dmonitor[16583]: JA2KWX A from ZR */
 				memset(&status[0], '\0', sizeof(status));
 				strncpy(status, line, 16);			// 日付と時刻
 				strncat(status, tmpptr - 9, 8);			// Callsign
 				status[24] = '\0';
 
 				/* JST 時刻の算出 */
-//				jstimer = time(NULL);
-//				jstimeptr = localtime(&jstimer);
-//
-//				/* LastheardとしてMAINページに表示 */
-//				strftime(tmpstr, sizeof(tmpstr), "%m.%d %H:%M ", jstimeptr);
-//				strncat(tmpstr, tmpptr - 9, 8);
-//				tmpstr[20] = '\0';
-//				sprintf(command, "MAIN.status_dmon.txt=\"%s\"", tmpstr);
-//				sendcmd(command);
+				jstimer = time(NULL);
+				jstimeptr = localtime(&jstimer);
+
+				/* LastheardとしてMAINページに表示 */
+				strftime(tmpstr, sizeof(tmpstr), "%H:%M ", jstimeptr);
+				strncat(tmpstr, tmpptr - 9, 9);
+				strncat(tmpstr, tmpptr + 5, 2);
+				tmpstr[20] = '\0';
+				sprintf(command, "MAIN.t0.txt=\"%s\"", tmpstr);
+				sendcmd(command);
 //				sendcmd("MAIN.t0.txt=MAIN.status_dmon.txt");
 				stat = 0;
 

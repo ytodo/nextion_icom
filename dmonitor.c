@@ -27,7 +27,7 @@ void dmonitor(void)
 	/* メインスクリーンの初期設定 */
 	sendcmd("dim=dims");
 	sendcmd("DMON.station.txt=\"\"");
-	sendcmd("DMON.link.txt=\"LINK TO :\"");
+	sendcmd("DMON.link.txt=\"LINK TO : NONE\"");
 	sendcmd("DMON.stat1.txt=\"\"");
 	sendcmd("DMON.stat2.txt=\"\"");
 	usercmd[0] = '\0';

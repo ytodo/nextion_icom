@@ -82,7 +82,7 @@ int main(void)
 
 			/* 日付･時刻表示 */
 			dispclock();
-			usleep(WAITTIME * 50);	//0.5sec
+			usleep(WAITTIME * 5);	//0.5sec
 
 			/* タッチパネルのデータを読み込む */
 			recvdata(usercmd);
