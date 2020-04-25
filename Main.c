@@ -33,10 +33,10 @@
 //              状態表示もし、双方を切れ替えて使用する
 ////////////////////////////////////////////////////////////////////////
 #include "Nextion.h"
-#include <sys/types.h>  // fork
-#include <unistd.h>     // fork
-#include <err.h>
-#include <errno.h>
+//#include <sys/types.h>  // fork
+//#include <unistd.h>     // fork
+//#include <err.h>
+//#include <errno.h>
 
 int main(void)
 {
@@ -59,26 +59,26 @@ int main(void)
 	getconfig();
 	dispipaddr();
 
-	pid_t	pid;
-	pid = fork ();
+//	pid_t	pid;
+//	pid = fork ();
 
-	if (pid == -1)
-	{
-		err (EXIT_FAILURE, "Can't fork");
-	}
-	else if (pid == 0)
-	{
-		printf("Child process");
-		dispcapture();
-	}
-	else
-	{
+//	if (pid == -1)
+//	{
+//		err (EXIT_FAILURE, "Can't fork");
+//	}
+//	else if (pid == 0)
+//	{
+//		printf("Child process");
+//		dispcapture();
+//	}
+//	else
+//	{
 
 		/* 送・受信ループ */
 		while(1)
 		{
 			/* MAINへの簡易ラストハード表示 */
-			dispstatus_dmon();
+//			dispstatus_dmon();
 
 			/* 日付･時刻表示 */
 			dispclock();
@@ -100,7 +100,7 @@ int main(void)
 				syscmdswitch();
 			}
 		}
-	}
+//	}
 
 	/* GPIO シリアルポートのクローズ */
 	close(fd);

@@ -83,21 +83,10 @@ void dstarrepeater(void)
 			if (strncmp(usercmd, "REF", 3) == 0 || strncmp(usercmd, "XLX", 3) == 0 ||
 			    strncmp(usercmd, "DCS", 3) == 0 || strncmp(usercmd, "XRF", 3) == 0)
 			{
-
-				/* XLXリフレクタはDCSプロトコルに変換する */
-				if (strncmp(usercmd, "XLX", 3) == 0)
-				{
-					strcpy(refcall, "DCS");
-					strncat(&refcall[3], &usercmd[3], 3);
-					strcat(refcall, "_");
-					strncat(refcall, &usercmd[6], 1);
-				}
-				else
-				{
-					strncpy(refcall, usercmd, 6);
-					strcat(refcall, "_");
-					strncat(refcall, &usercmd[6], 1);
-				}
+				/* リフレクタ接続コマンドの整形 */
+				strncpy(refcall, usercmd, 6);
+				strcat(refcall, "_");
+				strncat(refcall, &usercmd[6], 1);
 
 				/* ノードコールサインの整形 */
 				strncpy(nodecall, ds.station, 8);
@@ -111,6 +100,9 @@ void dstarrepeater(void)
 
 				sprintf(cmdline, "remotecontrold %s link never %s", nodecall, refcall);
 				system(cmdline);
+
+printf("%s\n", cmdline);
+
 				sendcmd("page IDLE");
 			}
 			else

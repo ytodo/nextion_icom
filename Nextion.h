@@ -80,6 +80,7 @@ typedef	struct {
 	char	station[9];			// ノードコール（Terminal:個人コール/Access Point:クラブコール）
 	char	default_rpt[9];			// 立ち上げ時自動接続リピータ
 	char	default_ref[9];			// 立ち上げ時自動接続リフレクタ
+	char	clock_color[8];			// デジタル時計の文字色指定
 	char	microsec[8];			// リスト書き込み時のスピード調整用
 	char	debug[1];			// 0:通常／1:デバッグモード(status表示が多くなる）
 } nextion_ini_t;

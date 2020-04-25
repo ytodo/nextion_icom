@@ -280,12 +280,17 @@ void	dispstatus_dmon(void)
 
 				/* LastheardとしてMAINページに表示 */
 				strftime(tmpstr, sizeof(tmpstr), "%H:%M ", jstimeptr);
-				strncat(tmpstr, tmpptr - 9, 9);
+				strncat(tmpstr, tmpptr - 9, 8);
+				strcat(tmpstr, "  ");
 				strncat(tmpstr, tmpptr + 5, 2);
-				tmpstr[20] = '\0';
+				if (strncmp(&tmpstr[16], "RI", 2))
+				{
+					strcpy(&tmpstr[16], "RIG");
+				}
+				tmpstr[19] = '\0';
 				sprintf(command, "MAIN.t0.txt=\"%s\"", tmpstr);
 				sendcmd(command);
-//				sendcmd("MAIN.t0.txt=MAIN.status_dmon.txt");
+				sendcmd("MAIN.status_dmon.txt=\"\"");
 				stat = 0;
 
 			}

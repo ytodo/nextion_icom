@@ -29,6 +29,7 @@ void getconfig(void)
 		if ((ret = strstr(line, "STATION"))     != NULL) sscanf(line, "STATION=%[^\n]",		nx.station);
 		if ((ret = strstr(line, "DEFAULT_RPT")) != NULL) sscanf(line, "DEFAULT_RPT=%[^\n]",	nx.default_rpt);
 		if ((ret = strstr(line, "DEFAULT_REF")) != NULL) sscanf(line, "DEFAULT_REF=%[^\n]",	nx.default_ref);
+		if ((ret = strstr(line, "CLOCK_COLOR")) != NULL) sscanf(line, "CLOCK_COLOR=%[^\n]",	nx.clock_color);
 		if ((ret = strstr(line, "SLEEPTIME"))   != NULL) sscanf(line, "SLEEPTIME=%s",		nx.microsec);
 		if ((ret = strstr(line, "DEBUG"))       != NULL) sscanf(line, "DEBUG=%s",		nx.debug);
 	}

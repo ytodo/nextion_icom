@@ -118,9 +118,17 @@ void dispclock(void)
 	/* 日付･時刻表示 */
 	jstimer = time(NULL);
 	jstimeptr = localtime(&jstimer);
-	strftime(tmpstr, sizeof(tmpstr), "%Y.%m.%d %H:%M:%S ", jstimeptr);
-	tmpstr[20] = '\0';
-	sprintf(command, "MAIN.t2.txt=\"%s\"", tmpstr);
+
+	sprintf(command, "MAIN.t0.pco=%s", nx.clock_color);
+	sendcmd(command);
+	strftime(tmpstr, sizeof(tmpstr), "%H:%M:%S", jstimeptr);
+	sprintf(command, "MAIN.t0.txt=\"%s\"", tmpstr);
+	sendcmd(command);
+
+	sprintf(command, "MAIN.t1.pco=%s", nx.clock_color);
+	sendcmd(command);
+	strftime(tmpstr, sizeof(tmpstr), "%Y.%m.%d", jstimeptr);
+	sprintf(command, "MAIN.t1.txt=\"%s\"", tmpstr);
 	sendcmd(command);
 
 	return;
@@ -214,7 +222,6 @@ void syscmdswitch(void)
 
 	case 5:						// dstarrepeater 起動
 		st.mode = 2;
-		system("sudo killall -q -s 2 dmonitor");			// test 通常なし
 		system("sudo systemctl restart dstarrepeater.service");
 		dstarrepeater();
 		break;
@@ -265,13 +272,15 @@ void syscmdswitch(void)
 			break;
 
 		case 1:	// dmonitor
-//			system("sudo killall -q -s 2 dmonitor");
+			system("sudo killall -q -s 2 dmonitor");
+			system("sudo systemctl restart nextion.service");
 			st.mode = 0;
 			sendcmd("page MAIN");
 			break;
 
 		case 2:	// dstarrepeater
 			system("sudo systemctl stop dstarrepeater.service");
+			system("sudo systemctl restart nextion.service");
 			st.mode = 0;
 			sendcmd("page MAIN");
 			break;
