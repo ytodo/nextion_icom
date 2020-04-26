@@ -77,8 +77,8 @@ void dmonitor(void)
 				continue;
 			}
 
-                        /* 比較後、保存変数をクリア */
-                        chkusercmd[0] = '\0';
+			/* 比較後、保存変数をクリア */
+			chkusercmd[0] = '\0';
 
 			/* 現在の返り値を保存 */
 			strncpy(chkusercmd, usercmd, 8);

@@ -15,15 +15,15 @@
 void dstarrepeater(void)
 {
 	int	fd;
-    	int	i;
-    	int	flag;
+	int	i;
+	int	flag;
 	char	chkusercmd[32]	= {'\0'};
 	char	refcall[9]	= {'\0'};
 	char	nodecall[9]	= {'\0'};
 
-        /* メインスクリーンの初期設定 */
-        sendcmd("dim=dims");
-        sendcmd("page IDLE");
+	/* メインスクリーンの初期設定 */
+	sendcmd("dim=dims");
+	sendcmd("page IDLE");
 
 	/* グローバル変数の初期設定 */
 	sprintf(command, "IDLE.station.txt=\"%s\"", ds.station);	// ノードコールサイン
@@ -51,7 +51,6 @@ void dstarrepeater(void)
 		dispstatus_ref();
 
 
-
 		/*
 		 * 受信処理
 		 */
@@ -70,14 +69,14 @@ void dstarrepeater(void)
 			usercmd[8] = '\0';
 		}
 
-                /* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
-                if ((strlen(usercmd) > 4) && (strncmp(usercmd, chkusercmd, 8) != 0))
-                {
-                      /* 比較後、保存変数をクリア */
-                        chkusercmd[0] = '\0';
+		/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
+		if ((strlen(usercmd) > 4) && (strncmp(usercmd, chkusercmd, 8) != 0))
+		{
+			/* 比較後、保存変数をクリア */
+			chkusercmd[0] = '\0';
 
-                        /* 現在の返り値を保存 */
-                        strncpy(chkusercmd, usercmd, 8);
+			/* 現在の返り値を保存 */
+			strncpy(chkusercmd, usercmd, 8);
 
 			/* リフレクタ接続 */
 			if (strncmp(usercmd, "REF", 3) == 0 || strncmp(usercmd, "XLX", 3) == 0 ||
@@ -100,9 +99,6 @@ void dstarrepeater(void)
 
 				sprintf(cmdline, "remotecontrold %s link never %s", nodecall, refcall);
 				system(cmdline);
-
-printf("%s\n", cmdline);
-
 				sendcmd("page IDLE");
 			}
 			else

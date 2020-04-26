@@ -60,20 +60,6 @@ void	getusers(void)
 			}
 		}
 
-		/* ステータス・ラストハードの表示 */
-//		if ((strncmp(tmpstr, "", 1) != 0) && (strncmp(tmpstr, statpre, 24) != 0))
-//		{
-//			strcpy(statpre, tmpstr);
-
-			/* 取得ステイタス=> STATUS1 */
-//			sendcmd("t9.txt=t8.txt");
-//			sprintf(command, "t8.txt=\"%s\"", status);
-//			sendcmd(command);
-
-			/* statusをクリアする */
-//			status[0] = '\0';
-//		}
-
 		/* 1秒に一回リフレッシュする */
 		sleep(1);
 	}

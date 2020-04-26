@@ -33,10 +33,6 @@
 //              状態表示もし、双方を切れ替えて使用する
 ////////////////////////////////////////////////////////////////////////
 #include "Nextion.h"
-//#include <sys/types.h>  // fork
-//#include <unistd.h>     // fork
-//#include <err.h>
-//#include <errno.h>
 
 int main(void)
 {
@@ -59,48 +55,29 @@ int main(void)
 	getconfig();
 	dispipaddr();
 
-//	pid_t	pid;
-//	pid = fork ();
+	/* 送・受信ループ */
+	while(1)
+	{
+		/* 日付･時刻表示 */
+		dispclock();
+		usleep(WAITTIME * 5);	//0.5sec
 
-//	if (pid == -1)
-//	{
-//		err (EXIT_FAILURE, "Can't fork");
-//	}
-//	else if (pid == 0)
-//	{
-//		printf("Child process");
-//		dispcapture();
-//	}
-//	else
-//	{
+		/* タッチパネルのデータを読み込む */
+		recvdata(usercmd);
 
-		/* 送・受信ループ */
-		while(1)
+		/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
+		if ((strlen(usercmd) > 4) && (strncmp(usercmd, chkusercmd, 8) != 0))
 		{
-			/* MAINへの簡易ラストハード表示 */
-//			dispstatus_dmon();
+			/* 比較後、保存変数をクリア */
+			chkusercmd[0] = '\0';
 
-			/* 日付･時刻表示 */
-			dispclock();
-			usleep(WAITTIME * 5);	//0.5sec
+			/* 現在の返り値を保存 */
+			strncpy(chkusercmd, usercmd, 8);
 
-			/* タッチパネルのデータを読み込む */
-			recvdata(usercmd);
-
-			/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
-			if ((strlen(usercmd) > 4) && (strncmp(usercmd, chkusercmd, 8) != 0))
-			{
-				/* 比較後、保存変数をクリア */
-				chkusercmd[0] = '\0';
-
-				/* 現在の返り値を保存 */
-				strncpy(chkusercmd, usercmd, 8);
-
-				/* コマンドをスイッチに振り分ける */
-				syscmdswitch();
-			}
+			/* コマンドをスイッチに振り分ける */
+			syscmdswitch();
 		}
-//	}
+	}
 
 	/* GPIO シリアルポートのクローズ */
 	close(fd);

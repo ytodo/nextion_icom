@@ -37,7 +37,6 @@ void getconfig(void)
 	/* ファイルクローズ */
 	fclose(fp);
 
-
 	///// DStarRepeater /////
 	/* dstarrepeater(設定ファイル)をオープンする */
 	if ((fp = fopen(CONFFILE, "r")) == NULL)

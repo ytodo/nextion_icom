@@ -292,7 +292,6 @@ void	dispstatus_dmon(void)
 				sendcmd(command);
 				sendcmd("MAIN.status_dmon.txt=\"\"");
 				stat = 0;
-
 			}
 
 			/* どこに接続したかを取得 */

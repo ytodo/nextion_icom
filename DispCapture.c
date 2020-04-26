@@ -21,20 +21,20 @@ void	dispcapture(void)
 		/* ircddbgateway.dumpをオープン */
 		if ((fp = popen(cmdline, "r")) == NULL)
         	{
-	                return;
+			return;
         	}
 
-	        line[0] = '\0';
-        	fgets(line,  sizeof(line),  fp);
-	        fgets(line,  sizeof(line),  fp);
-        	fgets(line,  sizeof(line),  fp);
+		line[0] = '\0';
+		fgets(line,  sizeof(line),  fp);
+		fgets(line,  sizeof(line),  fp);
+		fgets(line,  sizeof(line),  fp);
 
-	        /* ソケットのクローズ   */
+		/* ソケットのクローズ   */
         	pclose(fp);
 
-	        if ((tmpptr = strstr(line, "DSRP")) != NULL)
+		if ((tmpptr = strstr(line, "DSRP")) != NULL)
         	{
-                	strcpy(line, tmpptr);
+			strcpy(line, tmpptr);
 
 			// 0         1         2         3         4
 			// 01234567890123456789012345678901234567890123456789
@@ -45,12 +45,12 @@ void	dispcapture(void)
 				strncpy(callsign, &line[35], 8);
 				strncpy(subcall, &line[43], 4);
 
-	                        /* JST 時刻の算出 */
+				/* JST 時刻の算出 */
 				jstimer = time(NULL);
 				jstimeptr = localtime(&jstimer);
 
-	                        /* LastheardとしてMAINページに表示 */
-        	               	strftime(tmpstr, sizeof(tmpstr), "%H:%M ", jstimeptr);
+				/* LastheardとしてMAINページに表示 */
+				strftime(tmpstr, sizeof(tmpstr), "%H:%M ", jstimeptr);
 
 				sprintf(command, "MAIN.t1.txt=\"%s %s/%s\"", tmpstr, callsign, subcall);
 				sendcmd(command);
