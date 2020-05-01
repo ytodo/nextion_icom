@@ -4,10 +4,8 @@
 //	機能	openport		ttyAMA0ポートを開ける（from ON7LDS source)
 //		sendcmd			Nextionへのコマンド送信
 //		recvdata		Nextionからのコマンド受信
-//		reflesh_idle		Nextionページの再表示
-//		dmonitor_restart	dmonitorのrestart用システムコマンド
-//		dstarrepeater_restart	DStarRepeaterのrestart用システムコマンド
-//		modem_stop		reboot/shutdown前にサービスを止める
+//		dispclock		デジタル時計の表示
+//		syscmdswitch		タッチパネルから受けるコマンドの分岐
 //		基本的なファンクション・コマンドのツールボックス
 ///////////////////////////////////////////////////////////////////////////////////////
 #include "Nextion.h"
@@ -183,6 +181,7 @@ void syscmdswitch(void)
 			system("sudo killall -q -s 9 sleep");
 			sendcmd("dim=dims");
 			sendcmd("page DMON");
+			sendcmd("t1.txt=\"LINK TO : NONE\"");
 			break;
 
 		case 2: // dstarrepeater
