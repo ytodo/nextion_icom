@@ -70,7 +70,7 @@ void dstarrepeater(void)
 		}
 
 		/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
-		if ((strlen(usercmd) > 4) && (strncmp(usercmd, chkusercmd, 8) != 0))
+		if ((strlen(usercmd) > 0) && (strncmp(usercmd, chkusercmd, 8) != 0))
 		{
 			/* 比較後、保存変数をクリア */
 			chkusercmd[0] = '\0';
@@ -80,13 +80,8 @@ void dstarrepeater(void)
 
 			/* リフレクタ接続 */
 			if (strncmp(usercmd, "REF", 3) == 0 || strncmp(usercmd, "XLX", 3) == 0 ||
-			    strncmp(usercmd, "DCS", 3) == 0 || strncmp(usercmd, "XRF", 3) == 0)
+			    strncmp(usercmd, "DCS", 3) == 0 || strncmp(usercmd, "XRF", 3) == 0 || (strlen(usercmd) == 1 && strncmp(usercmd, "U", 1) == 0))
 			{
-				/* リフレクタ接続コマンドの整形 */
-				strncpy(refcall, usercmd, 6);
-				strcat(refcall, "_");
-				strncat(refcall, &usercmd[6], 1);
-
 				/* ノードコールサインの整形 */
 				strncpy(nodecall, ds.station, 8);
 				for (i = 0; i < 8; i++)
@@ -97,8 +92,22 @@ void dstarrepeater(void)
 					}
 				}
 
-				sprintf(cmdline, "remotecontrold %s link never %s", nodecall, refcall);
-				system(cmdline);
+				/* リフレクタ接続解除 */
+				if (strncmp(usercmd, "U", 1) == 0)
+				{
+					sprintf(cmdline, "remotecontrold %s unlink", nodecall);
+					system(cmdline);
+				}
+				else
+				{
+					/* リフレクタ接続コマンドの整形 */
+					strncpy(refcall, usercmd, 6);
+					strcat(refcall, "_");
+					strncat(refcall, &usercmd[6], 1);
+
+					sprintf(cmdline, "remotecontrold %s link never %s", nodecall, refcall);
+					system(cmdline);
+				}
 				sendcmd("page IDLE");
 			}
 			else
@@ -107,7 +116,7 @@ void dstarrepeater(void)
 				syscmdswitch();
 			}
 		}
-	}// Loop
+	}		// Loop
 
 	return;
 }

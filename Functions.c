@@ -164,7 +164,7 @@ void syscmdswitch(void)
 	{
 	case 1:						// restart
 		switch (st.mode) {
-		case 0: // MAIN
+		case 0: // MAIN (初期立上げ時の状態に戻る）
 			sendcmd("dim=10");
 			system("sudo systemctl restart ircddbgateway.service");
 			system("sudo systemctl stop dstarrepeater.service");
@@ -179,16 +179,18 @@ void syscmdswitch(void)
 			system("sudo killall -q -s 2 dmonitor");
 			system("sudo rm /var/run/dmonitor.pid");
 			system("sudo killall -q -s 9 sleep");
-			sendcmd("dim=dims");
-			sendcmd("page DMON");
-			sendcmd("t1.txt=\"LINK TO : NONE\"");
+//			sendcmd("dim=dims");
+//			sendcmd("page DMON");
+//			sendcmd("t1.txt=\"LINK TO : NONE\"");
+			dmonitor();
 			break;
 
 		case 2: // dstarrepeater
 			sendcmd("dim=10");
 			system("sudo systemctl restart dstarrepeater.service");
-			sendcmd("dim=dims");
-			sendcmd("page IDLE");
+//			sendcmd("dim=dims");
+//			sendcmd("page IDLE");
+			dstarrepeater();
 			break;
 		}
 		break;
@@ -225,6 +227,8 @@ void syscmdswitch(void)
 		break;
 
 	case 6:						// update
+		sendcmd("SYSTEM.b5.pco=65504");
+		sendcmd("SYSTEM.b5.txt=\"UPDATE\"");
 		system("sudo killall -q -s 2 dmonitor");
 		system("sudo rm /var/run/dmonitor.pid");
 		system("sudo apt clean && apt update && apt install dmonitor");
