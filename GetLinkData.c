@@ -124,7 +124,7 @@ void	previous_page(void)
 				sendcmd(command);
 			}
 		}
-		st.selected_page = pages + 1;       	// 表示した最後のページを保存
+		st.selected_page = pages;       	// 表示した最後のページを保存
 	}
 
 	/* 現在のページが最初のページではない場合 */
@@ -132,10 +132,16 @@ void	previous_page(void)
 	{
 		st.selected_page -= 1;
 
+		/* 表示を優先して書出し */
 		for (i = 0; i < 21; i++)
 		{
 			sprintf(command, "RPTLIST.t%d.txt=\"%s\"",  i + 100, linkdata[i + 21 * st.selected_page].call);
 			sendcmd(command);
+		}
+
+		/* 表示と同データをストア */
+		for (i = 0; i < 21; i++)
+		{
 			sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i      , linkdata[i + 21 * st.selected_page].call);
 			sendcmd(command);
 		}
@@ -183,7 +189,7 @@ void	next_page(void)
 	/* 現在のページが最後のページより一つ前ではない場合 */
 	else
 	{
-		if (st.selected_page == pages + 1)
+		if (st.selected_page == pages)
 		{
 			st.selected_page = 0;
 		}
@@ -192,10 +198,16 @@ void	next_page(void)
 			st.selected_page += 1;
 		}
 
+		/* 表示を優先して書出し */
 		for (i = 0; i < 21; i++)
 		{
 			sprintf(command, "RPTLIST.t%d.txt=\"%s\"",  i + 100, linkdata[i + 21 * st.selected_page].call);
 			sendcmd(command);
+		}
+
+		/* 表示と同データをストア */
+		for (i = 0; i < 21; i++)
+		{
 			sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i      , linkdata[i + 21 * st.selected_page].call);
 			sendcmd(command);
 		}
