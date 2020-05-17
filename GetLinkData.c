@@ -189,10 +189,12 @@ void	next_page(void)
 	/* 現在のページが最後のページより一つ前ではない場合 */
 	else
 	{
-		if (st.selected_page == pages)
+		/* 最後のページであったとき */
+		if (st.selected_page == pages + 1)
 		{
 			st.selected_page = 0;
 		}
+		/* 最後でも、その一つ前でもないとき */
 		else
 		{
 			st.selected_page += 1;
