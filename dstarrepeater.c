@@ -100,12 +100,17 @@ void dstarrepeater(void)
 				}
 				else
 				{
+
+printf("%s\n", usercmd);
 					/* リフレクタ接続コマンドの整形 */
 					strncpy(refcall, usercmd, 6);
+					refcall[6] = '\0';
 					strcat(refcall, "_");
 					strncat(refcall, &usercmd[6], 1);
 
 					sprintf(cmdline, "remotecontrold %s link never %s", nodecall, refcall);
+printf("%s\n", refcall);
+
 					system(cmdline);
 				}
 				sendcmd("page IDLE");
