@@ -125,6 +125,7 @@ void	previous_page(void);			//	〃
 void	dmonitor(void);				// dmonitor.c
 void	dstarrepeater(void);			// dstarrepeater.c
 void	getusers(void);				// GetUsers.c
+void	getactive(void);			// GetActive.c
 void	getconfig(void);			// GetConfig.c
 void	dispstatus_dmon(void);			// DispLOGinfo.c
 void	dispstatus_ref(void);			//	〃

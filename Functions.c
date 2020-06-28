@@ -156,6 +156,7 @@ void syscmdswitch(void)
 	if (strncmp(usercmd, "USERS",    5) == 0) flag =  9;
 	if (strncmp(usercmd, "next",     4) == 0) flag = 10;
 	if (strncmp(usercmd, "previous", 8) == 0) flag = 11;
+	if (strncmp(usercmd, "ACTIVE",   6) == 0) flag = 13;
 
 	/* dmonitor, dstarrepeater共通 */
 	if (strncmp(usercmd, "return",   6) == 0) flag = 12;
@@ -287,6 +288,11 @@ void syscmdswitch(void)
 			sendcmd("page MAIN");
 			break;
 		}
+		break;
+
+	case 13:					// ACTIVE REPEATERSパネルへの表示と移動
+		sendcmd("page ACTIVE");
+		getactive();
 		break;
 
 	default:
