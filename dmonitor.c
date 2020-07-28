@@ -56,9 +56,8 @@ void dmonitor(void)
 	/* 送・受信ループ */
 	while (1)
 	{
-		/* タッチパネルのデータを読み込む */
+		/* タッチされたデータを読み込む */
 		recvdata(usercmd);
-
 
 		/* もしタッチデータが選択されていない場合、初回のみデフォルトリピータをセットする */
 		if ((strlen(usercmd) == 0) && (strlen(chkusercmd) == 0) && (strlen(nx.default_rpt) != 0))
@@ -100,7 +99,7 @@ void dmonitor(void)
 					sprintf(command, "sudo /usr/bin/dmonitor '%s' %s %s '%s' '%s'", nx.station, linkdata[i].addr, linkdata[i].port, linkdata[i].call, linkdata[i].zone);
 					system(command);
 					sendcmd("page DMON");
-					usleep(atoi(nx.microsec) * 3);
+//					usleep(atoi(nx.microsec) * 3);
 					flag = 1;		// リピータ接続だった時 1 となる
 				}
 			}

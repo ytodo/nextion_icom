@@ -23,7 +23,11 @@ void	getactive(void)
 	{
 		/* [Return]又は接続リピータの検出 */
 		recvdata(ret);
-		if (strlen(ret) > 3) break;
+		if (strlen(ret) > 3)
+		{
+			strncpy(usercmd, ret, 8);
+			break;
+		}
 
 		/* コマンドの標準出力オープン */
 		if ((fp = fopen(active_tbl, "r")) == NULL)

@@ -270,8 +270,10 @@ void	dispstatus_dmon(void)
 			{
 				/* Apr 23 05:55:41 ham06 dmonitor[16583]: JA2KWX A from ZR */
 				memset(&status[0], '\0', sizeof(status));
-				strncpy(status, line, 16);			// 日付と時刻
-				strncat(status, tmpptr - 9, 8);			// Callsign
+				strncpy(status, line, 12);			// 日付と時刻
+				strcat(status, " ");
+				strncat(status, tmpptr - 9, 8);			// Callsign1,2
+				strncat(status, tmpptr + 4, 3);			// ZR/GW
 				status[24] = '\0';
 
 				/* JST 時刻の算出 */
@@ -299,6 +301,9 @@ void	dispstatus_dmon(void)
 			{
 				strncpy(rptcall, tmpptr + 13, 8);
 				rptcall[8] = '\0';
+
+printf("%s\n", rptcall);
+
 			}
 
 			/* Last packet wrong ステータスの場合、文字を黄色に */
