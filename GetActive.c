@@ -23,7 +23,12 @@ void	getactive(void)
 	{
 		/* [Return]又は接続リピータの検出 */
 		recvdata(ret);
-		if (strlen(ret) > 3)
+
+		/* [Return]の時はループを抜け戻る */
+		if ((strncmp(ret, "Return", 6)) == 0) break;
+
+		/* リピータコールの時は、コールをコマンド変数に代入して戻る */
+		if ((strncmp(ret, "J", 1)) == 0)
 		{
 			strncpy(usercmd, ret, 8);
 			break;

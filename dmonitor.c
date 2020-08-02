@@ -99,7 +99,6 @@ void dmonitor(void)
 					sprintf(command, "sudo /usr/bin/dmonitor '%s' %s %s '%s' '%s'", nx.station, linkdata[i].addr, linkdata[i].port, linkdata[i].call, linkdata[i].zone);
 					system(command);
 					sendcmd("page DMON");
-//					usleep(atoi(nx.microsec) * 3);
 					flag = 1;		// リピータ接続だった時 1 となる
 				}
 			}
@@ -111,7 +110,8 @@ void dmonitor(void)
 		/* ステータス・ラストハードの読み取り */
 		dispstatus_dmon();
 
-	}		// Loop
+		usleep(atoi(nx.microsec) * 5);
+	}	// Loop
 
 	return;
 }
