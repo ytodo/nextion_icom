@@ -232,7 +232,7 @@ void syscmdswitch(void)
 		sendcmd("SYSTEM.b5.txt=\"UPDATE\"");
 		system("sudo killall -q -s 2 dmonitor");
 		system("sudo rm /var/run/dmonitor.pid");
-		system("sudo apt clean && apt update && apt install dmonitor");
+		system("sudo apt clean && apt update && apt install dmonitor -y");
 
 		sendcmd("dim=10");
 		system("sudo systemctl restart nextion.service");
