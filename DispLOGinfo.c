@@ -301,9 +301,6 @@ void	dispstatus_dmon(void)
 			{
 				strncpy(rptcall, tmpptr + 13, 8);
 				rptcall[8] = '\0';
-
-printf("%s\n", rptcall);
-
 			}
 
 			/* Last packet wrong ステータスの場合、文字を黄色に */
@@ -343,7 +340,7 @@ printf("%s\n", rptcall);
 		}
 
 		/* ドロップパケット比の表示 */
-		if ((atoi(nx.debug) == 1) && ((tmpptr = strstr(line, "drop")) != NULL))
+		if ((nx.debug == "1") && ((tmpptr = strstr(line, "drop packet")) != NULL))
 		{
 			memset(&status[0], '\0', sizeof(status));
 			strcpy(status, "Drop PKT ");
