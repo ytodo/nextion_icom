@@ -1,0 +1,9 @@
+[Unit]
+Description=ircDDBGateway Start delay timer
+
+[Timer]
+OnBootSec=30sec
+
+[Install]
+WantedBy=timers.target
+

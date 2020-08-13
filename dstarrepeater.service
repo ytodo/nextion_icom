@@ -1,0 +1,11 @@
+[Unit]
+Description=D-STAR Repeater Daemon
+After=network.target
+
+[Service]
+#Type=forking
+ExecStart=/usr/bin/dstarrepeaterd
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

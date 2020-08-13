@@ -1,0 +1,11 @@
+[Unit]
+Description=D-STAR ircDDBGateway Daemon
+After=network.target
+
+[Service]
+#Type=forking
+ExecStart=/usr/bin/ircddbgatewayd
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

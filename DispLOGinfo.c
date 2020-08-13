@@ -340,7 +340,7 @@ void	dispstatus_dmon(void)
 		}
 
 		/* ドロップパケット比の表示 */
-		if ((nx.debug == "1") && ((tmpptr = strstr(line, "drop packet")) != NULL))
+		if ((atoi(nx.debug) == 1) && ((tmpptr = strstr(line, "drop packet")) != NULL))
 		{
 			memset(&status[0], '\0', sizeof(status));
 			strcpy(status, "Drop PKT ");

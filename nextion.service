@@ -1,11 +1,11 @@
-[Unit]
-Description = Nextion Service for "DStarRepeater" by Yosh Todo/JE3HCZ
+﻿[Unit]
+Description = Nextion Service for "dmonitor" by Yosh Todo/JE3HCZ
 After = network.target
 
 [Service]
-#Type = forking
 Type = simple
 ExecStart = /usr/local/bin/nextion
+ExecStop = /usr/bin/killall -q -s 2 nextion
 
 [Install]
 WantedBy = multi-user.target
