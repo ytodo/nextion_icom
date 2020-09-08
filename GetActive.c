@@ -34,6 +34,9 @@ void	getactive(void)
 			break;
 		}
 
+                /* ファイルを読む前に更新する */
+                system("sudo /var/www/cgi-bin/repActive");
+
 		/* コマンドの標準出力オープン */
 		if ((fp = fopen(active_tbl, "r")) == NULL)
 		{
