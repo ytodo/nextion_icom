@@ -25,5 +25,13 @@ $(PROGRAM)	: $(OBJECTS)
 clean	:
 	$(RM)  $(PROGRAM) $(OBJECTS)
 
+# Install files
+install	:
+	sudo mv $(PROGRAM)		/usr/local/bin
+	sudo cp $(PROGRAM).service	/etc/systemd/system
+	sudo systemctl daemon-reload
+	sudo systemctl enable 	$(PROGRAM).service
+	sudo systemctl restart	$(PROGRAM).service
+
 # Dependency of Header Files
 $(OBJECTS)		: Nextion.h
