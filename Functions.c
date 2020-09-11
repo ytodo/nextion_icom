@@ -177,20 +177,17 @@ void syscmdswitch(void)
 
 		case 1: // dmonitor
 			sendcmd("dim=10");
+			system("sudo systemctl stop rpt_conn");
 			system("sudo killall -q -s 2 dmonitor");
 			system("sudo rm /var/run/dmonitor.pid");
+			system("sudo rm -f /var/run/rpt_conn.pid");
 			system("sudo killall -q -s 9 sleep");
-//			sendcmd("dim=dims");
-//			sendcmd("page DMON");
-//			sendcmd("t1.txt=\"LINK TO : NONE\"");
 			dmonitor();
 			break;
 
 		case 2: // dstarrepeater
 			sendcmd("dim=10");
 			system("sudo systemctl restart dstarrepeater.service");
-//			sendcmd("dim=dims");
-//			sendcmd("page IDLE");
 			dstarrepeater();
 			break;
 		}

@@ -90,7 +90,8 @@ void dmonitor(void)
 				if (strncmp(linkdata[i].call, usercmd, 8) == 0)
 				{
 					/* 現在稼働中のdmonitor をKILL */
-					system("sudo killall -q -s 9 repeater_scan");
+					system("sudo systemctl stop rpt_conn");
+					system("sudo rm -f /var/run/rpt_conn.pid");
 					system("sudo killall -q -s 2 dmonitor");
 					system("sudo rm /var/run/dmonitor.pid");
 					system("sudo rig_port_check");

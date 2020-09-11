@@ -30,6 +30,11 @@ install	:
 	sudo mv $(PROGRAM)		/usr/local/bin
 	sudo cp $(PROGRAM).service	/etc/systemd/system
 	sudo systemctl daemon-reload
+	sudo killall -s 9 dmonitor
+	sudo systemctl stop auto_repmon.service
+	sudo systemctl disable auto_repmon.service
+	sudo systemctl stop rpt_conn.service
+	sudo systemctl disable rpt_conn.service
 	sudo systemctl enable 	$(PROGRAM).service
 	sudo systemctl restart	$(PROGRAM).service
 
