@@ -9,8 +9,8 @@
 
 FILE	*fp;					// ファイルポインタ
 char	*tmpptr;				// 一時的ポインタ
-char	line[256]	= {'\0'};		// ファイルから読んだ一行
 char	tmpstr[32]	= {'\0'};		// 一時的文字列
+char	line[256]	= {'\0'};		// ファイルから読んだ一行
 
 
 /********************************************************
@@ -239,110 +239,143 @@ void dispstatus_ref(void)
 void	dispstatus_dmon(void)
 {
 
+        char    *getstatus      = "tail -n3 /var/log/dmonitor.log";
+        char    mycall[8]       = {'\0'};
+        char    mycallpre[8]    = {'\0'};
+        char    tmpstat[32]     = {'\0'};
 	char	ret[2]		= {'\0'};
-	char	jitter_av[8]	= {'\0'};
-	char	jitter_mx[8]	= {'\0'};
-	char	jitter_mi[8]	= {'\0'};
 	char	status[32]	= {'\0'};
 	char	rptcall[9]	= {'\0'};
 	int	stat		= 0;
 
 	/* コマンドの標準出力オープン */
-	strcpy(cmdline, "tail -n3 /var/log/dmonitor.log");
-	if ((fp = popen(cmdline, "r")) == NULL)
+	if ((fp = popen(getstatus, "r")) == NULL)
 	{
 		printf("dmonitor.log file open error!\n");
 		return;
 	}
 
-	/* 過去のデータをクリアする  */
-	memset(&status[0], '\0', sizeof(status));
-	memset(&rptcall[0],'\0', sizeof(rptcall));
-
 	/* 標準出力を配列に取得 */
 	while ((fgets(line, sizeof(line), fp)) != NULL)
 	{
+		/* 過去のデータをクリアする  */
+		memset(&status[0], '\0', sizeof(status));
+		memset(&rptcall[0],'\0', sizeof(rptcall));
+
 		/* status に関する文字列があったら */
 		if ((tmpptr = strstr(line, "from")) != NULL)
 		{
-			/* 日付時間とコールサインをログとして出力 */
-			if ((strstr(line, "Connected") == NULL) && (strstr(line, "Last packet") == NULL))
-			{
-				/* Apr 23 05:55:41 ham06 dmonitor[16583]: JA2KWX A from ZR */
-				memset(&status[0], '\0', sizeof(status));
-				strncpy(status, line, 12);			// 日付と時刻
-				strcat(status, " ");
-				strncat(status, tmpptr - 9, 8);			// Callsign1,2
-				strncat(status, tmpptr + 4, 3);			// ZR/GW
-				status[24] = '\0';
+	                /* <1-1>dmonitorへの信号がZRからかGW側からかを判断して status 代入の準備のみする */
+        	        if ((tmpptr = strstr(line, "from ZR")) != NULL || (tmpptr = strstr(line, "from GW")) != NULL)
+                	{
+	                        memset(&tmpstat[0], '\0', sizeof(tmpstat));
 
-				/* JST 時刻の算出 */
-				jstimer = time(NULL);
-				jstimeptr = localtime(&jstimer);
+        	                /* MyCallsignの取得 */
+                	        memset(&mycall[0], '\0', sizeof(mycall));
+                        	strncpy(mycall, tmpptr - 9, 8);         // My Callsign
 
-				/* LastheardとしてMAINページに表示 */
-				strftime(tmpstr, sizeof(tmpstr), "%H:%M ", jstimeptr);
-				strncat(tmpstr, tmpptr - 9, 8);
-				strcat(tmpstr, "  ");
-				strncat(tmpstr, tmpptr + 5, 2);
-				if (strncmp(&tmpstr[16], "RI", 2))
+	                        /* MyCallsignが単なるループではない場合 */
+        	                if (strncmp(mycall, mycallpre, 8) != 0)
+                	        {
+                        	        strncpy(tmpstat, line, 12);             // 日付時分
+                                	strcat(tmpstat, " ");
+	                                strncat(tmpstat, mycall, 8);            // コールサイン
+        	                        strncat(tmpstat, tmpptr + 4, 3);        // ZR/GW
+                	        }
+	                }
+
+	                /* <2>無線機から送信したときのログを出力 */
+        	        if ((tmpptr = strstr(line, "from")) != NULL)
+                	{
+	                        if (strncmp("Rig",  tmpptr + 5, 3) == 0)
 				{
-					strcpy(&tmpstr[16], "RIG");
+					if (nx.type == "ICOM") 	 strncpy(tmpstr, " TM", 3);
+					if (nx.type == "DVAP")	 strncpy(tmpstr, " RF", 3);
+					if (nx.type == "NODE")   strncpy(tmpstr, " RF", 3);
+					if (nx.type == "DVMEGA") strncpy(tmpstr, " RF", 3);
 				}
-				tmpstr[19] = '\0';
-				sprintf(command, "MAIN.t0.txt=\"%s\"", tmpstr);
-				sendcmd(command);
-				sendcmd("MAIN.status_dmon.txt=\"\"");
-				stat = 0;
-			}
 
-			/* どこに接続したかを取得 */
+                	        strncpy(status, line, 12);              // 日付時分
+                        	strcat(status, " ");
+	                        strncat(status, tmpptr - 9, 8);         // コールサイン
+        	                strcat(status, tmpstr);                 // Terminal-AP Mode/DVAP Mode
+                	        stat = 0;
+	                }
+
+			/* <3>どこに接続したかを取得 */
 			if ((tmpptr = strstr(line, "Connected")) != NULL)
 			{
 				strncpy(rptcall, tmpptr + 13, 8);
 				rptcall[8] = '\0';
 			}
-
-			/* Last packet wrong ステータスの場合、文字を黄色に */
-			if ((stat == 1) && (nx.debug == "1") && (strstr(line, "Last packet wrong") != NULL))
-			{
-				strcpy(status, "Last packet wrong...");
-			}
 		}
 
-		/* dmonitorの開始とバージョンを取得 */
+                /* <1-2>rpt2, rpt1, ur, my の行が見つかったら,コールサインを照合して前段のtmpstatをstatusに代入 */
+                if ((tmpptr = strstr(line, "my:")) != NULL)
+                {
+                        if (strncmp(mycall, tmpptr + 3, 8) == 0) strcpy(status, tmpstat);
+                        stat = 0;
+                }
+
+
+		/* <4>dmonitorの開始とバージョンを取得 */
 		if ((tmpptr = strstr(line, "dmonitor start")) != NULL)
 		{
-			memset(&status[0], '\0', sizeof(status));
 			strncpy(status, tmpptr, 21);
+		}
+
+                /* <6>DVAP使用時の周波数 */
+                if ((atoi(nx.debug) == 1) && ((tmpptr = strstr(line, "Frequency Set")) != NULL))
+                {
+                        strcpy(status, "DVAP FREQ. ");
+                        strncat(status, tmpptr + 14, 3);
+                        strcat(status, ".");
+                        strncat(status, tmpptr + 17, 3);
+                        strcat(status, " MHz");
+                        break;
+                }
+
+		/* Last packet wrong ステータスの場合、文字を黄色に */
+		if ((stat == 1) && (nx.debug == "1") && (strstr(line, "Last packet wrong") != NULL))
+		{
+			strcpy(status, "Last packet wrong...");
 		}
 
 		/* バッファの拡張のサイズを取得 */
 		if ((tmpptr = strstr(line, "New FiFo buffer")) != NULL)
 		{
-			memset(&status[0], '\0', sizeof(status));
 			strcpy(status, tmpptr + 9);
 			status[strlen(status) - 1] = '\0';
 		}
+
+                /* <10>UNLINKコマンドの処理 */
+                if (strstr(line, "my2:UNLK") != NULL)
+                {
+                        strcpy(status, "UNLINK FROM RIG");
+
+               	        system("sudo systemctl restart rpt_conn");
+                       	system("sudo systemctl restart auto_repmon_light");
+                        system("sudo killall -q -s 2 dmonitor");
+       	                system("sudo rm -f /var/nun/dmonitor.pid");
+                }
 
 		/* 接続解除を取得 */
 		if ((atoi(nx.debug) == 1) && (strstr(line, "dmonitor end") != NULL))
 		{
 			memset(&status[0], '\0', sizeof(status));
 			strcpy(status, "Disconnected");
+			strcpy(rptcall, "NONE");
 		}
 
-		/* 無線機の接続状況 */
-		if ((atoi(nx.debug) == 1) && (strstr(line, "init/re-init") != NULL))
-		{
-			memset(&status[0], '\0', sizeof(status));
-			strcpy(status, "Initializing RIG is done.");
-		}
+                /* <9>無線機の接続状況 */
+                if ((atoi(nx.debug) == 1) && (strstr(line, "init/re-init") != NULL))
+                {
+                        strcpy(status, "RIG initializing is done.");
+                }
 
 		/* ドロップパケット比の表示 */
 		if ((atoi(nx.debug) == 1) && ((tmpptr = strstr(line, "drop packet")) != NULL))
 		{
-			memset(&status[0], '\0', sizeof(status));
 			strcpy(status, "Drop PKT ");
 			strcat(status, tmpptr + 17);
 			status[strlen(status) - 1] = '\0';
@@ -355,18 +388,18 @@ void	dispstatus_dmon(void)
 	pclose(fp);
 
 
-	/* 接続先の表示*/
-	if ((strncmp(rptcall, "", 1) != 0) && (strncmp(rptcall, rptcallpre, 8) != 0))
-	{
-		strncpy(rptcallpre, rptcall, 8);
-		sprintf(command, "DMON.t1.txt=\"LINK TO : %s\"", rptcall);
-		sendcmd(command);
-		sprintf(command, "DMON.link.txt=\"LINK TO : %s\"", rptcall);
-		sendcmd(command);
-	}
+        /* 接続先の表示*/
+        if (((strncmp(rptcall, "J", 1) == 0) || (strncmp(rptcall, "NONE", 4) == 0)) && (strncmp(rptcall, rptcallpre, 8) != 0))
+        {
+                strncpy(rptcallpre, rptcall, 8);
+                sprintf(command, "MAIN.t1.txt=\"LINK TO : %s\"", rptcall);
+                sendcmd(command);
+                sprintf(command, "MAIN.link.txt=\"LINK TO : %s\"", rptcall);
+                sendcmd(command);
+        }
 
 	/* ステータス・ラストハードの表示 */
-	if ((strncmp(status, "", 1) != 0) && (strncmp(status, statpre, 24) != 0))
+        if ((strlen(status) != 0) && (strncmp(status, statpre, 24) != 0))
 	{
 		strcpy(statpre, status);
 
@@ -387,15 +420,3 @@ void	dispstatus_dmon(void)
 
 	return;
 }
-
-
-/* sample
-Nov 16 09:35:00 ham12 dmonitor[30968]: drop pakcet rate 0.00% (0/22)
-Nov 16 09:35:00 ham12 dmonitor[30968]: jitter info. ave:20mSec. max:26mSec. min:17mSec.
-Nov 16 09:35:20 ham12 dmonitor[30968]: dmonitor end
-Nov 16 09:35:20 ham12 dmonitor[9408]: dmonitor start V01.27 (Compiled Nov 11 2019 12:50:00)
-Nov 16 09:35:20 ham12 dmonitor[9408]: Connected to JP3YIY A (153.131.76.69:51000) from JE3HCZ D
-Nov 16 09:35:21 ham12 dmonitor[9408]: RIG(ID-xxPlus) open
-Nov 16 09:35:21 ham12 dmonitor[9408]: hole punch done.
-Nov 16 09:35:21 ham12 dmonitor[9408]: RIG(ID-xxPlus) init/re-init done
-*/

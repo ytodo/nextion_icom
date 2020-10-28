@@ -66,7 +66,7 @@ int main(void)
 		recvdata(usercmd);
 
 		/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
-		if ((strlen(usercmd) > 4) && (strncmp(usercmd, chkusercmd, 8) != 0))
+		if ((strlen(usercmd) > 0) && (strncmp(usercmd, chkusercmd, 8) != 0))
 		{
 			/* 比較後、保存変数をクリア */
 			chkusercmd[0] = '\0';

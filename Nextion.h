@@ -83,6 +83,7 @@ typedef	struct {
 	char	clock_color[8];			// デジタル時計の文字色指定
 	char	microsec[8];			// リスト書き込み時のスピード調整用
 	char	debug[1];			// 0:通常／1:デバッグモード(status表示が多くなる）
+	char	type[6];			// ICOM, DVAP, DVMEGA, NODE が入る
 } nextion_ini_t;
 extern	nextion_ini_t	nx;			// nextion.iniの内容
 

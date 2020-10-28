@@ -21,6 +21,11 @@ void dmonitor(void)
 	char	chkusercmd[8]	= {'\0'};
 	char	tmpstr[32]	= {'\0'};
 
+	/* dmonitor関連サービスの起動 */
+        system("sudo systemctl restart auto_repmon.service");
+        system("sudo systemctl restart rpt_conn.service");
+	system("sudo /var/www/cgi-bin/repUpd");
+
 	/* 現在利用可能なリピータリストの取得*/
 	st.num = getlinkdata();
 
@@ -89,11 +94,14 @@ void dmonitor(void)
 			{
 				if (strncmp(linkdata[i].call, usercmd, 8) == 0)
 				{
+					/* 現在稼働中のrpt_conn をKILL */
+//					system("sudo systemctl stop rpt_conn.service");
+//					system("sudo killall -q -s 9 rpt_conn");
+//					system("sudo rm -f /var/run/rpt_conn.pid");
+
 					/* 現在稼働中のdmonitor をKILL */
-					system("sudo systemctl stop rpt_conn");
-					system("sudo rm -f /var/run/rpt_conn.pid");
 					system("sudo killall -q -s 2 dmonitor");
-					system("sudo rm /var/run/dmonitor.pid");
+					system("sudo rm -f /var/run/dmonitor.pid");
 					system("sudo rig_port_check");
 
 					/* 接続コマンドの実行 */

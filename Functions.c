@@ -140,6 +140,9 @@ void syscmdswitch(void)
 	int	flag		= 0;
 	int	i		= 0;
 
+
+printf("%s\n", usercmd);
+
 	/* 共通 */
 	if (strncmp(usercmd, "restart",  7) == 0) flag =  1;
 	if (strncmp(usercmd, "reboot",   6) == 0) flag =  2;
@@ -167,21 +170,23 @@ void syscmdswitch(void)
 		switch (st.mode) {
 		case 0: // MAIN (初期立上げ時の状態に戻る）
 			sendcmd("dim=10");
-			system("sudo systemctl restart ircddbgateway.service");
+// GW 分離		system("sudo systemctl restart ircddbgateway.service");
 			system("sudo systemctl stop dstarrepeater.service");
 			system("sudo killall -q -s 2 dmonitor");
-			system("sudo rm /var/run/dmonitor.pid");
+			system("sudo rm -f /var/run/dmonitor.pid");
 			system("sudo killall -q -s 9 sleep");
 			system("sudo systemctl restart nextion");
 			break;
 
 		case 1: // dmonitor
 			sendcmd("dim=10");
-			system("sudo systemctl stop rpt_conn");
+
+			/* dmonitorを終了する */
 			system("sudo killall -q -s 2 dmonitor");
-			system("sudo rm /var/run/dmonitor.pid");
-			system("sudo rm -f /var/run/rpt_conn.pid");
+			system("sudo rm -f /var/run/dmonitor.pid");
 			system("sudo killall -q -s 9 sleep");
+			system("sudo systemctl stop auto_repmon.service");
+
 			dmonitor();
 			break;
 
@@ -195,20 +200,20 @@ void syscmdswitch(void)
 
 	case 2:						// reboot
 		sendcmd("dim=10");
-		system("sudo systemctl stop ircddbgateway.service");
+// GW 分離	system("sudo systemctl stop ircddbgateway.service");
 		system("sudo systemctl stop dstarrepeater.service");
 		system("sudo killall -q -s 2 dmonitor");
-		system("sudo rm /var/run/dmonitor.pid");
+		system("sudo rm -f /var/run/dmonitor.pid");
 		system("sudo killall -q -s 9 sleep");
 		system("sudo shutdown -r now");
 		break;
 
 	case 3:						// shutdown
 		sendcmd("dim=10");
-		system("sudo systemctl stop ircddbgateway.service");
+// GW 分離	system("sudo systemctl stop ircddbgateway.service");
 		system("sudo systemctl stop dstarrepeater.service");
 		system("sudo killall -q -s 2 dmonitor");
-		system("sudo rm /var/run/dmonitor.pid");
+		system("sudo rm -f /var/run/dmonitor.pid");
 		system("sudo killall -q -s 9 sleep");
 		system("sudo shutdown -h now");
 		break;
@@ -229,7 +234,7 @@ void syscmdswitch(void)
 		sendcmd("SYSTEM.b5.txt=\"UPDATE\"");
 		system("sudo killall -q -s 2 dmonitor");
 		system("sudo rm /var/run/dmonitor.pid");
-		system("sudo apt clean && apt update && apt install dmonitor -y");
+		system("sudo apt clean && sudo apt update && sudo apt install dmonitor -y");
 
 		sendcmd("dim=10");
 		system("sudo systemctl restart nextion.service");
@@ -266,20 +271,32 @@ void syscmdswitch(void)
 	case 12:					// return
 		switch (st.mode) {
 		case 0:	// MAIN
+			/* 関連する全てのサービスを停止 */
 			system("sudo killall -q -s 2 dmonitor");
+			system("sudo systemctl stop rpt_conn.service");
+			system("sudo systemctl stop auto_repmon.service");
 			system("sudo systemctl stop dstarrepeater.service");
+			st.mode = 0;
 			sendcmd("page MAIN");
 			break;
 
 		case 1:	// dmonitor
+			/* dmonitor関連のサービスを停止 */
 			system("sudo killall -q -s 2 dmonitor");
+			system("sudo systemctl stop rpt_conn.service");
+			system("sudo systemctl stop auto_repmon.service");
+
+			/* nextionを再起動してmodeをMAIN待機画面（０）とする */
 			system("sudo systemctl restart nextion.service");
 			st.mode = 0;
 			sendcmd("page MAIN");
 			break;
 
 		case 2:	// dstarrepeater
+			/* dstarrepeaterを停止 */
 			system("sudo systemctl stop dstarrepeater.service");
+
+			/* nextionを再起動してmodeをMAIN待機画面（０）とする */
 			system("sudo systemctl restart nextion.service");
 			st.mode = 0;
 			sendcmd("page MAIN");
