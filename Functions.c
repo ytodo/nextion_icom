@@ -140,9 +140,6 @@ void syscmdswitch(void)
 	int	flag		= 0;
 	int	i		= 0;
 
-
-printf("%s\n", usercmd);
-
 	/* 共通 */
 	if (strncmp(usercmd, "restart",  7) == 0) flag =  1;
 	if (strncmp(usercmd, "reboot",   6) == 0) flag =  2;
@@ -254,7 +251,7 @@ printf("%s\n", usercmd);
 
 	case 9:						// Remote Usersパネルへ接続ユーザ表示
 		sendcmd("page USERS");
-		sprintf(command, "USERS.b0.txt=\"LINKED USERS on %s\"", rptcallpre);
+		sprintf(command, "USERS.b0.txt=\"LINKED USERS on %s\"", chkrptcall);
 		sendcmd(command);
 		getusers();
 		strcpy(usercmd, "Return");

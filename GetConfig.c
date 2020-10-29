@@ -23,7 +23,6 @@ void getconfig(void)
 		printf("Nextion.ini file open error!\n");
 		return;
 	}
-
 	while ((fgets(line, sizeof(line), fp)) != NULL)
 	{							// 構造体 nextion_ini へ保存
 		if ((ret = strstr(line, "STATION"))     != NULL) sscanf(line, "STATION=%[^\n]",		nx.station);
@@ -32,18 +31,11 @@ void getconfig(void)
 		if ((ret = strstr(line, "CLOCK_COLOR")) != NULL) sscanf(line, "CLOCK_COLOR=%[^\n]",	nx.clock_color);
 		if ((ret = strstr(line, "SLEEPTIME"))   != NULL) sscanf(line, "SLEEPTIME=%s",		nx.microsec);
 		if ((ret = strstr(line, "DEBUG"))       != NULL) sscanf(line, "DEBUG=%s",		nx.debug);
-		if ((ret = strstr(line, "RIGTYPE"))	!= NULL) sscanf(line, "RIGTYPE=%s",		nx.type);
+		if ((ret = strstr(line, "RIGTYPE"))	!= NULL) sscanf(line, "RIGTYPE=%s",		nx.rigtype);
+		if ((ret = strstr(line, "PORT"))        != NULL) sscanf(line, "PORT=%s",		nx.nextion_port);
 	}
-
 	/* ファイルクローズ */
 	fclose(fp);
-
-	/* 基本設定値をdmonitorの設定ファイルに転送 */
-//	if ((fp = fopen(/var/www/ConnectCall, "w")) == NULL)
-//	{
-//		printf("ConnectCall file open error!\n");
-//		return
-//	}
 
 
 	///// DStarRepeater /////

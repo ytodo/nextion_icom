@@ -42,8 +42,19 @@ int main(void)
 	int	i = 0;
 	char	chkusercmd[32]	= {'\0'};
 	char	tmpstr[32]	= {'\0'};
+	char	SERIALPORT[16]	= {'\0'};
 
-	/* GPIO シリアルポートのオープン*/
+	/* シリアルポートのオープン nextion.iniより */
+	if ((nx.nextion_port != NULL) && (strlen(nx.nextion_port) != 0))
+	{
+		/* nextion.iniにポート指定が有る場合 */
+		sprintf(SERIALPORT, "/dev/%s", nx.nextion_port);
+	}
+	else
+	{	/* ポート指定が無い場合 */
+		strcpy(SERIALPORT, "/dev/ttyAMA0");
+
+	}
 	fd = openport(SERIALPORT, BAUDRATE);
 
 	/* メインスクリーンの初期設定 */

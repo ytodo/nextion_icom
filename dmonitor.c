@@ -22,8 +22,8 @@ void dmonitor(void)
 	char	tmpstr[32]	= {'\0'};
 
 	/* dmonitor関連サービスの起動 */
-        system("sudo systemctl restart auto_repmon.service");
-        system("sudo systemctl restart rpt_conn.service");
+//	system("sudo systemctl restart auto_repmon.service");
+//	system("sudo systemctl restart rpt_conn.service");
 	system("sudo /var/www/cgi-bin/repUpd");
 
 	/* 現在利用可能なリピータリストの取得*/
@@ -36,7 +36,6 @@ void dmonitor(void)
 	sendcmd("DMON.stat1.txt=\"\"");
 	sendcmd("DMON.stat2.txt=\"\"");
 	usercmd[0] = '\0';
-
 	sprintf(command, "DMON.station.txt=\"STATION : %s\"", nx.station);
 	sendcmd(command);
 

@@ -48,12 +48,11 @@
 #include	<time.h>
 
 /* Macros */
-#define	SERIALPORT	"/dev/ttyAMA0"
 #define	CONFFILE	"/etc/dstarrepeater"
 #define	INIFILE		"/etc/nextion.ini"
 #define	LOGDIR		"/var/log/"
 #define	DUMPFILE	"/tmp/tcpdump.dstar"
-#define	USBPORT		"/dev/IDxxPlus"
+#define	USBPORT		"/dev/dstar"
 #define	BAUDRATE	B9600
 #define	LISTSIZE	512			// 最大リピータ数
 #define	TXHANG		1			// ラストパケット検出後のハングタイム（秒）
@@ -83,7 +82,8 @@ typedef	struct {
 	char	clock_color[8];			// デジタル時計の文字色指定
 	char	microsec[8];			// リスト書き込み時のスピード調整用
 	char	debug[1];			// 0:通常／1:デバッグモード(status表示が多くなる）
-	char	type[6];			// ICOM, DVAP, DVMEGA, NODE が入る
+	char	rigtype[8];			// ICOM, DVAP, DVMEGA, NODE が入る
+	char	nextion_port[16];		// ttyUSB0, ttyAMA0等nextion.iniで指定
 } nextion_ini_t;
 extern	nextion_ini_t	nx;			// nextion.iniの内容
 
@@ -102,7 +102,7 @@ typedef struct {
 } status_t;
 extern	status_t	st;			// Nextionの使用状況まとめ
 
-extern	char	command[32];			// Nextionに送信するコマンド
+extern	char	command[64];			// Nextionに送信するコマンド
 extern	char	cmdline[128];			// システムコマンド
 extern	char	stat_dmon[32];			// ログファイルからの状況取得用
 extern	char	stat_dstar1[32];		// 	〃
@@ -113,10 +113,15 @@ extern	char	station_dmon[9];		// dmonitor接続用コールサイン
 extern	char	station_dstar[9];		// リフレクタ接続用コールサイン
 extern	char	chklink[16];			// ループ内の多重処理禁止用
 extern	char	chklink2[16];			// ループ内の多重処理禁止用
-extern	char	chkstat[256];			// ループ内の多重処理禁止用
-extern	char	chkstat2[256];
-extern	char	rptcallpre[32];
-extern	char	statpre[32];
+extern	char	line[256];
+extern	char	chkline[256];			// ループ内の多重処理禁止用
+extern	char	chkline2[256];
+extern	char	rptcall[9];
+extern	char	chkrptcall[9];
+extern	char	status[32];
+extern	char	chkstat1[32];
+extern	char	chkstat2[32];
+extern	char	chkstat3[32];
 
 /* Functions */
 int	openport(char *devicename, long baudrate);
@@ -130,6 +135,8 @@ void	getactive(void);			// GetActive.c
 void	getconfig(void);			// GetConfig.c
 void	dispstatus_dmon(void);			// DispLOGinfo.c
 void	dispstatus_ref(void);			//	〃
+int	disp_stat();				//      〃
+int	disp_rpt();				//      〃
 void	dispipaddr(void);			// DispCMDinfo.c
 void	disptemp(void);				//	〃
 void	sendcmd(char *cmd);			// Functions.c
