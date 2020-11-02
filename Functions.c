@@ -172,6 +172,8 @@ void syscmdswitch(void)
 			system("sudo killall -q -s 2 dmonitor");
 			system("sudo rm -f /var/run/dmonitor.pid");
 			system("sudo killall -q -s 9 sleep");
+			system("sudo killall -q -s 9 repeater_scan");
+			system("sudo /var/www/cgi-bin/repUpd");
 			system("sudo systemctl restart nextion");
 			break;
 

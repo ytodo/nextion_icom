@@ -258,7 +258,7 @@ void	dispstatus_dmon(void)
 		memset(status, '\0', sizeof(status));
 		memset(tmpstr, '\0', sizeof(tmpstr));
 
-		/* <3>どこに接続したかを取得 */
+		/* <1>どこに接続したかを取得 */
 		if ((tmpptr = strstr(line, "Connected")) != NULL)
 		{
 			rptcall[0] = '\0';
@@ -266,7 +266,7 @@ void	dispstatus_dmon(void)
 			disp_rpt();
 		}
 
-		/* <4>dmonitorの開始とバージョンを取得 */
+		/* <2>dmonitorの開始とバージョンを取得 */
 		if ((tmpptr = strstr(line, "dmonitor start")) != NULL)
 		{
 			strncpy(status, tmpptr, 21);
@@ -315,7 +315,7 @@ void	dispstatus_dmon(void)
 
 		}
 
-		/* <5>無線機の接続状況 */
+		/* <5-1>モデムの接続状況 */
 		if ((atoi(nx.debug) == 1) && (((tmpptr = strstr(line, "Frequency Set")) != NULL)
 				 || (strstr(line, "RIG(ID-xxPlus) init") != NULL)))
 		{
@@ -334,6 +334,13 @@ void	dispstatus_dmon(void)
 				strcat(status, " MHz");
 			}
 			disp_stat();
+		}
+		/* <5-2>ノードアダプターV7の接続状況 */
+		if ((tmpptr = strstr(line, "PIC program")) != NULL)
+		{
+			 strcpy(status, "Node licensed to ");
+			 strncat(status, tmpptr + 27, 8);
+			 disp_stat();
 		}
 
  		/* <6>Last packet wrong ステータスの場合、文字を黄色に */
@@ -399,11 +406,10 @@ int disp_rpt()
 	if (strcmp(rptcall, chkrptcall) != 0)
 	{
 		strcpy(chkrptcall, rptcall);
-printf("%s\n", rptcall);
 
-		sprintf(command, "MAIN.t1.txt=\"LINK TO : %s\"", rptcall);
+		sprintf(command, "DMON.t1.txt=\"LINK TO : %s\"", rptcall);
 		sendcmd(command);
-		sprintf(command, "MAIN.link.txt=\"LINK TO : %s\"", rptcall);
+		sprintf(command, "DMON.link.txt=\"LINK TO : %s\"", rptcall);
 		sendcmd(command);
 	}
 	return(0);
@@ -424,14 +430,14 @@ int disp_stat()
 printf("%s\n", status);
 
 		/* STATUS1 => STATUS2 */
-		sendcmd("MAIN.stat2.txt=MAIN.stat1.txt");
+		sendcmd("DMON.stat2.txt=DMON.stat1.txt");
 
 		/* 取得ステイタス=> STATUS1 */
-		sprintf(command, "MAIN.stat1.txt=\"%s\"", status);
+		sprintf(command, "DMON.stat1.txt=\"%s\"", status);
 		sendcmd(command);
 
-		sendcmd("MAIN.t2.txt=MAIN.stat1.txt");
-		sendcmd("MAIN.t3.txt=MAIN.stat2.txt");
+		sendcmd("DMON.t2.txt=DMON.stat1.txt");
+		sendcmd("DMON.t3.txt=DMON.stat2.txt");
 		sendcmd("USERS.t8.txt=DMON.stat1.txt");
 		sendcmd("USERS.t9.txt=DMON.stat2.txt");
 	}
