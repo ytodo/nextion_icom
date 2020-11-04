@@ -23,26 +23,35 @@ void dmonitor(void)
 
 	/* dmonitor関連サービスの起動 */
 	system("sudo systemctl restart auto_repmon");
-	system("sudo systemctl restart rpt_conn.service");
+	system("sudo systemctl restart rpt_conn");
 
 	/* 現在利用可能なリピータリストの取得*/
 	st.num = getlinkdata();
 
 	/* メインスクリーンの初期設定 */
 	sendcmd("dim=dims");
-	sendcmd("DMON.station.txt=\"\"");
-	sendcmd("DMON.link.txt=\"LINK TO : NONE\"");
-	sendcmd("DMON.stat1.txt=\"\"");
-	sendcmd("DMON.stat2.txt=\"\"");
-	usercmd[0] = '\0';
+	sendcmd("page DMON");
+
+//	sprintf(command, "DMON.version.txt=\"Ver.%d.%d.%d\"", VERSION, VERSUB, RELEASE);
+//	sendcmd(command);
+//	sendcmd("MAIN.t6.txt=version.txt");	// バージョン表示
+
 	sprintf(command, "DMON.station.txt=\"STATION : %s\"", nx.station);
 	sendcmd(command);
-
-	/* 読み込んだリピータの総数を表示 */
-	sprintf(command, "DMON.stat1.txt=\"Read %d Repeaters\"", st.num);
+	sprintf(command, "DMON.t0.txt=\"STATION : %s\"", nx.station);
 	sendcmd(command);
-	sendcmd("page DMON");
-	sleep(2);
+	sendcmd("DMON.t1.txt=\"LINK TO : NONE\"");
+	sendcmd("DMON.link.txt=\"LINK TO : NONE\"");
+
+	/* Nextionの初期化と読み込んだリピータ総数の表示 */
+	sendcmd("DMON.t2.txt=\"\"");
+	sendcmd("DMON.t3.txt=\"\"");
+	sendcmd("DMON.stat1.txt=\"\"");
+	sendcmd("DMON.stat2.txt=\"\"");
+	sprintf(command, "DMON.stat1.txt=\"Reading %d Repeaters\"", st.num);
+	sendcmd(command);
+	sendcmd("DMON.t2.txt=DMON.stat1.txt");
+
 
 	/* 全リストを空にした後リピータ数分の文字配列にコールサインを格納 */
 	for (i = 0; i < 21; i++)
@@ -51,7 +60,7 @@ void dmonitor(void)
 		sendcmd(command);
 	}
 
-	/* チェックしたIPアドレスをSYSTEM pageに表示 */
+	/* チェックし	たIPアドレスをSYSTEM pageに表示 */
 	sprintf(command, "SYSTEM.va0.txt=\"%s\"", ds.ipaddress);
 	sendcmd(command);
 

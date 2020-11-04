@@ -43,6 +43,8 @@ void dispstatus_ref(void)
 		exit(EXIT_FAILURE);
 	}
 
+// while で回すべき
+
 	/* 標準出力を配列に取得 */
 	fgets(line,  sizeof(line),  fp);
 	line[strlen(line) - 1] = '\0';
@@ -230,7 +232,6 @@ void dispstatus_ref(void)
 }
 
 
-
 /************************************************************
 	dmonitor のログファイルよりラストハード及び
 	状況を取得し変数status に入れる
@@ -270,7 +271,7 @@ void	dispstatus_dmon(void)
 		if ((tmpptr = strstr(line, "dmonitor start")) != NULL)
 		{
 			strncpy(status, tmpptr, 21);
-			disp_rpt();
+			disp_stat();
 		}
 
 		/* <3>dmonitorへの信号がZRからかGW側からかを判断して status 代入の準備のみする */
@@ -332,11 +333,11 @@ void	dispstatus_dmon(void)
 				strcat(status, ".");
 				strncat(status, tmpptr + 17, 3);
 				strcat(status, " MHz");
-			}
+			} 
 			disp_stat();
 		}
 		/* <5-2>ノードアダプターV7の接続状況 */
-		if ((tmpptr = strstr(line, "PIC program")) != NULL)
+		if ((atoi(nx.debug) == 1) && ((tmpptr = strstr(line, "PIC program is licensed to")) != NULL))
 		{
 			 strcpy(status, "Node licensed to ");
 			 strncat(status, tmpptr + 27, 8);
