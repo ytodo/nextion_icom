@@ -167,8 +167,8 @@ void syscmdswitch(void)
 		switch (st.mode) {
 		case 0: // MAIN (初期立上げ時の状態に戻る）
 			sendcmd("dim=10");
-// GW 分離		system("sudo systemctl restart ircddbgateway.service");
-			system("sudo systemctl stop dstarrepeater.service");
+// GW 分離		system("sudo systemctl restart ircddbgateway");
+			system("sudo systemctl stop dstarrepeater");
 			system("sudo killall -q -s 9 sleep");
 			system("sudo killall -q -s 9 repeater_scan");
 			system("sudo killall -q -s 2 dmonitor");
@@ -181,17 +181,17 @@ void syscmdswitch(void)
 			sendcmd("dim=10");
 
 			/* dmonitorを終了する */
-			system("sudo killall -q -s 2 dmonitor");
+			system("sudo killall -q -2 dmonitor");
 			system("sudo rm -f /var/run/dmonitor.pid");
-			system("sudo killall -q -s 9 sleep");
-			system("sudo systemctl stop auto_repmon.service");
+			system("sudo killall -q -9 sleep");
+//			system("sudo systemctl stop auto_repmon");
 
 			dmonitor();
 			break;
 
 		case 2: // dstarrepeater
 			sendcmd("dim=10");
-			system("sudo systemctl restart dstarrepeater.service");
+			system("sudo systemctl restart dstarrepeater");
 			dstarrepeater();
 			break;
 		}
@@ -199,8 +199,8 @@ void syscmdswitch(void)
 
 	case 2:						// reboot
 		sendcmd("dim=10");
-// GW 分離	system("sudo systemctl stop ircddbgateway.service");
-		system("sudo systemctl stop dstarrepeater.service");
+// GW 分離	system("sudo systemctl stop ircddbgateway");
+		system("sudo systemctl stop dstarrepeater");
 		system("sudo killall -q -s 2 dmonitor");
 		system("sudo rm -f /var/run/dmonitor.pid");
 		system("sudo killall -q -s 9 sleep");
@@ -209,8 +209,8 @@ void syscmdswitch(void)
 
 	case 3:						// shutdown
 		sendcmd("dim=10");
-// GW 分離	system("sudo systemctl stop ircddbgateway.service");
-		system("sudo systemctl stop dstarrepeater.service");
+// GW 分離	system("sudo systemctl stop ircddbgateway");
+		system("sudo systemctl stop dstarrepeater");
 		system("sudo killall -q -s 2 dmonitor");
 		system("sudo rm -f /var/run/dmonitor.pid");
 		system("sudo killall -q -s 9 sleep");
@@ -219,12 +219,13 @@ void syscmdswitch(void)
 
 	case 4:						// dmonitor 起動
 		st.mode = 1;
+		system("sudo systemctl stop dstarrepeater");
 		dmonitor();
 		break;
 
 	case 5:						// dstarrepeater 起動
 		st.mode = 2;
-		system("sudo systemctl restart dstarrepeater.service");
+		system("sudo systemctl restart dstarrepeater");
 		dstarrepeater();
 		break;
 
@@ -236,7 +237,7 @@ void syscmdswitch(void)
 		system("sudo apt clean && sudo apt update && sudo apt install dmonitor -y");
 
 		sendcmd("dim=10");
-		system("sudo systemctl restart nextion.service");
+		system("sudo systemctl restart nextion");
 		break;
 
 	case 7:						// バッファの増加
@@ -271,9 +272,11 @@ void syscmdswitch(void)
 		switch (st.mode) {
 		case 0:	// MAIN
 			/* 関連する全てのサービスを停止 */
-			system("sudo killall -q -s 2 dmonitor");
-			system("sudo systemctl stop rpt_conn.service");
-			system("sudo systemctl stop auto_repmon.service");
+			sendcmd("dim=10");
+			system("sudo killall -q -2 dmonitor");
+			system("sudo rm -f /var/run/dmonitor.pid");
+			system("sudo systemctl stop rpt_conn");
+			system("sudo systemctl stop auto_repmon");
 			system("sudo systemctl stop dstarrepeater.service");
 			st.mode = 0;
 			sendcmd("page MAIN");
@@ -281,22 +284,24 @@ void syscmdswitch(void)
 
 		case 1:	// dmonitor
 			/* dmonitor関連のサービスを停止 */
-			system("sudo killall -q -s 2 dmonitor");
-			system("sudo systemctl stop rpt_conn.service");
-			system("sudo systemctl stop auto_repmon.service");
+			sendcmd("dim=10");
+			system("sudo killall -q -2 dmonitor");
+			system("sudo rm -f /var/run/dmonitor.pid");
+			system("sudo systemctl stop rpt_conn");
+			system("sudo systemctl stop auto_repmon");
 
 			/* nextionを再起動してmodeをMAIN待機画面（０）とする */
-			system("sudo systemctl restart nextion.service");
+			system("sudo systemctl restart nextion");
 			st.mode = 0;
 			sendcmd("page MAIN");
 			break;
 
 		case 2:	// dstarrepeater
 			/* dstarrepeaterを停止 */
-			system("sudo systemctl stop dstarrepeater.service");
+			system("sudo systemctl stop dstarrepeater");
 
 			/* nextionを再起動してmodeをMAIN待機画面（０）とする */
-			system("sudo systemctl restart nextion.service");
+			system("sudo systemctl restart nextion");
 			st.mode = 0;
 			sendcmd("page MAIN");
 			break;

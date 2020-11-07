@@ -337,11 +337,10 @@ void	dispstatus_dmon(void)
 			disp_stat();
 		}
 		/* <5-2>ノードアダプターV7の接続状況 */
-		if ((atoi(nx.debug) == 1) && ((tmpptr = strstr(line, "PIC program is licensed to")) != NULL))
+		if ((atoi(nx.debug) == 1) && ((tmpptr = strstr(line, "NODE Alter Header")) != NULL))
 		{
-			 strcpy(status, "Node licensed to ");
-			 strncat(status, tmpptr + 27, 8);
-			 disp_stat();
+			strncpy(status, "NODE ADAPTER INITIALIZED", 24);
+			disp_stat();
 		}
 
  		/* <6>Last packet wrong ステータスの場合、文字を黄色に */
@@ -403,7 +402,7 @@ void	dispstatus_dmon(void)
  *********************************************************************/
 int disp_rpt()
 {
-	/* rptcallが設定されており且つ内容が前回と異なる場合表示する */
+	/* rptcallの内容が前回と異なる場合表示する */
 	if (strcmp(rptcall, chkrptcall) != 0)
 	{
 		strcpy(chkrptcall, rptcall);
@@ -422,13 +421,12 @@ int disp_rpt()
  *********************************************************************/
 int disp_stat()
 {
+	/* statusの内容が過去３回と異なる場合表示する */
 	if ((strcmp(status, chkstat1) != 0) && (strcmp(status, chkstat2) != 0) && (strcmp(status, chkstat3) != 0))
 	{
 		strcpy(chkstat3, chkstat2);
 		strcpy(chkstat2, chkstat1);
 		strcpy(chkstat1, status);
-
-printf("%s\n", status);
 
 		/* STATUS1 => STATUS2 */
 		sendcmd("DMON.stat2.txt=DMON.stat1.txt");
