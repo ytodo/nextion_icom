@@ -169,23 +169,21 @@ void syscmdswitch(void)
 			sendcmd("dim=10");
 // GW 分離		system("sudo systemctl restart ircddbgateway");
 			system("sudo systemctl stop dstarrepeater");
-			system("sudo killall -q -s 9 sleep");
-			system("sudo killall -q -s 9 repeater_scan");
-			system("sudo killall -q -s 2 dmonitor");
+			system("sudo killall -q -2 dmonitor");
 			system("sudo rm -f /var/run/dmonitor.pid");
+			system("sudo killall -q -9 sleep");
+			system("sudo killall -q -9 repeater_scan");
 			system("sudo /var/www/cgi-bin/repUpd");
 			system("sudo systemctl restart nextion");
 			break;
 
 		case 1: // dmonitor
 			sendcmd("dim=10");
-
-			/* dmonitorを終了する */
 			system("sudo killall -q -2 dmonitor");
 			system("sudo rm -f /var/run/dmonitor.pid");
 			system("sudo killall -q -9 sleep");
-//			system("sudo systemctl stop auto_repmon");
-
+			system("sudo killall -q -9 repeater_scan");
+			system("sudo /var/www/cgi-bin/repUpd");
 			dmonitor();
 			break;
 
