@@ -319,7 +319,7 @@ void	dispstatus_dmon(void)
 		/* <5-1>モデムの接続状況 */
 		if ((atoi(nx.debug) == 1) && (((tmpptr = strstr(line, "Frequency Set")) != NULL)
 				 || (strstr(line, "RIG(ID-xxPlus) init") != NULL)))
-		{
+		{				   
 			/* RFを使う場合には周波数表示で初期化表示とする */
 			if (strstr(line, "DVAP"))   strcpy(status, "DVAP FREQ. ");
 			if (strstr(line, "DVMEGA")) strcpy(status, "DVMEGA FREQ. ");
