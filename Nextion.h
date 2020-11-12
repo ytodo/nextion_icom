@@ -52,7 +52,7 @@
 #define	INIFILE		"/etc/nextion.ini"
 #define	LOGDIR		"/var/log/"
 #define	DUMPFILE	"/tmp/tcpdump.dstar"
-#define	USBPORT		"/dev/dstar"
+#define	RIGFILE		"/var/www/rig.type"
 #define	BAUDRATE	B9600
 #define	LISTSIZE	512			// 最大リピータ数
 #define	TXHANG		1			// ラストパケット検出後のハングタイム（秒）

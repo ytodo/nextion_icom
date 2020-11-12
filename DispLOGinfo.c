@@ -1,6 +1,5 @@
 //////////////////////////////////////////////////////////////////////////////////
-//	ファイル名	DispLOGinfo.c
-//			2020.03.07-
+//	ファイル名	DispLOGinfo.c 2020.03.07-
 //	機能	dispstatus_ref	dstarrepeaterd.logから現状をピックアップ
 //		dispstatus_dmon	dmonitor.logから現状をピックアップ
 //		Nextion上にラストハードやステータスとして表示する。
@@ -243,7 +242,6 @@ void	dispstatus_dmon(void)
 	char	*getstatus	= "tail -n3 /var/log/dmonitor.log";
 	char	mycall[9]	= {'\0'};
 	char	mycallpre[9]	= {'\0'};
-	char	stat[5]		= {'\0'};
 
 	/* コマンドの標準出力オープン */
 	if ((fp = popen(getstatus, "r")) == NULL)
@@ -313,13 +311,12 @@ void	dispstatus_dmon(void)
 			strncat(status, tmpptr - 9, 8);         // コールサイン
 			strcat(status, tmpstr);                 // Terminal-AP Mode/DVAP/DVMEGA/Node
 			disp_stat();
-
 		}
 
 		/* <5-1>モデムの接続状況 */
 		if ((atoi(nx.debug) == 1) && (((tmpptr = strstr(line, "Frequency Set")) != NULL)
 				 || (strstr(line, "RIG(ID-xxPlus) init") != NULL)))
-		{				   
+		{
 			/* RFを使う場合には周波数表示で初期化表示とする */
 			if (strstr(line, "DVAP"))   strcpy(status, "DVAP FREQ. ");
 			if (strstr(line, "DVMEGA")) strcpy(status, "DVMEGA FREQ. ");
@@ -333,7 +330,7 @@ void	dispstatus_dmon(void)
 				strcat(status, ".");
 				strncat(status, tmpptr + 17, 3);
 				strcat(status, " MHz");
-			} 
+			}
 			disp_stat();
 		}
 		/* <5-2>ノードアダプターV7の接続状況 */
@@ -396,7 +393,7 @@ void	dispstatus_dmon(void)
 	pclose(fp);
 	return;
 }
- 
+
  /*********************************************************************
  変数rptcall の内容をNextionに表示する関数
  *********************************************************************/

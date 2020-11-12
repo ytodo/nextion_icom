@@ -1,6 +1,5 @@
 //////////////////////////////////////////////////////////////////////////////
-//	ファイル名	GetConfig.c
-//			2020.03.07-
+//	ファイル名	GetConfig.c 2020.03.07-
 //	機能	環境設定ファイルnextion.ini と dstarrepeater の内容を読む
 //////////////////////////////////////////////////////////////////////////////
 #include "Nextion.h"
@@ -31,11 +30,23 @@ void getconfig(void)
 		if ((ret = strstr(line, "CLOCK_COLOR")) != NULL) sscanf(line, "CLOCK_COLOR=%[^\n]",	nx.clock_color);
 		if ((ret = strstr(line, "SLEEPTIME"))   != NULL) sscanf(line, "SLEEPTIME=%s",		nx.microsec);
 		if ((ret = strstr(line, "DEBUG"))       != NULL) sscanf(line, "DEBUG=%s",		nx.debug);
-		if ((ret = strstr(line, "RIGTYPE"))	!= NULL) sscanf(line, "RIGTYPE=%s",		nx.rigtype);
 		if ((ret = strstr(line, "PORT"))        != NULL) sscanf(line, "PORT=%s",		nx.nextion_port);
 	}
 	/* ファイルクローズ */
 	fclose(fp);
+
+        /* rig.typeファイルをオープンする */
+        if ((fp = fopen(RIGFILE, "r")) == NULL)
+        {
+                printf("rig.type file open error!\n");
+        }
+        /* 内容を読込み変数に代入する */
+        while ((fgets(line, sizeof(line), fp)) != NULL)
+        {
+                sscanf(line, "%[^\n]", nx.rigtype);
+        }
+	/* ファイルクローズ */
+        fclose(fp);
 
 
 	///// DStarRepeater /////
