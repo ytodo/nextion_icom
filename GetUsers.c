@@ -18,6 +18,12 @@ void	getusers(void)
 	int     i           = 0;
 	int     j           = 0;
 
+
+	/* 画面を切り替える */
+	sendcmd("page USERS");
+	sprintf(command, "USERS.b0.txt=\"LINKED USERS on %s\"", chkrptcall);
+	sendcmd(command);
+
 	/* [Return]ボタンが押されるまで繰り返す */
 	while (1)
 	{

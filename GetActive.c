@@ -18,6 +18,9 @@ void	getactive(void)
 	int     i           = 0;
 	int     j           = 0;
 
+	/* 画面を切り替える */
+	sendcmd("page ACTIVE");
+
 	/* [Return]ボタンが押されるかリピータが選択されるまで繰り返す */
 	while (1)
 	{

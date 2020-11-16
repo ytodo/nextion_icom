@@ -251,9 +251,6 @@ void syscmdswitch(void)
 		break;
 
 	case 9:						// Remote Usersパネルへ接続ユーザ表示
-		sendcmd("page USERS");
-		sprintf(command, "USERS.b0.txt=\"LINKED USERS on %s\"", chkrptcall);
-		sendcmd(command);
 		getusers();
 		strcpy(usercmd, "Return");
 		break;
@@ -307,7 +304,6 @@ void syscmdswitch(void)
 		break;
 
 	case 13:					// ACTIVE REPEATERSパネルへの表示と移動
-		sendcmd("page ACTIVE");
 		getactive();
 		break;
 
