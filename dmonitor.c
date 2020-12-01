@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////
-// 	D-STAR  Nextion display for ICOM Terminal/Access Mode
+//	D-STAR  Nextion display for ICOM Terminal/Access Mode
 //
 //	ファイル名	dmonitor.c
 //			2020.03.05 -
@@ -131,18 +131,18 @@ void dmonitor(void)
 		/* ステータス・ラストハードの読み取り */
 		dispstatus_dmon();
 
-                /* 無線機からのコマンドを接続解除の間受け取る準備 */
-                if (strcmp(status, "Disconnected") == 0)
-                {
-                        system("sudo killall -q -2 dmonitor");
-                        system("sudo rm -f /var/nun/dmonitor.pid");
+		/* 無線機からのコマンドを接続解除の間受け取る準備 */
+		if (strcmp(status, "Disconnected") == 0)
+		{
+			system("sudo killall -q -2 dmonitor");
+			system("sudo rm -f /var/nun/dmonitor.pid");
 			usleep(atoi(nx.microsec) * 10);
 			system("sudo systemctl restart rpt_conn");
 			status[0] = '\0';
-                }
+		}
 		usleep(atoi(nx.microsec) * 5);
 
-	}	// Loop
+	} // Loop
 
 	return;
 }
