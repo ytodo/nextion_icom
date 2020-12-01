@@ -8,10 +8,10 @@
 void	getactive(void)
 {
 	FILE    *fp;
+	char    *tmpptr;
 	char    *active_tbl  = "/var/www/html/repeater_active.html";
 	char    line[64]    = {'\0'};
 	char    tmpstr[32]  = {'\0'};
-	char    *tmpptr;
 	char    command[32] = {'\0'};
 	char    statpre[32] = {'\0'};
 	char    ret[16]     = {'\0'};

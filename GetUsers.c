@@ -8,10 +8,10 @@
 void	getusers(void)
 {
 	FILE    *fp;
+	char    *tmpptr;
 	char    *users_tbl  = "/var/www/html/connected_table.html";
 	char    line[64]    = {'\0'};
 	char    tmpstr[32]  = {'\0'};
-	char    *tmpptr;
 	char    command[32] = {'\0'};
 	char    statpre[32] = {'\0'};
 	char    ret[16]     = {'\0'};
@@ -69,7 +69,6 @@ void	getusers(void)
 		/* 1秒に一回リフレッシュする */
 		sleep(1);
 	}
-
 	return;
 }
 
