@@ -167,7 +167,7 @@ void syscmdswitch(void)
 		switch (st.mode) {
 		case 0: // MAIN (初期立上げ時の状態に戻る）
 			sendcmd("dim=10");
-// GW 分離		system("sudo systemctl restart ircddbgateway");
+			system("sudo systemctl restart ircddbgateway");
 			system("sudo systemctl stop dstarrepeater");
 			system("sudo killall -q -2 dmonitor");
 			system("sudo rm -f /var/run/dmonitor.pid");
@@ -179,7 +179,7 @@ void syscmdswitch(void)
 
 		case 1: // dmonitor
 			sendcmd("dim=10");
-			system("sudo killall -q -2 dmonitor");
+			system("sudo killall -q -9 dmonitor");
 			system("sudo rm -f /var/run/dmonitor.pid");
 			system("sudo killall -q -9 sleep");
 			system("sudo killall -q -9 repeater_scan");
@@ -197,21 +197,23 @@ void syscmdswitch(void)
 
 	case 2:						// reboot
 		sendcmd("dim=10");
-// GW 分離	system("sudo systemctl stop ircddbgateway");
+		sendcmd("page SPLASH");
+		system("sudo systemctl stop ircddbgateway");
 		system("sudo systemctl stop dstarrepeater");
-		system("sudo killall -q -s 2 dmonitor");
+		system("sudo killall -q -2 dmonitor");
 		system("sudo rm -f /var/run/dmonitor.pid");
-		system("sudo killall -q -s 9 sleep");
+		system("sudo killall -q -9 sleep");
 		system("sudo shutdown -r now");
 		break;
 
 	case 3:						// shutdown
 		sendcmd("dim=10");
-// GW 分離	system("sudo systemctl stop ircddbgateway");
+		sendcmd("page SPLASH");
+		system("sudo systemctl stop ircddbgateway");
 		system("sudo systemctl stop dstarrepeater");
-		system("sudo killall -q -s 2 dmonitor");
+		system("sudo killall -q -2 dmonitor");
 		system("sudo rm -f /var/run/dmonitor.pid");
-		system("sudo killall -q -s 9 sleep");
+		system("sudo killall -q -9 sleep");
 		system("sudo shutdown -h now");
 		break;
 
@@ -293,6 +295,7 @@ void syscmdswitch(void)
 
 		case 2:	// dstarrepeater
 			/* dstarrepeaterを停止 */
+			sendcmd("dim=10");
 			system("sudo systemctl stop dstarrepeater");
 
 			/* nextionを再起動してmodeをMAIN待機画面（０）とする */
@@ -313,3 +316,4 @@ void syscmdswitch(void)
 	}
 	return;
 }
+

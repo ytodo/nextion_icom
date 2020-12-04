@@ -44,6 +44,7 @@ int main(void)
 	char	tmpstr[32]	= {'\0'};
 	char	SERIALPORT[16]	= {'\0'};
 
+
 	/* シリアルポートのオープン nextion.iniより */
 	if ((nx.nextion_port != NULL) && (strlen(nx.nextion_port) != 0))
 	{
@@ -59,13 +60,23 @@ int main(void)
 
 	/* メインスクリーンの初期設定 */
 	sendcmd("dim=dims");
-	sendcmd("page MAIN");
-	usercmd[0] = '\0';
+//	sendcmd("page MAIN");
+//	usercmd[0] = '\0';
+
+	/* D*SWITCHのバージョンを表示 */
+	sprintf(command, "SPLASH.version.txt=\"Ver.%d.%d.%d\"", VERSION, VERSUB, RELEASE);
+	sendcmd(command);
+	sendcmd("SPLASH.t4.txt=version.txt");    // バージョン表示
 
 	/* 設定項目の取得と表示 */
 	getconfig();
 	dispipaddr();
 
+	/* nextion.iniの指定に従って専用とスイッチを分岐 */
+	if (strncmp(nx.default_mode, "REF",  3) == 0) strncpy(usercmd, "dstarrpt", 8);
+	if (strncmp(nx.default_mode, "DMON", 4) == 0) strncpy(usercmd, "dmonitor", 8);
+	if (strncmp(nx.default_mode, "MAIN", 4) == 0) sendcmd("page MAIN");
+	
 	/* 送・受信ループ */
 	while(1)
 	{
@@ -74,7 +85,7 @@ int main(void)
 		usleep(WAITTIME * 5);	//0.5sec
 
 		/* タッチパネルのデータを読み込む */
-		recvdata(usercmd);
+		if (strncmp(nx.default_mode, "MAIN", 4) == 0) recvdata(usercmd);
 
 		/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
 		if ((strlen(usercmd) > 0) && (strncmp(usercmd, chkusercmd, 8) != 0))
@@ -95,3 +106,4 @@ int main(void)
 
 	return(EXIT_SUCCESS);
 }
+

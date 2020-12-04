@@ -87,6 +87,7 @@ typedef	struct {
 	char	debug[1];			// 0:通常／1:デバッグモード(status表示が多くなる）
 	char	rigtype[8];			// ICOM, DVAP, DVMEGA, NODE が入る
 	char	nextion_port[16];		// ttyUSB0, ttyAMA0等nextion.iniで指定
+	char	default_mode[8];		// 指定モードによって起動後の初期画面を選択
 } nextion_ini_t;
 extern	nextion_ini_t	nx;			// nextion.iniの内容
 

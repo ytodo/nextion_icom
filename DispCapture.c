@@ -1,3 +1,7 @@
+/*
+ * 現在不使用
+ */
+
 #include "Nextion.h"
 
 void	dispcapture(void)

@@ -31,6 +31,7 @@ void getconfig(void)
 		if ((ret = strstr(line, "SLEEPTIME"))   != NULL) sscanf(line, "SLEEPTIME=%s",		nx.microsec);
 		if ((ret = strstr(line, "DEBUG"))       != NULL) sscanf(line, "DEBUG=%s",		nx.debug);
 		if ((ret = strstr(line, "PORT"))        != NULL) sscanf(line, "PORT=%s",		nx.nextion_port);
+		if ((ret = strstr(line, "MODE"))	!= NULL) sscanf(line, "MODE=%s",		nx.default_mode);
 	}
 	/* ファイルクローズ */
 	fclose(fp);

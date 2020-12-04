@@ -32,10 +32,6 @@ void dmonitor(void)
 	sendcmd("dim=dims");
 	sendcmd("page DMON");
 
-//	sprintf(command, "DMON.version.txt=\"Ver.%d.%d.%d\"", VERSION, VERSUB, RELEASE);
-//	sendcmd(command);
-//	sendcmd("MAIN.t6.txt=version.txt");	// バージョン表示
-
 	sprintf(command, "DMON.station.txt=\"STATION : %s\"", nx.station);
 	sendcmd(command);
 	sprintf(command, "DMON.t0.txt=\"STATION : %s\"", nx.station);
