@@ -60,8 +60,6 @@ int main(void)
 
 	/* メインスクリーンの初期設定 */
 	sendcmd("dim=dims");
-//	sendcmd("page MAIN");
-//	usercmd[0] = '\0';
 
 	/* D*SWITCHのバージョンを表示 */
 	sprintf(command, "SPLASH.version.txt=\"Ver.%d.%d.%d\"", VERSION, VERSUB, RELEASE);

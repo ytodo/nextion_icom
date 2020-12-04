@@ -171,6 +171,7 @@ void syscmdswitch(void)
 			system("sudo systemctl stop dstarrepeater");
 			system("sudo killall -q -2 dmonitor");
 			system("sudo rm -f /var/run/dmonitor.pid");
+			system("sudo systemctl stop auto_repmon");
 			system("sudo killall -q -9 sleep");
 			system("sudo killall -q -9 repeater_scan");
 			system("sudo /var/www/cgi-bin/repUpd");
