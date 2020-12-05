@@ -199,22 +199,24 @@ void syscmdswitch(void)
 	case 2:						// reboot
 		sendcmd("dim=10");
 		sendcmd("page SPLASH");
+		sendcmd("SPLASH.t3.txt=\"Stopping...\"");
 		system("sudo systemctl stop ircddbgateway");
 		system("sudo systemctl stop dstarrepeater");
 		system("sudo killall -q -2 dmonitor");
 		system("sudo rm -f /var/run/dmonitor.pid");
-		system("sudo killall -q -9 sleep");
+//		system("sudo killall -q -9 sleep");
 		system("sudo shutdown -r now");
 		break;
 
 	case 3:						// shutdown
 		sendcmd("dim=10");
 		sendcmd("page SPLASH");
+		sendcmd("SPLASH.t3.txt=\"Stopping...\"");
 		system("sudo systemctl stop ircddbgateway");
 		system("sudo systemctl stop dstarrepeater");
 		system("sudo killall -q -2 dmonitor");
 		system("sudo rm -f /var/run/dmonitor.pid");
-		system("sudo killall -q -9 sleep");
+//		system("sudo killall -q -9 sleep");
 		system("sudo shutdown -h now");
 		break;
 

@@ -46,9 +46,6 @@ void dispstatus_ref(void)
 	/* ファイル行を配列に取得 */
 	while ((fgets(line, sizeof(line), fp)) != NULL)
 	{
-		
-printf("%s", line);
-		
 		/* 一巡して全く同じ内容ならパス */
 		if (strcmp(line, chkline) == 0) continue;
 
