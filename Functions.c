@@ -199,7 +199,7 @@ void syscmdswitch(void)
 	case 2:						// reboot
 		sendcmd("dim=10");
 		sendcmd("page SPLASH");
-		sendcmd("SPLASH.t3.txt=\"Stopping...\"");
+		sendcmd("SPLASH.t3.txt=\"Restarting...\"");
 		system("sudo systemctl stop ircddbgateway");
 		system("sudo systemctl stop dstarrepeater");
 		system("sudo killall -q -2 dmonitor");

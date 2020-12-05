@@ -22,6 +22,8 @@ void dstarrepeater(void)
 	char	nodecall[9]	= {'\0'};
 
 
+	system("sudo systemctl restart dstarrepeater");
+
 	/* メインスクリーンの初期設定 */
 	sendcmd("dim=dims");
 	sendcmd("page IDLE");
