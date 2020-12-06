@@ -169,7 +169,7 @@ void syscmdswitch(void)
 			sendcmd("dim=10");
 			system("sudo systemctl restart ircddbgateway");
 			system("sudo systemctl stop dstarrepeater");
-			system("sudo killall -q -2 dmonitor");
+			system("sudo killall -q -9 dmonitor");
 			system("sudo rm -f /var/run/dmonitor.pid");
 			system("sudo systemctl stop auto_repmon");
 			system("sudo killall -q -9 sleep");
