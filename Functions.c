@@ -204,7 +204,6 @@ void syscmdswitch(void)
 		system("sudo systemctl stop dstarrepeater");
 		system("sudo killall -q -2 dmonitor");
 		system("sudo rm -f /var/run/dmonitor.pid");
-//		system("sudo killall -q -9 sleep");
 		system("sudo shutdown -r now");
 		break;
 
@@ -216,7 +215,6 @@ void syscmdswitch(void)
 		system("sudo systemctl stop dstarrepeater");
 		system("sudo killall -q -2 dmonitor");
 		system("sudo rm -f /var/run/dmonitor.pid");
-//		system("sudo killall -q -9 sleep");
 		system("sudo shutdown -h now");
 		break;
 

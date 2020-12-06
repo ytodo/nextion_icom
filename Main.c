@@ -75,9 +75,6 @@ int main(void)
 	if (strncmp(nx.default_mode, "DMON", 4) == 0) strncpy(usercmd, "dmonitor", 8);
 	if (strncmp(nx.default_mode, "MAIN", 4) == 0) sendcmd("page MAIN");
 
-
-printf("%s\n",nx.default_mode);
-
 	/* 送・受信ループ */
 	while(1)
 	{
