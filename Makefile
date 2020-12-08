@@ -27,15 +27,25 @@ clean	:
 
 # Install files
 install	:
+# プログラムのコンパイル
+	make
+# プログラムの配置
 	sudo mv $(PROGRAM)		/usr/local/bin
+	sudo cp $(PROGRAM).ini		/etc
+# ユニットファイルの配置
 	sudo cp $(PROGRAM).service	/etc/systemd/system
+	sudo cp ircddbgateway.service	/etc/systemd/system
+	sudo cp dstarrepeater.service	/etc/systemd/system
 	sudo systemctl daemon-reload
-	sudo killall -s 9 dmonitor
-	sudo systemctl stop auto_repmon.service
-	sudo systemctl disable auto_repmon.service
-	sudo systemctl stop rpt_conn.service
-	sudo systemctl disable rpt_conn.service
-	sudo systemctl enable 	$(PROGRAM).service
+# serviceの起動設定
+	sudo systemctl stop	monitorix
+	sudo systemctl disable	monitorix
+	sudo systemctl stop	auto_repmon.service
+	sudo systemctl disable	auto_repmon.service
+	sudo systemctl stop	rpt_conn.service
+	sudo systemctl disable	rpt_conn.service
+	sudo systemctl enable	ircddbgateway.service
+	sudo systemctl enable	$(PROGRAM).service
 	sudo systemctl restart	$(PROGRAM).service
 
 # Dependency of Header Files

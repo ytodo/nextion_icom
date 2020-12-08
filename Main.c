@@ -44,6 +44,8 @@ int main(void)
 	char	tmpstr[32]	= {'\0'};
 	char	SERIALPORT[16]	= {'\0'};
 
+	/* 設定項目の取得と表示 */
+	getconfig();
 
 	/* シリアルポートのオープン nextion.iniより */
 	if ((nx.nextion_port != NULL) && (strlen(nx.nextion_port) != 0))
@@ -56,6 +58,7 @@ int main(void)
 		strcpy(SERIALPORT, "/dev/ttyAMA0");
 
 	}
+
 	fd = openport(SERIALPORT, BAUDRATE);
 
 	/* メインスクリーンの初期設定 */
@@ -65,22 +68,22 @@ int main(void)
 	sprintf(command, "SPLASH.version.txt=\"Ver.%d.%d.%d\"", VERSION, VERSUB, RELEASE);
 	sendcmd(command);
 	sendcmd("SPLASH.t4.txt=version.txt");    // バージョン表示
-
-	/* 設定項目の取得と表示 */
-	getconfig();
-	dispipaddr();
+	usleep(atoi(nx.microsec) * 8);
 
 	/* nextion.iniの指定に従って専用とスイッチを分岐 */
 	if (strncmp(nx.default_mode, "REF",  3) == 0) strncpy(usercmd, "dstarrpt", 8);
 	if (strncmp(nx.default_mode, "DMON", 4) == 0) strncpy(usercmd, "dmonitor", 8);
 	if (strncmp(nx.default_mode, "MAIN", 4) == 0) sendcmd("page MAIN");
 
+	/* IPアドレスの取得 */
+	dispipaddr();
+
 	/* 送・受信ループ */
 	while(1)
 	{
 		/* 日付･時刻表示 */
 		dispclock();
-		usleep(WAITTIME * 5);	//0.5sec
+		usleep(WAITTIME * 5);	//10000のとき0.05sec
 
 		/* タッチパネルのデータを読み込む */
 		if (strncmp(nx.default_mode, "MAIN", 4) == 0) recvdata(usercmd);

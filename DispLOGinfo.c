@@ -30,7 +30,7 @@ void dispstatus_ref(void)
 	/* 日付入りログファイル名の作成 */
 	timer = time(NULL);
 	timeptr = gmtime(&timer);
-	strftime(fname, sizeof(fname), "dstarrepeaterd-%Y-%m-%d.log", timeptr);
+	strftime(fname, sizeof(fname), "DStarRepeater-%Y-%m-%d.log", timeptr);
 	sprintf(dstarlogpath, "%s%s", LOGDIR, fname);
 
 	/* コマンドの標準出力オープン */
