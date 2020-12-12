@@ -52,7 +52,7 @@
 #define	INIFILE		"/etc/nextion.ini"
 #define	LOGDIR		"/var/log/"
 #define	DUMPFILE	"/tmp/tcpdump.dstar"
-#define	RIGFILE		"/var/www/rig.type"
+#define	RIGFILE		"/var/www/dmonitor.conf"
 #define	BAUDRATE	B9600
 #define	LISTSIZE	512			// 最大リピータ数
 #define	TXHANG		1			// ラストパケット検出後のハングタイム（秒）
@@ -83,8 +83,8 @@ typedef	struct {
 	char	default_rpt[9];			// 立ち上げ時自動接続リピータ
 	char	default_ref[9];			// 立ち上げ時自動接続リフレクタ
 	char	clock_color[8];			// デジタル時計の文字色指定
-	char	microsec[8];			// リスト書き込み時のスピード調整用
-	char	debug[1];			// 0:通常／1:デバッグモード(status表示が多くなる）
+	unsigned int	microsec;		// リスト書き込み時のスピード調整用
+	unsigned int	debug;			// 0:通常／1:デバッグモード(status表示が多くなる）
 	char	rigtype[8];			// ICOM, DVAP, DVMEGA, NODE が入る
 	char	nextion_port[16];		// ttyUSB0, ttyAMA0等nextion.iniで指定
 	char	default_mode[8];		// 指定モードによって起動後の初期画面を選択

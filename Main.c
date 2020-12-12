@@ -68,7 +68,7 @@ int main(void)
 	sprintf(command, "SPLASH.version.txt=\"Ver.%d.%d.%d\"", VERSION, VERSUB, RELEASE);
 	sendcmd(command);
 	sendcmd("SPLASH.t4.txt=version.txt");    // バージョン表示
-	usleep(atoi(nx.microsec) * 8);
+	usleep(nx.microsec * 8);
 
 	/* nextion.iniの指定に従って専用とスイッチを分岐 */
 	if (strncmp(nx.default_mode, "REF",  3) == 0) strncpy(usercmd, "dstarrpt", 8);

@@ -120,7 +120,7 @@ void dstarrepeater(void)
 				syscmdswitch();
 			}
 		}
-		usleep(atoi(nx.microsec) * 30);
+		usleep(nx.microsec * 30);
 	}	// Loop
 
 	return;

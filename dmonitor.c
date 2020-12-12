@@ -132,11 +132,11 @@ void dmonitor(void)
 		{
 			system("sudo killall -q -2 dmonitor");
 			system("sudo rm -f /var/nun/dmonitor.pid");
-			usleep(atoi(nx.microsec) * 10);
+			usleep(nx.microsec * 10);
 			system("sudo systemctl restart rpt_conn");
 			status[0] = '\0';
 		}
-		usleep(atoi(nx.microsec) * 5);
+		usleep(nx.microsec * 5);
 
 	} // Loop
 

@@ -305,7 +305,8 @@ void	dispstatus_dmon(void)
 		}
 
 		/* <5-1>モデムの接続状況 */
-		if ((atoi(nx.debug) == 1) && (((tmpptr = strstr(line, "Frequency Set")) != NULL)
+printf("%d\n", nx.debug);
+		if ((nx.debug == 1) && (((tmpptr = strstr(line, "Frequency Set")) != NULL)
 				 || (strstr(line, "RIG(ID-xxPlus) init") != NULL)))
 		{
 			/* RFを使う場合には周波数表示で初期化表示とする */
@@ -325,14 +326,14 @@ void	dispstatus_dmon(void)
 			disp_stat();
 		}
 		/* <5-2>ノードアダプターV7の接続状況 */
-		if ((atoi(nx.debug) == 1) && ((tmpptr = strstr(line, "NODE Alter Header")) != NULL))
+		if ((nx.debug == 1) && ((tmpptr = strstr(line, "NODE Alter Header")) != NULL))
 		{
 			strncpy(status, "NODE ADAPTER INITIALIZED", 24);
 			disp_stat();
 		}
 
 		/* <6>Last packet wrong ステータスの場合、文字を黄色に */
-		if ((atoi(nx.debug) == 1) && (strstr(line, "Last packet wrong") != NULL))
+		if ((nx.debug == 1) && (strstr(line, "Last packet wrong") != NULL))
 		{
 			strcpy(status, "Last packet is wrong...");
 			disp_stat();
@@ -364,7 +365,7 @@ void	dispstatus_dmon(void)
 		}
 
 		/* ドロップパケット比の表示 */
-		if ((atoi(nx.debug) == 1) && ((tmpptr = strstr(line, "drop packet")) != NULL))
+		if ((nx.debug == 1) && ((tmpptr = strstr(line, "drop packet")) != NULL))
 		{
 			strcpy(status, "Drop PKT ");
 			strcat(status, tmpptr + 17);

@@ -28,10 +28,10 @@ void getconfig(void)
 		if ((ret = strstr(line, "DEFAULT_RPT")) != NULL) sscanf(line, "DEFAULT_RPT=%[^\n]",	nx.default_rpt);
 		if ((ret = strstr(line, "DEFAULT_REF")) != NULL) sscanf(line, "DEFAULT_REF=%[^\n]",	nx.default_ref);
 		if ((ret = strstr(line, "CLOCK_COLOR")) != NULL) sscanf(line, "CLOCK_COLOR=%[^\n]",	nx.clock_color);
-		if ((ret = strstr(line, "SLEEPTIME"))   != NULL) sscanf(line, "SLEEPTIME=%s",		nx.microsec);
-		if ((ret = strstr(line, "DEBUG"))       != NULL) sscanf(line, "DEBUG=%s",		nx.debug);
-		if ((ret = strstr(line, "PORT"))        != NULL) sscanf(line, "PORT=%s",		nx.nextion_port);
-		if ((ret = strstr(line, "MODE"))	!= NULL) sscanf(line, "MODE=%s",		nx.default_mode);
+		if ((ret = strstr(line, "SLEEPTIME"))   != NULL) sscanf(line, "SLEEPTIME=%d",		&nx.microsec);
+		if ((ret = strstr(line, "DEBUG"))       != NULL) sscanf(line, "DEBUG=%d",		&nx.debug);
+		if ((ret = strstr(line, "PORT"))        != NULL) sscanf(line, "PORT=%[^\n]",		nx.nextion_port);
+		if ((ret = strstr(line, "MODE"))	!= NULL) sscanf(line, "MODE=%[^\n]",		nx.default_mode);
 	}
 	/* ファイルクローズ */
 	fclose(fp);
@@ -39,12 +39,16 @@ void getconfig(void)
         /* rig.typeファイルをオープンする */
         if ((fp = fopen(RIGFILE, "r")) == NULL)
         {
-                printf("rig.type file open error!\n");
+                printf("dmonitor.conf file open error!\n");
         }
         /* 内容を読込み変数に代入する */
         while ((fgets(line, sizeof(line), fp)) != NULL)
         {
                 sscanf(line, "%[^\n]", nx.rigtype);
+                if ((strncmp(nx.rigtype, "ICOM",   4) == 0) ||
+                    (strncmp(nx.rigtype, "DVAP",   4) == 0) ||
+                    (strncmp(nx.rigtype, "DVMEGA", 6) == 0) ||
+                    (strncmp(nx.rigtype, "NODE",   4) == 0)) break;
         }
 	/* ファイルクローズ */
         fclose(fp);
