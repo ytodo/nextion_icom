@@ -98,13 +98,14 @@ void dmonitor(void)
 				if (strncmp(linkdata[i].call, usercmd, 8) == 0)
 				{
 					/* 接続コマンド実行前処理 */
+					system("sudo killall -q -2 dmonitor");
+					system("sudo rm -f /var/run/dmonitor.pid");
+					usleep(nx.microsec * 10);
 					system("sudo systemctl stop rpt_conn");
 					system("sudo killall -q -9 repeater_scan");
-					system("sudo killall -q -9 dmonitor");
-					system("sudo rm -f /var/run/dmonitor.pid");
 					system("sudo killall -q -9 rpt_conn");
 					system("sudo rm -f /var/run/rpt_conn.pid");
-					system("sudo rig_port_check");
+					system("sudo /usr/bin/rig_port_check");
 					system("sudo cp /dev/null /var/tmp/update.log");
 					system("sudo cp /var/www/html/error_msg.html.save /var/tmp/error_msg.html");
 					system("sudo touch /var/tmp/error_msg.html");
@@ -125,10 +126,10 @@ void dmonitor(void)
 		}
 
 		/* ステータス・ラストハードの読み取り */
-		dispstatus_dmon();
+//		dispstatus_dmon();
 
 		/* 無線機からのコマンドを接続解除の間受け取る準備 */
-		if (strcmp(status, "Disconnected") == 0)
+		if (strcmp(status, "UNLINK FROM RIG") == 0)
 		{
 			system("sudo killall -q -2 dmonitor");
 			system("sudo rm -f /var/nun/dmonitor.pid");
