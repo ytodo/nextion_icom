@@ -51,6 +51,7 @@
 #define	CONFFILE	"/etc/dstarrepeater"
 #define	INIFILE		"/etc/nextion.ini"
 #define	LOGDIR		"/var/log/"
+#define	DSLOGFILE	"dstarrepeaterd"
 #define	DUMPFILE	"/tmp/tcpdump.dstar"
 #define	RIGFILE		"/var/www/dmonitor.conf"
 #define	BAUDRATE	B9600

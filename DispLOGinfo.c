@@ -30,8 +30,8 @@ void dispstatus_ref(void)
 	/* 日付入りログファイル名の作成 */
 	timer = time(NULL);
 	timeptr = gmtime(&timer);
-	strftime(fname, sizeof(fname), "DStarRepeater-%Y-%m-%d.log", timeptr);
-	sprintf(dstarlogpath, "%s%s", LOGDIR, fname);
+	strftime(fname, sizeof(fname), "-%Y-%m-%d.log", timeptr);
+	sprintf(dstarlogpath, "%s%s%s", LOGDIR, DSLOGFILE, fname);
 
 	/* コマンドの標準出力オープン */
 	sprintf(cmdline, "tail -n1000 %s | egrep -v 'RTI_DATA_NAK|Transmitting to' > /tmp/tmplog.txt", dstarlogpath);
@@ -305,7 +305,6 @@ void	dispstatus_dmon(void)
 		}
 
 		/* <5-1>モデムの接続状況 */
-printf("%d\n", nx.debug);
 		if ((nx.debug == 1) && (((tmpptr = strstr(line, "Frequency Set")) != NULL)
 				 || (strstr(line, "RIG(ID-xxPlus) init") != NULL)))
 		{
