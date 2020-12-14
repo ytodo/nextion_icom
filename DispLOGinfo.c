@@ -34,7 +34,7 @@ void dispstatus_ref(void)
 	sprintf(dstarlogpath, "%s%s%s", LOGDIR, DSLOGFILE, fname);
 
 	/* コマンドの標準出力オープン */
-	sprintf(cmdline, "tail -n1000 %s | egrep -v 'RTI_DATA_NAK|Transmitting to' > /tmp/tmplog.txt", dstarlogpath);
+	sprintf(cmdline, "tail -n10 %s | egrep -v 'RTI_DATA_NAK|Transmitting to' > /tmp/tmplog.txt", dstarlogpath);
 	system(cmdline);
 
 	if ((fp = popen("tail -n1 /tmp/tmplog.txt", "r")) == NULL )
@@ -230,12 +230,12 @@ void	dispstatus_dmon(void)
 {
 	FILE	*fp;
 	char	*tmpptr;
-	char	*getstatus	= "tail -n3 /var/log/dmonitor.log";
+	char	*DMONLOG	= "tail -n3 /var/log/dmonitor.log";
 	char	mycall[9]	= {'\0'};
 	char	mycallpre[9]	= {'\0'};
 
 	/* コマンドの標準出力オープン */
-	if ((fp = popen(getstatus, "r")) == NULL)
+	if ((fp = popen(DMONLOG, "r")) == NULL)
 	{
 		printf("dmonitor.log file open error!\n");
 		return;
