@@ -48,12 +48,17 @@
 #include	<time.h>
 
 /* Macros */
+
+// 設定ファイル
 #define	CONFFILE	"/etc/dstarrepeater"
 #define	INIFILE		"/etc/nextion.ini"
+#define	RIGFILE		"/var/www/dmonitor.conf"
+// ログファイル
 #define	LOGDIR		"/var/log/"
 #define	DSLOGFILE	"dstarrepeaterd"
+#define	DMLOGFILE	"dmonitor.log"
 #define	DUMPFILE	"/tmp/tcpdump.dstar"
-#define	RIGFILE		"/var/www/dmonitor.conf"
+// 設定値
 #define	BAUDRATE	B9600
 #define	LISTSIZE	512			// 最大リピータ数
 #define	TXHANG		1			// ラストパケット検出後のハングタイム（秒）

@@ -230,12 +230,15 @@ void	dispstatus_dmon(void)
 {
 	FILE	*fp;
 	char	*tmpptr;
-	char	*DMONLOG	= "tail -n3 /var/log/dmonitor.log";
+	char	dmonlogcmd[32]	= {'\0'};
 	char	mycall[9]	= {'\0'};
 	char	mycallpre[9]	= {'\0'};
 
+	/* Pathの作成 */
+	sprintf(dmonlogcmd, "tail -n3 %s%s", LOGDIR, DMLOGFILE);
+
 	/* コマンドの標準出力オープン */
-	if ((fp = popen(DMONLOG, "r")) == NULL)
+	if ((fp = popen(dmonlogcmd, "r")) == NULL)
 	{
 		printf("dmonitor.log file open error!\n");
 		return;
