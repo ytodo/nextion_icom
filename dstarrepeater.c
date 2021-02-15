@@ -12,16 +12,17 @@
 ////////////////////////////////////////////////////////////////////////
 #include	"Nextion.h"
 
+
 void dstarrepeater(void)
 {
-	int	fd;
 	int	i;
 	int	flag;
 	char	chkusercmd[32]	= {'\0'};
 	char	refcall[9]	= {'\0'};
 	char	nodecall[9]	= {'\0'};
+	
 
-
+	system("sudo /usr/bin/rig_port_check");
 	system("sudo systemctl restart dstarrepeater");
 
 	/* メインスクリーンの初期設定 */

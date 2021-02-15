@@ -34,24 +34,38 @@ void dispstatus_ref(void)
 	sprintf(dstarlogpath, "%s%s%s", LOGDIR, DSLOGFILE, fname);
 
 	/* コマンドの標準出力オープン */
-	sprintf(cmdline, "tail -n10 %s | egrep -v 'RTI_DATA_NAK|Transmitting to' > /tmp/tmplog.txt", dstarlogpath);
-	system(cmdline);
-
-	if ((fp = popen("tail -n1 /tmp/tmplog.txt", "r")) == NULL )
+	if (strncmp(ds.modemtype, "DVMEGA", 6) == 0)	// DVMEGAの場合 
 	{
-		printf("LOGinfo open error!!");
-		exit(EXIT_FAILURE);
+		/* dstarrepeaterd-yyyy-mm-dd.log の最新１行を読むコマンド */
+		sprintf(cmdline, "tail -n1 %s | egrep -v 'RT_DATA|RT_HEADER|0000|0010|0020|0030|Transmitting to'", dstarlogpath);
+
+		/* コマンドを実行、出力を読む */
+		if ((fp = popen(cmdline, "r")) == NULL)
+		{
+			printf("LOGinfo open error!!");
+			exit(EXIT_FAILURE);
+		}
+	}
+	else						// DVMEGA以外の場合
+	{
+		sprintf(cmdline, "tail -n10 %s | egrep -v 'RTI_DAT_NAK|Transmitting to' > /tmp/tmplog.txt", dstarlogpath);
+		system(cmdline);
+
+		if ((fp = popen("tail -n1 /tmp/tmplog.txt", "r")) == NULL )
+		{
+			printf("LOGinfo open error!!");
+			exit(EXIT_FAILURE);
+		}
 	}
 
 	/* ファイル行を配列に取得 */
 	while ((fgets(line, sizeof(line), fp)) != NULL)
 	{
 		/* 一巡して全く同じ内容ならパス */
-		if (strcmp(line, chkline) == 0) continue;
+		if (strncmp(line, chkline, strlen(line)) == 0) continue;
 
 		/* 重複チェック */
 		strcpy(chkline, line);
-
 
 		/*
 		 * クラストパケットの抽出
@@ -245,7 +259,7 @@ void	dispstatus_dmon(void)
 	}
 
 	/* 標準出力を配列に取得 */
-	while ((fgets(line, sizeof(line), fp)) != NULL)
+	while (fgets(line, sizeof(line), fp) != NULL)
 	{
 		/* 過去のデータをクリアする  */
 		memset(status, '\0', sizeof(status));
@@ -279,7 +293,7 @@ void	dispstatus_dmon(void)
 				strncpy(status, line, 12);             // 日付時分
 				strcat(status, " ");
 				strncat(status, mycall, 8);            // コールサイン
-			strncat(status, tmpptr + 4, 3);        // ZR/GW
+				strncat(status, tmpptr + 4, 3);        // ZR/GW
 			}
 			disp_stat();
                 }
@@ -291,7 +305,7 @@ void	dispstatus_dmon(void)
 		{
 			if (strncmp("Rig",  tmpptr + 5, 3) == 0)
 			{
-				if (strcmp(nx.rigtype, "ICOM") == 0)
+				if (strncmp(nx.rigtype, "ICOM", 4) == 0)
 				{
 					strncpy(tmpstr, " TM", 3);
 				} else {
@@ -308,8 +322,7 @@ void	dispstatus_dmon(void)
 		}
 
 		/* <5-1>モデムの接続状況 */
-		if ((nx.debug == 1) && (((tmpptr = strstr(line, "Frequency Set")) != NULL)
-				 || (strstr(line, "RIG(ID-xxPlus) init") != NULL)))
+		if ((nx.debug == 1) && (((tmpptr = strstr(line, "Frequency Set")) != NULL) || (strstr(line, "RIG(ID-xxPlus) init") != NULL)))
 		{
 			/* RFを使う場合には周波数表示で初期化表示とする */
 			if (strstr(line, "DVAP"))   strcpy(status, "DVAP FREQ. ");
@@ -341,7 +354,7 @@ void	dispstatus_dmon(void)
 			disp_stat();
 		}
 
-		/* バッファの拡張のサイズを取得 */
+		/* <7>バッファの拡張のサイズを取得 */
 		if ((tmpptr = strstr(line, "New FiFo buffer")) != NULL)
 		{
 			strcpy(status, tmpptr + 9);
@@ -388,6 +401,7 @@ void	dispstatus_dmon(void)
 	return;
 }
 
+
  /*********************************************************************
  変数rptcall の内容をNextionに表示する関数
  *********************************************************************/
@@ -396,8 +410,7 @@ int disp_rpt()
 	/* rptcallの内容が前回と異なる場合表示する */
 	if (strcmp(rptcall, chkrptcall) != 0)
 	{
-		strcpy(chkrptcall, rptcall);
-
+		strncpy(chkrptcall, rptcall, 8);
 		sprintf(command, "DMON.t1.txt=\"LINK TO : %s\"", rptcall);
 		sendcmd(command);
 		sprintf(command, "DMON.link.txt=\"LINK TO : %s\"", rptcall);

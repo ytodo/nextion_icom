@@ -59,6 +59,7 @@
 #define	DMLOGFILE	"dmonitor.log"
 #define	DUMPFILE	"/tmp/tcpdump.dstar"
 // 設定値
+#define	AUTOREPMON	"auto_repmon_light"
 #define	BAUDRATE	B9600
 #define	LISTSIZE	512			// 最大リピータ数
 #define	TXHANG		1			// ラストパケット検出後のハングタイム（秒）
@@ -136,6 +137,8 @@ extern	char	chkstat3[32];
 /* Functions */
 int	openport(char *devicename, long baudrate);
 int	getlinkdata(void);			// GetLinkData.c
+int	disp_stat();				//      〃
+int	disp_rpt();				//      〃
 void	next_page(void);			//	〃
 void	previous_page(void);			//	〃
 void	dmonitor(void);				// dmonitor.c
@@ -145,8 +148,6 @@ void	getactive(void);			// GetActive.c
 void	getconfig(void);			// GetConfig.c
 void	dispstatus_dmon(void);			// DispLOGinfo.c
 void	dispstatus_ref(void);			//	〃
-int	disp_stat();				//      〃
-int	disp_rpt();				//      〃
 void	dispipaddr(void);			// DispCMDinfo.c
 void	disptemp(void);				//	〃
 void	sendcmd(char *cmd);			// Functions.c

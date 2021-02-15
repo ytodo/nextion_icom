@@ -88,7 +88,7 @@ void getconfig(void)
 	sprintf(command, "IDLE.type.txt=\"%s\"", ds.modemtype);
 	sendcmd(command);
 
-/// Test ///
+/// for Test ///
 //printf("station: %s | default: %s | microsec: %d | debug: %d\n\n", nx.station, nx.default_rpt, nx.microsec, nx.debug);
 //printf("station: %s | ipaddress: %s | port: %s | modem: %s\n\n", ds.station, ds.ipaddress, ds.localport, ds.modemtype);
 

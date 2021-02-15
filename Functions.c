@@ -10,7 +10,10 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 #include "Nextion.h"
 
+#define	BAUD_RATE	B115200		// RS232C通信ボーレート
+
 int	fd;
+int	fds;
 
 /*********************************************
  * シリアルポートのオープン
@@ -34,12 +37,12 @@ int openport(char *devicename, long baudrate)
 	cfsetospeed(&newtio,baudrate);
 
 	newtio.c_cflag &= ~PARENB;
-	newtio.c_cflag &= ~CSTOPB;          // ストップビット   : 1bit
-	newtio.c_cflag &= ~CSIZE;           // データビットサイズ
-	newtio.c_cflag |=  CS8;             // データビット     : 8bits
+	newtio.c_cflag &= ~CSTOPB;		// ストップビット   : 1bit
+	newtio.c_cflag &= ~CSIZE;		// データビットサイズ
+	newtio.c_cflag |=  CS8;			// データビット     : 8bits
 
 	newtio.c_cflag &= ~CRTSCTS;
-	newtio.c_cflag |= CREAD | CLOCAL;   // 受信有効｜ローカルライン（モデム制御無し）
+	newtio.c_cflag |= CREAD | CLOCAL;	// 受信有効｜ローカルライン（モデム制御無し）
 
 	newtio.c_iflag = 0;
 	newtio.c_oflag = 0;
@@ -56,7 +59,6 @@ int openport(char *devicename, long baudrate)
 
 	return (fd);
 }
-
 
 
 /*********************************************
@@ -167,24 +169,42 @@ void syscmdswitch(void)
 		switch (st.mode) {
 		case 0: // MAIN (初期立上げ時の状態に戻る）
 			sendcmd("dim=10");
+
+			/* リフレクタアプリの停止 */
 			system("sudo systemctl restart ircddbgateway");
 			system("sudo systemctl stop dstarrepeater");
+
+			/* dmonitor関連アプリを完全停止 */
 			system("sudo killall -q -9 dmonitor");
 			system("sudo rm -f /var/run/dmonitor.pid");
-			system("sudo systemctl stop auto_repmon");
+			sprintf(command, "sudo systemctl stop %s", AUTOREPMON);
+			system(command);
 			system("sudo killall -q -9 sleep");
 			system("sudo killall -q -9 repeater_scan");
+
+			/* リピータリストの更新 */
 			system("sudo /var/www/cgi-bin/repUpd");
+
+			/* nextionを再起動 */
 			system("sudo systemctl restart nextion");
 			break;
 
 		case 1: // dmonitor
 			sendcmd("dim=10");
-			system("sudo killall -q -9 dmonitor");
-			system("sudo rm -f /var/run/dmonitor.pid");
-			system("sudo killall -q -9 sleep");
-			system("sudo killall -q -9 repeater_scan");
+
+			/* リピータリストの更新*/
 			system("sudo /var/www/cgi-bin/repUpd");
+
+			/* dmonitorを完全に止める */
+			system("sudo killall -q -9 repeater_scan");
+			system("sudo killall -q -2 dmonitor");
+			system("sudo rm -f /var/run/dmonitor.pid");
+			system("sudo systemctl stop rpt_conn");
+                        sprintf(command, "sudo systemctl stop %s", AUTOREPMON);
+                        system(command);
+			usleep(nx.microsec * 50);
+
+			/* dmonitorコントロールを開始 */
 			dmonitor();
 			break;
 
@@ -274,7 +294,8 @@ void syscmdswitch(void)
 			system("sudo killall -q -2 dmonitor");
 			system("sudo rm -f /var/run/dmonitor.pid");
 			system("sudo systemctl stop rpt_conn");
-			system("sudo systemctl stop auto_repmon");
+                        sprintf(command, "sudo systemctl stop %s", AUTOREPMON);
+                        system(command);
 			system("sudo systemctl stop dstarrepeater.service");
 			st.mode = 0;
 			sendcmd("page MAIN");
@@ -286,7 +307,8 @@ void syscmdswitch(void)
 			system("sudo killall -q -2 dmonitor");
 			system("sudo rm -f /var/run/dmonitor.pid");
 			system("sudo systemctl stop rpt_conn");
-			system("sudo systemctl stop auto_repmon");
+                        sprintf(command, "sudo systemctl stop %s", AUTOREPMON);
+                        system(command);
 
 			/* nextionを再起動してmodeをMAIN待機画面（０）とする */
 			system("sudo systemctl restart nextion");

@@ -12,16 +12,18 @@
 ////////////////////////////////////////////////////////////////////////
 #include	"Nextion.h"
 
+
 void dmonitor(void)
 {
-	int	fd;
 	int	i;
 	int	flag;
 	char	chkusercmd[8]	= {'\0'};
 	char	tmpstr[32]	= {'\0'};
 
+
 	/* dmonitor関連サービスの起動 */
-	system("sudo systemctl restart auto_repmon");
+	sprintf(command, "sudo systemctl restart %s", AUTOREPMON);
+	system(command);
 	system("sudo systemctl restart rpt_conn");
 
 	/* 現在利用可能なリピータリストの取得*/
@@ -94,27 +96,26 @@ void dmonitor(void)
 			flag = 0;
 			for (i = 0; i < st.num; i++)
 			{
+				/* リピータリストに指定したコールサインが有った場合接続手順に入る */
 				if (strncmp(linkdata[i].call, usercmd, 8) == 0)
 				{
-					/* 接続コマンド実行前処理 */
+					/* 実行前処理 スキャン中なら止める */
+					system("sudo killall -q -9 repeater_scan");
+
+					/* dmonitorを完全に終了させる */
 					system("sudo killall -q -2 dmonitor");
 					system("sudo rm -f /var/run/dmonitor.pid");
-					usleep(nx.microsec * 100);
 
+					/* リピータコネクタを停止する */
 					system("sudo systemctl stop rpt_conn");
-					system("sudo killall -q -9 repeater_scan");
 					system("sudo killall -q -9 rpt_conn");
 					system("sudo rm -f /var/run/rpt_conn.pid");
 
+					/* リグ又はモデムポートをチェックする */
 					system("sudo /usr/bin/rig_port_check");
 
-//					system("sudo cp /dev/null /var/tmp/update.log");
-//					system("sudo cp /var/www/html/error_msg.html.save /var/tmp/error_msg.html");
-//					system("sudo touch /var/tmp/error_msg.html");
-//					system("sudo cp /var/www/html/short_msg.html.save /var/tmp/short_msg.html");
-//					system("sudo touch /var/tmp/short_msg.html");
-
 					system("ulimit -c unlimited");
+					usleep(nx.microsec * 200);
 
 					/* 接続コマンドの実行 */
 					sprintf(command, "sudo /usr/bin/dmonitor '%s' %s %s '%s' '%s'", nx.station, linkdata[i].addr, linkdata[i].port, linkdata[i].call, linkdata[i].zone);
