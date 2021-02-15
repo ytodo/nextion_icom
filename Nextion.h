@@ -58,8 +58,9 @@
 #define	DSLOGFILE	"dstarrepeaterd"
 #define	DMLOGFILE	"dmonitor.log"
 #define	DUMPFILE	"/tmp/tcpdump.dstar"
-// 設定値
+// 使用アプリケーション
 #define	AUTOREPMON	"auto_repmon_light"
+// 設定値
 #define	BAUDRATE	B9600
 #define	LISTSIZE	512			// 最大リピータ数
 #define	TXHANG		1			// ラストパケット検出後のハングタイム（秒）
@@ -157,3 +158,4 @@ void	dispcapture(void);			//      〃
 void	syscmdswitch(void);			//	〃
 
 #endif // __NEXTION_H__
+

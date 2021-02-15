@@ -115,7 +115,7 @@ void dmonitor(void)
 					system("sudo /usr/bin/rig_port_check");
 
 					system("ulimit -c unlimited");
-					usleep(nx.microsec * 200);
+					usleep(nx.microsec * 300);
 
 					/* 接続コマンドの実行 */
 					sprintf(command, "sudo /usr/bin/dmonitor '%s' %s %s '%s' '%s'", nx.station, linkdata[i].addr, linkdata[i].port, linkdata[i].call, linkdata[i].zone);
