@@ -1,5 +1,5 @@
 [Unit]
-Description=D-STAR Repeater Daemon
+Description=D-STAR Repeater Daemon (20210217)
 After=network.target
 
 [Service]

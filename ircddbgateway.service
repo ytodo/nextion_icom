@@ -1,5 +1,5 @@
 [Unit]
-Description=D-STAR ircDDBGateway Daemon
+Description=D-STAR ircDDBGateway Daemon (20210217)
 After=network.target
 
 [Service]

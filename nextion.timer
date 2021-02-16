@@ -1,5 +1,5 @@
 ﻿[Unit]
-Description = Nextion Service for "dmonitor" delay timer
+Description = Nextion Service delay timer (20210217)
 
 [Timer]
 OnBootSec=30sec

@@ -2,7 +2,7 @@
 // 	D-STAR  Nextion display for ICOM Terminal/Access Mode
 //
 //	ファイル名	dstarrepeater.c
-//			2020.03.05 -
+//			2020.03.05 - 2021.02.17
 //
 //	機能	ircDDBGatewayとDStarRepeaterによるシステムに
 //		アドオンとして常駐し状況をNextionに表示したり

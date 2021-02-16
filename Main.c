@@ -24,7 +24,7 @@
 //      D-STAR  Nextion display for ICOM Terminal/Access Mode
 //
 //      ファイル名      Main.c
-//                      2020.03.05 -
+//                      2020.03.05 - 2021.02.17
 //
 //      機能    Multi_Forwardが搭載されているリピータリストを取得して
 //              「接続可能リピータ」としてdmonitor用ディスプレイに表示。
@@ -68,7 +68,7 @@ int main(void)
 	sprintf(command, "SPLASH.version.txt=\"Ver.%d.%d.%d\"", VERSION, VERSUB, RELEASE);
 	sendcmd(command);
 	sendcmd("SPLASH.t4.txt=version.txt");    // バージョン表示
-	usleep(nx.microsec * 8);
+	usleep(nx.microsec * 50);
 
 	/* nextion.iniの指定に従って専用とスイッチを分岐 */
 	if (strncmp(nx.default_mode, "REF",  3) == 0) strncpy(usercmd, "dstarrpt", 8);
