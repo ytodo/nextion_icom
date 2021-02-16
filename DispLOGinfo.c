@@ -48,7 +48,7 @@ void dispstatus_ref(void)
 	}
 	else						// DVMEGA以外の場合
 	{
-		sprintf(cmdline, "tail -n10 %s | egrep -v 'RTI_DAT_NAK|Transmitting to' > /tmp/tmplog.txt", dstarlogpath);
+		sprintf(cmdline, "tail -n5 %s | egrep -v 'RTI_DATA_NAK|Transmitting to' > /tmp/tmplog.txt", dstarlogpath);
 		system(cmdline);
 
 		if ((fp = popen("tail -n1 /tmp/tmplog.txt", "r")) == NULL )
@@ -68,7 +68,7 @@ void dispstatus_ref(void)
 		strcpy(chkline, line);
 
 		/*
-		 * クラストパケットの抽出
+		 * ラストパケットの抽出
 		 */
 
 		/* ネットワークラストパケット */
