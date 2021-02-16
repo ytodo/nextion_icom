@@ -195,15 +195,6 @@ void syscmdswitch(void)
 			/* リピータリストの更新*/
 			system("sudo /var/www/cgi-bin/repUpd");
 
-			/* dmonitorを完全に止める */
-			system("sudo killall -q -9 repeater_scan");
-			system("sudo killall -q -2 dmonitor");
-			system("sudo rm -f /var/run/dmonitor.pid");
-			system("sudo systemctl stop rpt_conn");
-                        sprintf(command, "sudo systemctl stop %s", AUTOREPMON);
-                        system(command);
-			usleep(nx.microsec * 50);
-
 			/* dmonitorコントロールを開始 */
 			dmonitor();
 			break;

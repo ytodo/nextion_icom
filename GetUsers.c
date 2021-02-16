@@ -66,6 +66,9 @@ void	getusers(void)
 			}
 		}
 
+		/* ステータス・ラストハードの読み取り */
+		dispstatus_dmon();
+
 		/* 1秒に一回リフレッシュする */
 		sleep(1);
 	}
