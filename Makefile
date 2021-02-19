@@ -59,7 +59,7 @@ update	:
 	@git pull
 	@make > /dev/null
 	@sudo mv $(PROGRAM)		/usr/local/bin
-	@echo "D*MONITOR をリスタートしています..."
+	@echo "D*SWITCH (Nextion Addon Driver) をリスタートしています..."
 	@sudo killall -2 dmonitor
 	@sudo systemctl enable nextion.service
 	@sudo systemctl restart nextion.service
