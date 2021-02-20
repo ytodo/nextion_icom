@@ -8,13 +8,12 @@ on:
 
 jobs:
   build:
-
     runs-on: self-hosted
 
     steps:
     - uses: actions/checkout@v2
-#    - name: configure
-#      run: ./configure
+    - name: configure
+      run: ./configure
     - name: make
       run: make
     - name: make check
