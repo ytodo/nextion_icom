@@ -191,11 +191,6 @@ void syscmdswitch(void)
 
 		case 1: // dmonitor
 			sendcmd("dim=10");
-
-			/* リピータリストの更新*/
-			system("sudo /var/www/cgi-bin/repUpd");
-
-			/* dmonitorコントロールを開始 */
 			dmonitor();
 			break;
 

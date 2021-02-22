@@ -22,6 +22,10 @@ void dmonitor(void)
 
 
 	/* dmonitor関連サービスの起動 */
+        if (AUTOREPMON == "auto_repmon_light")
+        {
+                system("sudo systemctl stop auto_repmon");
+        }
 	sprintf(command, "sudo systemctl restart %s", AUTOREPMON);
 	system(command);
 	system("sudo systemctl restart rpt_conn");
@@ -105,6 +109,7 @@ void dmonitor(void)
 					/* dmonitorを完全に終了させる */
 					system("sudo killall -q -2 dmonitor");
 					system("sudo rm -f /var/run/dmonitor.pid");
+					usleep(nx.microsec * 300);
 
 					/* リピータコネクタを停止する */
 					system("sudo systemctl stop rpt_conn");
@@ -113,9 +118,7 @@ void dmonitor(void)
 
 					/* リグ又はモデムポートをチェックする */
 					system("sudo /usr/bin/rig_port_check");
-
 					system("ulimit -c unlimited");
-					usleep(nx.microsec * 300);
 
 					/* 接続コマンドの実行 */
 					sprintf(command, "sudo /usr/bin/dmonitor '%s' %s %s '%s' '%s'", nx.station, linkdata[i].addr, linkdata[i].port, linkdata[i].call, linkdata[i].zone);
@@ -137,7 +140,7 @@ void dmonitor(void)
 		{
 			system("sudo killall -q -2 dmonitor");
 			system("sudo rm -f /var/nun/dmonitor.pid");
-			usleep(nx.microsec * 10);
+			usleep(nx.microsec * 300);
 			system("sudo systemctl restart rpt_conn");
 			status[0] = '\0';
 		}

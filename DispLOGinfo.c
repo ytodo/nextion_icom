@@ -229,10 +229,10 @@ void dispstatus_ref(void)
 		line[0]  = '\0';
 
 	}	// Loop
-	
+
 	/* ファイルクローズ */
 	pclose(fp);
-	
+
 	return;
 }
 
@@ -250,7 +250,7 @@ void	dispstatus_dmon(void)
 	char	mycallpre[9]	= {'\0'};
 
 	/* Pathの作成 */
-	sprintf(dmonlogcmd, "tail -n3 %s%s", LOGDIR, DMLOGFILE);
+	sprintf(dmonlogcmd, "tail -n2 %s%s", LOGDIR, DMLOGFILE);
 
 	/* コマンドの標準出力オープン */
 	if ((fp = popen(dmonlogcmd, "r")) == NULL)

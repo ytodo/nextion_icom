@@ -28,6 +28,10 @@ int 	getlinkdata(void)
 	char	line[512]	= {'\0'};
 	int	i = 0;
 
+	/* リピータリストの更新*/
+	system("sudo /var/www/cgi-bin/repUpd");
+	usleep(nx.microsec * 100);
+
 	/* テーブルをオープンする */
 	if ((fp = fopen(RPTSTBL, "r")) == NULL)
 	{
