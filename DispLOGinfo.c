@@ -266,8 +266,6 @@ void	dispstatus_dmon(void)
 		if ((strcmp(line, chkline) == 0)) continue;
 		strcpy(chkline, line);
 
-printf("%s\n", line);
-
 		/* 過去のデータをクリアする  */
 		memset(status, '\0', sizeof(status));
 		memset(tmpstr, '\0', sizeof(tmpstr));
