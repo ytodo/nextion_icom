@@ -144,6 +144,8 @@ void dmonitor(void)
 			system("sudo systemctl restart rpt_conn");
 			status[0] = '\0';
 		}
+
+                /* CPUの速さによるループ調整（nextion.ini:SLEEPTIME）*/
 		usleep(nx.microsec * 5);
 
 	} // Loop
