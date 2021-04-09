@@ -250,13 +250,15 @@ void	dispstatus_dmon(void)
 	char	mycallpre[9]	= {'\0'};
 
 	/* Pathの作成 */
-	sprintf(dmonlogcmd, "tail -n9 %s%s | egrep -v 'inet recv' > /tmp/tmplog.txt", LOGDIR, DMLOGFILE);
-	system(dmonlogcmd);
+//	sprintf(dmonlogcmd, "tail -n9 %s%s | egrep -v 'inet recv' > /tmp/tmplog.txt", LOGDIR, DMLOGFILE);
+	sprintf(dmonlogcmd, "tail %s%s | egrep -v 'inet recv' --line-buffered", LOGDIR, DMLOGFILE);
+//	system(dmonlogcmd);
 
 	/* コマンドの標準出力オープン */
-	if ((fp = fopen("/tmp/tmplog.txt", "r")) == NULL)
+//	if ((fp = fopen("/tmp/tmplog.txt", "r")) == NULL)
+	if ((fp = popen(dmonlogcmd, "r")) == NULL)
 	{
-		printf("dmonitor.log file open error!\n");
+		printf("dmonitor.log open error!\n");
 		return;
 	}
 
@@ -265,8 +267,6 @@ void	dispstatus_dmon(void)
 	{
 		if ((strcmp(line, chkline) == 0)) continue;
 		strcpy(chkline, line);
-
-printf("%s\n", line);
 
 		/* 過去のデータをクリアする  */
 		memset(status, '\0', sizeof(status));
@@ -404,7 +404,9 @@ printf("%s\n", line);
 	}
 
 	/* 標準出力クローズ */
-	fclose(fp);
+//	fclose(fp);
+	pclose(fp);
+
 	return;
 }
 
