@@ -250,12 +250,9 @@ void	dispstatus_dmon(void)
 	char	mycallpre[9]	= {'\0'};
 
 	/* Pathの作成 */
-//	sprintf(dmonlogcmd, "tail -n9 %s%s | egrep -v 'inet recv' > /tmp/tmplog.txt", LOGDIR, DMLOGFILE);
 	sprintf(dmonlogcmd, "tail %s%s | egrep -v 'inet recv' --line-buffered", LOGDIR, DMLOGFILE);
-//	system(dmonlogcmd);
 
 	/* コマンドの標準出力オープン */
-//	if ((fp = fopen("/tmp/tmplog.txt", "r")) == NULL)
 	if ((fp = popen(dmonlogcmd, "r")) == NULL)
 	{
 		printf("dmonitor.log open error!\n");
@@ -377,14 +374,14 @@ void	dispstatus_dmon(void)
 		}
 
 		/* <9>接続解除を取得 */
-		if (strstr(line, "dmonitor end") != NULL)
-		{
-			rptcall[0] = '\0';
-			strcpy(rptcall, "NONE");
-			disp_rpt();
-			strcpy(status, "Disconnected");
-			disp_stat();
-		}
+//		if (strstr(line, "dmonitor end") != NULL)
+//		{
+//			rptcall[0] = '\0';
+//			strcpy(rptcall, "NONE");
+//			disp_rpt();
+//			strcpy(status, "Disconnected");
+//			disp_stat();
+//		}
 
 		/* ドロップパケット比の表示 */
 		if ((nx.debug == 1) && ((tmpptr = strstr(line, "drop packet")) != NULL))
@@ -404,7 +401,6 @@ void	dispstatus_dmon(void)
 	}
 
 	/* 標準出力クローズ */
-//	fclose(fp);
 	pclose(fp);
 
 	return;
@@ -419,7 +415,7 @@ int disp_rpt()
 	/* rptcallの内容が前回と異なる場合表示する */
 	if (strcmp(rptcall, chkrptcall) != 0)
 	{
-		strncpy(chkrptcall, rptcall, 8);
+		strcpy(chkrptcall, rptcall);
 		sprintf(command, "DMON.t1.txt=\"LINK TO : %s\"", rptcall);
 		sendcmd(command);
 		sprintf(command, "DMON.link.txt=\"LINK TO : %s\"", rptcall);
