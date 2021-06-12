@@ -35,10 +35,10 @@ void dispstatus_ref(void)
 	sprintf(dstarlogpath, "%s%s%s", LOGDIR, DSLOGFILE, fname);
 
 	/* コマンドの標準出力オープン */
-	if (strncmp(ds.modemtype, "DVMEGA", 6) == 0)	// DVMEGAの場合 
+	if (strncmp(ds.modemtype, "DVMEGA", 6) == 0)	// DVMEGAの場合
 	{
 		/* dstarrepeaterd-yyyy-mm-dd.log の最新１行を読むコマンド */
-		sprintf(cmdline, "tail -n1 %s | egrep -v 'RT_DATA|RT_HEADER|0000|0010|0020|0030|Transmitting to'", dstarlogpath);
+		sprintf(cmdline, "tail %s | grep -v 'inet recv' --line-buffered", dstarlogpath);
 
 		/* コマンドを実行、出力を読む */
 		if ((fp = popen(cmdline, "r")) == NULL)
