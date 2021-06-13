@@ -35,10 +35,10 @@ void dispstatus_ref(void)
 	sprintf(dstarlogpath, "%s%s%s", LOGDIR, DSLOGFILE, fname);
 
 	/* コマンドの標準出力オープン */
-//	if (strncmp(ds.modemtype, "DVMEGA", 6) == 0)	// DVMEGAの場合
-//	{
+	if (strncmp(ds.modemtype, "DVMEGA", 6) == 0)	// DVMEGAの場合
+	{
 		/* dstarrepeaterd-yyyy-mm-dd.log の最新１行を読むコマンド */
-		sprintf(cmdline, "tail %s | grep -v 'inet recv' --line-buffered", dstarlogpath);
+		sprintf(cmdline, "tail %s | grep -v 'RTI_DATA_NAK' --line-buffered", dstarlogpath);
 
 		/* コマンドを実行、出力を読む */
 		if ((fp = popen(cmdline, "r")) == NULL)
@@ -46,18 +46,18 @@ void dispstatus_ref(void)
 			printf("LOGinfo open error!!");
 			exit(EXIT_FAILURE);
 		}
-//	}
-//	else						// DVMEGA以外の場合
-//	{
-//		sprintf(cmdline, "tail -n10 %s | egrep -v 'RTI_DATA_NAK|Transmitting to' > /tmp/tmplog.txt", dstarlogpath);
-//		system(cmdline);
+	}
+	else						// DVMEGA以外の場合
+	{
+		sprintf(cmdline, "tail -n10 %s | egrep -v 'RTI_DATA_NAK|Transmitting to' > /tmp/tmplog.txt", dstarlogpath);
+		system(cmdline);
 
-//		if ((fp = popen("tail -n1 /tmp/tmplog.txt", "r")) == NULL )
-//		{
-//			printf("LOGinfo open error!!");
-//			exit(EXIT_FAILURE);
-//		}
-//	}
+		if ((fp = popen("tail -n1 /tmp/tmplog.txt", "r")) == NULL )
+		{
+			printf("LOGinfo open error!!");
+			exit(EXIT_FAILURE);
+		}
+	}
 
 	/* ファイル行を配列に取得 */
 	while ((fgets(line, sizeof(line), fp)) != NULL)
@@ -250,7 +250,7 @@ void	dispstatus_dmon(void)
 	char	mycallpre[9]	= {'\0'};
 
 	/* Pathの作成 */
-	sprintf(dmonlogcmd, "tail %s%s | egrep -v 'inet recv' --line-buffered", LOGDIR, DMLOGFILE);
+	sprintf(dmonlogcmd, "tail %s%s | grep -v 'inet recv' --line-buffered", LOGDIR, DMLOGFILE);
 
 	/* コマンドの標準出力オープン */
 	if ((fp = popen(dmonlogcmd, "r")) == NULL)
@@ -415,6 +415,7 @@ int disp_rpt()
 	/* rptcallの内容が前回と異なる場合表示する */
 	if (strcmp(rptcall, chkrptcall) != 0)
 	{
+		chkrptcall[0] = '\0';
 		strcpy(chkrptcall, rptcall);
 		sprintf(command, "DMON.t1.txt=\"LINK TO : %s\"", rptcall);
 		sendcmd(command);
