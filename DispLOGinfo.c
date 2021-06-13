@@ -35,8 +35,8 @@ void dispstatus_ref(void)
 	sprintf(dstarlogpath, "%s%s%s", LOGDIR, DSLOGFILE, fname);
 
 	/* コマンドの標準出力オープン */
-	if (strncmp(ds.modemtype, "DVMEGA", 6) == 0)	// DVMEGAの場合
-	{
+//	if (strncmp(ds.modemtype, "DVMEGA", 6) == 0)	// DVMEGAの場合
+//	{
 		/* dstarrepeaterd-yyyy-mm-dd.log の最新１行を読むコマンド */
 		sprintf(cmdline, "tail %s | grep -v 'inet recv' --line-buffered", dstarlogpath);
 
@@ -46,18 +46,18 @@ void dispstatus_ref(void)
 			printf("LOGinfo open error!!");
 			exit(EXIT_FAILURE);
 		}
-	}
-	else						// DVMEGA以外の場合
-	{
-		sprintf(cmdline, "tail -n10 %s | egrep -v 'RTI_DATA_NAK|Transmitting to' > /tmp/tmplog.txt", dstarlogpath);
-		system(cmdline);
+//	}
+//	else						// DVMEGA以外の場合
+//	{
+//		sprintf(cmdline, "tail -n10 %s | egrep -v 'RTI_DATA_NAK|Transmitting to' > /tmp/tmplog.txt", dstarlogpath);
+//		system(cmdline);
 
-		if ((fp = popen("tail -n1 /tmp/tmplog.txt", "r")) == NULL )
-		{
-			printf("LOGinfo open error!!");
-			exit(EXIT_FAILURE);
-		}
-	}
+//		if ((fp = popen("tail -n1 /tmp/tmplog.txt", "r")) == NULL )
+//		{
+//			printf("LOGinfo open error!!");
+//			exit(EXIT_FAILURE);
+//		}
+//	}
 
 	/* ファイル行を配列に取得 */
 	while ((fgets(line, sizeof(line), fp)) != NULL)
