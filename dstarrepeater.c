@@ -20,7 +20,7 @@ void dstarrepeater(void)
 	char	chkusercmd[32]	= {'\0'};
 	char	refcall[9]	= {'\0'};
 	char	nodecall[9]	= {'\0'};
-	
+
 
 	system("sudo /usr/bin/rig_port_check");
 	system("sudo systemctl restart dstarrepeater");
@@ -121,7 +121,7 @@ void dstarrepeater(void)
 				syscmdswitch();
 			}
 		}
-		usleep(nx.microsec * 30);
+//		usleep(nx.microsec * 30);
 	}	// Loop
 
 	return;

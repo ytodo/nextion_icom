@@ -35,28 +35,13 @@ void dispstatus_ref(void)
 	sprintf(dstarlogpath, "%s%s%s", LOGDIR, DSLOGFILE, fname);
 
 	/* コマンドの標準出力オープン */
-	if (strncmp(ds.modemtype, "DVMEGA", 6) == 0)	// DVMEGAの場合
-	{
-		/* dstarrepeaterd-yyyy-mm-dd.log の最新１行を読むコマンド */
-		sprintf(cmdline, "tail %s | grep -v 'RTI_DATA_NAK' --line-buffered", dstarlogpath);
+	sprintf(cmdline, "tail -n10 %s | egrep -v 'RTI_DATA_NAK|Transmitting to' > /tmp/tmplog.txt", dstarlogpath);
+	system(cmdline);
 
-		/* コマンドを実行、出力を読む */
-		if ((fp = popen(cmdline, "r")) == NULL)
-		{
-			printf("LOGinfo open error!!");
-			exit(EXIT_FAILURE);
-		}
-	}
-	else						// DVMEGA以外の場合
+	if ((fp = popen("tail -n1 /tmp/tmplog.txt", "r")) == NULL )
 	{
-		sprintf(cmdline, "tail -n10 %s | egrep -v 'RTI_DATA_NAK|Transmitting to' > /tmp/tmplog.txt", dstarlogpath);
-		system(cmdline);
-
-		if ((fp = popen("tail -n1 /tmp/tmplog.txt", "r")) == NULL )
-		{
-			printf("LOGinfo open error!!");
-			exit(EXIT_FAILURE);
-		}
+		printf("LOGinfo open error!!");
+		exit(EXIT_FAILURE);
 	}
 
 	/* ファイル行を配列に取得 */

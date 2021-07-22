@@ -232,7 +232,7 @@ void syscmdswitch(void)
 
 	case 5:						// dstarrepeater 起動
 		st.mode = 2;
-		system("sudo systemctl restart dstarrepeater");
+//		system("sudo systemctl restart dstarrepeater");
 		dstarrepeater();
 		break;
 

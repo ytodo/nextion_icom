@@ -59,7 +59,8 @@
 #define	DMLOGFILE	"dmonitor.log"
 #define	DUMPFILE	"/tmp/tcpdump.dstar"
 // 使用アプリケーション
-#define	AUTOREPMON	"auto_repmon_light"
+//#define	AUTOREPMON	"auto_repmon_light"
+#define AUTOREPMON	"auto_repmon"
 // 設定値
 #define	BAUDRATE	B9600
 #define	LISTSIZE	512			// 最大リピータ数
