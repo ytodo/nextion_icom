@@ -21,9 +21,23 @@ void dstarrepeater(void)
 	char	refcall[9]	= {'\0'};
 	char	nodecall[9]	= {'\0'};
 
+        char    fname[32]               = {'\0'};       // ファイル名
+        char    dstarlogpath[32]        = {'\0'};       // D-STAR Repeater ログのフルパス
+
 
 	system("sudo /usr/bin/rig_port_check");
 	system("sudo systemctl restart dstarrepeater");
+
+        /* 日付入りログファイル名の作成 */
+        timer = time(NULL);
+        timeptr = gmtime(&timer);
+        strftime(fname, sizeof(fname), "-%Y-%m-%d.log", timeptr);
+        sprintf(dstarlogpath, "%s%s%s", LOGDIR, DSLOGFILE, fname);
+
+        /* コマンドの標準出力をファイルへ */
+	system("sudo pkill tail");			// 重複禁止処理
+	sprintf(cmdline, "tail -f %s | grep -E 'Stats|AMBE|Linked to|Not linked|Radio|Network' --line-buffered > /tmp/tmplog.txt &", dstarlogpath);
+	system(cmdline);
 
 	/* メインスクリーンの初期設定 */
 	sendcmd("dim=dims");

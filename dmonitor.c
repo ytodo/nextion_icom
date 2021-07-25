@@ -19,7 +19,7 @@ void dmonitor(void)
 	int	flag;
 	char	chkusercmd[8]	= {'\0'};
 	char	tmpstr[32]	= {'\0'};
-
+        char    dmonlogcmd[128] = {'\0'};
 
 	/* dmonitor関連サービスの起動 */
         if (AUTOREPMON == "auto_repmon_light")
@@ -29,6 +29,12 @@ void dmonitor(void)
 	sprintf(command, "sudo systemctl restart %s", AUTOREPMON);
 	system(command);
 	system("sudo systemctl restart rpt_conn");
+
+
+        /* dmonitor.logのうち必要な項目のみのリスト作成 */
+	system("sudo pkill tail");
+        sprintf(dmonlogcmd, "tail -f %s%s | grep -E 'dmonitor start|Connected|Frequency|from|drop' --line-buffered > /tmp/tmplog.txt &", LOGDIR, DMLOGFILE);
+	system(dmonlogcmd);
 
 	/* 現在利用可能なリピータリストの取得*/
 	st.num = getlinkdata();

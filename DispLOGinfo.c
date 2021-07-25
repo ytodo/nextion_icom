@@ -18,26 +18,15 @@ char	tmpstr[32]	= {'\0'};		// 一時的文字列
  ********************************************************/
 void dispstatus_ref(void)
 {
-	char	fname[32]		= {'\0'};	// ファイル名
 	char	mycall[14]		= {'\0'};
 	char	urcall[9]		= {'\0'};
-	char	dstarlogpath[32]	= {'\0'};	// D-STAR Repeater ログのフルパス
 	char	status2[32]		= {'\0'};
 
 	/*
 	 * ログファイルからリフレクタへのリンク情報を抽出する
 	 */
 
-	/* 日付入りログファイル名の作成 */
-	timer = time(NULL);
-	timeptr = gmtime(&timer);
-	strftime(fname, sizeof(fname), "-%Y-%m-%d.log", timeptr);
-	sprintf(dstarlogpath, "%s%s%s", LOGDIR, DSLOGFILE, fname);
-
 	/* コマンドの標準出力オープン */
-	sprintf(cmdline, "tail -n10 %s | egrep -v 'RTI_DATA_NAK|Transmitting to' > /tmp/tmplog.txt", dstarlogpath);
-	system(cmdline);
-
 	if ((fp = popen("tail -n1 /tmp/tmplog.txt", "r")) == NULL )
 	{
 		printf("LOGinfo open error!!");
@@ -48,7 +37,7 @@ void dispstatus_ref(void)
 	while ((fgets(line, sizeof(line), fp)) != NULL)
 	{
 		/* 一巡して全く同じ内容ならパス */
-		if (strncmp(line, chkline, strlen(line)) == 0) continue;
+		if (strncmp(line, chkline, strlen(line)) == 0) break;
 
 		/* 重複チェック */
 		strcpy(chkline, line);
@@ -136,7 +125,7 @@ void dispstatus_ref(void)
 		/*
 		 * RF ヘッダーの取得
 		 */
-		if ((tmpptr = strstr(line, "Radio header")) != NULL)
+		if ((tmpptr = strstr(line, "Radio")) != NULL)
 		{
 			sendcmd("page DSTAR");
 
@@ -230,15 +219,12 @@ void	dispstatus_dmon(void)
 {
 	FILE	*fp;
 	char	*tmpptr;
-	char	dmonlogcmd[128]	= {'\0'};
 	char	mycall[9]	= {'\0'};
 	char	mycallpre[9]	= {'\0'};
 
-	/* Pathの作成 */
-	sprintf(dmonlogcmd, "tail %s%s | grep -v 'inet recv' --line-buffered", LOGDIR, DMLOGFILE);
 
 	/* コマンドの標準出力オープン */
-	if ((fp = popen(dmonlogcmd, "r")) == NULL)
+	if ((fp = popen("tail -n2 /tmp/tmplog.txt", "r")) == NULL)
 	{
 		printf("dmonitor.log open error!\n");
 		return;
