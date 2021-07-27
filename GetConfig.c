@@ -10,6 +10,7 @@ void getconfig(void)
 	FILE	*fp;
 	char	*ret;
 	char	line[64]	= {'\0'};
+        char    band[10]   = {'\0'};
 	int	i = 0;
 
 	/*
@@ -73,6 +74,11 @@ void getconfig(void)
 
 	/* ファイルクローズ */
 	fclose(fp);
+
+	/* ステーション名にバンド名を追加設定 */
+	if (strncmp(&ds.station[7], "B", 1) == 0) strcpy(band, " (70cm)");
+	if (strncmp(&ds.station[7], "C", 1) == 0) strcpy(band, " (2m)");
+	strcat(ds.station, band);
 
 
 	/*
