@@ -65,9 +65,6 @@ void dstarrepeater(void)
 		/* CPU 温度の表示 */
 		disptemp();
 
-		/* ログステータスの読み取り */
-		dispstatus_ref();
-
 
 		/*
 		 * 受信処理
@@ -124,7 +121,12 @@ void dstarrepeater(void)
 					strcat(refcall, "_");
 					strncat(refcall, &usercmd[6], 1);
 
+					sprintf(cmdline, "remotecontrold %s unlink", nodecall);
+printf("\n%s\n", cmdline);
+					system(cmdline);
+sleep(5);
 					sprintf(cmdline, "remotecontrold %s link never %s", nodecall, refcall);
+printf("%s\n", cmdline);
 					system(cmdline);
 				}
 				sendcmd("page IDLE");
@@ -135,6 +137,10 @@ void dstarrepeater(void)
 				syscmdswitch();
 			}
 		}
+
+		/* ログステータスの読み取り */
+		dispstatus_ref();
+
 		usleep(nx.microsec * 30);
 	}	// Loop
 

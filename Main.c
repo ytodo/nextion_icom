@@ -47,6 +47,9 @@ int main(void)
 	/* 設定項目の取得と表示 */
 	getconfig();
 
+	/* IPアドレスの取得 */
+	dispipaddr();
+
 	/* シリアルポートのオープン nextion.iniより */
 	if ((nx.nextion_port != NULL) && (strlen(nx.nextion_port) != 0))
 	{
@@ -70,13 +73,13 @@ int main(void)
 	sendcmd("SPLASH.t4.txt=version.txt");    // バージョン表示
 	usleep(nx.microsec * 50);
 
+	/* 既存のコネクションを解除 */
+	disconnect_ref();
+
 	/* nextion.iniの指定に従って専用とスイッチを分岐 */
 	if (strncmp(nx.default_mode, "REF",  3) == 0) strncpy(usercmd, "dstarrpt", 8);
 	if (strncmp(nx.default_mode, "DMON", 4) == 0) strncpy(usercmd, "dmonitor", 8);
 	if (strncmp(nx.default_mode, "MAIN", 4) == 0) sendcmd("page MAIN");
-
-	/* IPアドレスの取得 */
-	dispipaddr();
 
 	/* 送・受信ループ */
 	while(1)

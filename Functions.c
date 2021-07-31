@@ -15,6 +15,7 @@
 int	fd;
 int	fds;
 
+
 /*********************************************
  * シリアルポートのオープン
  *   This is from ON7LDS's NextionDriver
@@ -135,12 +136,36 @@ void dispclock(void)
 
 
 /*********************************************
+ * リフレクタ接続解除
+ *********************************************/
+void disconnect_ref(void)
+{
+        char    nodecall[9] = {'\0'};
+	int	i	    = 0;
+
+	strncpy(nodecall, ds.station, 8);
+	for (i = 0; i < 8; i++)
+	{
+		if (!strncmp(&nodecall[i], " ", 1))
+		{
+			nodecall[i] = '_';
+		}
+	}
+	sprintf(cmdline, "remotecontrold %s unlink", nodecall);
+	system(cmdline);
+
+	return;
+}
+
+
+/*********************************************
  * システムコマンドを選択する
  *********************************************/
 void syscmdswitch(void)
 {
 	int	flag	= 0;
 	int	i	= 0;
+	char    nodecall[9]     = {'\0'};
 
 	/* 共通 */
 	if (strncmp(usercmd, "restart",  7) == 0) flag =  1;
@@ -196,7 +221,11 @@ void syscmdswitch(void)
 
 		case 2: // dstarrepeater
 			sendcmd("dim=10");
-			system("sudo systemctl restart dstarrepeater");
+
+			/* リフレクタ接続解除 */
+			disconnect_ref();
+
+			/* dstarrepeater再帰 */
 			dstarrepeater();
 			break;
 		}
@@ -204,6 +233,10 @@ void syscmdswitch(void)
 
 	case 2:						// reboot
 		sendcmd("dim=10");
+
+		/* リフレクタ接続解除 */
+		disconnect_ref();
+
 		sendcmd("page SPLASH");
 		sendcmd("SPLASH.t3.txt=\"Restarting...\"");
 		system("sudo systemctl stop ircddbgateway");
@@ -215,6 +248,10 @@ void syscmdswitch(void)
 
 	case 3:						// shutdown
 		sendcmd("dim=10");
+
+		/* リフレクタ接続解除 */
+		disconnect_ref();
+
 		sendcmd("page SPLASH");
 		sendcmd("SPLASH.t3.txt=\"Stopping...\"");
 		system("sudo systemctl stop ircddbgateway");
@@ -232,7 +269,6 @@ void syscmdswitch(void)
 
 	case 5:						// dstarrepeater 起動
 		st.mode = 2;
-//		system("sudo systemctl restart dstarrepeater");
 		dstarrepeater();
 		break;
 
@@ -303,8 +339,12 @@ void syscmdswitch(void)
 			break;
 
 		case 2:	// dstarrepeater
-			/* dstarrepeaterを停止 */
 			sendcmd("dim=10");
+
+			/* リフレクタ接続解除 */
+			disconnect_ref();
+
+			/* dstarrepeaterを停止 */
 			system("sudo systemctl stop dstarrepeater");
 
 			/* nextionを再起動してmodeをMAIN待機画面（０）とする */
