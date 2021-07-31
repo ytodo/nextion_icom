@@ -122,11 +122,9 @@ void dstarrepeater(void)
 					strncat(refcall, &usercmd[6], 1);
 
 					sprintf(cmdline, "remotecontrold %s unlink", nodecall);
-printf("\n%s\n", cmdline);
 					system(cmdline);
-sleep(5);
+					sleep(nx.microsec * 50);
 					sprintf(cmdline, "remotecontrold %s link never %s", nodecall, refcall);
-printf("%s\n", cmdline);
 					system(cmdline);
 				}
 				sendcmd("page IDLE");
