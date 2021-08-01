@@ -27,6 +27,7 @@ void dstarrepeater(void)
 
 	system("sudo /usr/bin/rig_port_check");
 	system("sudo systemctl restart dstarrepeater");
+	dispipaddr();
 
         /* 日付入りログファイル名の作成 */
         timer = time(NULL);
