@@ -33,7 +33,7 @@ void dmonitor(void)
 
         /* dmonitor.logのうち必要な項目のみのリスト作成 */
 	system("sudo pkill tail");
-        sprintf(dmonlogcmd, "tail -f %s%s | grep -E 'dmonitor start|Connected|Frequency|init|from|drop' --line-buffered > /tmp/tmplog.txt &", LOGDIR, DMLOGFILE);
+        sprintf(dmonlogcmd, "tail -f %s%s | grep -E 'dmonitor start|Connected|Frequency|init|from|drop|FiFo' --line-buffered > /tmp/tmplog.txt &", LOGDIR, DMLOGFILE);
 	system(dmonlogcmd);
 
 	/* 現在利用可能なリピータリストの取得*/
