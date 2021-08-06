@@ -25,7 +25,7 @@ $(PROGRAM)	: $(OBJECTS)
 clean	:
 	$(RM)  $(PROGRAM) $(OBJECTS)
 
-# Install files
+### Install files ###
 install	:
 # プログラムのコンパイル
 	@echo "コンパイルしています..."
@@ -37,32 +37,42 @@ install	:
 # ユニットファイルの配置
 	@sudo cp $(PROGRAM).service	/etc/systemd/system
 	@sudo cp ircddbgateway.service	/etc/systemd/system
+	@sudo cp ircddbgateway.timer	/etc/systemd/system
 	@sudo cp dstarrepeater.service	/etc/systemd/system
 	@sudo systemctl daemon-reload
 # serviceの起動設定
 	@echo "サービスの有効／無効を調整しています..."
 	@sudo systemctl stop	monitorix
-	@sudo systemctl disable	monitorix
+	@sudo systemctl disable	monitorix 		> /dev/null
 	@sudo systemctl stop	lightdm.service
-	@sudo systemctl disable lightdm.service
+	@sudo systemctl disable lightdm.service		> /dev/null
 	@sudo systemctl stop	auto_repmon.service
-	@sudo systemctl disable	auto_repmon.service
+	@sudo systemctl disable	auto_repmon.service	> /dev/null
 	@sudo systemctl stop	rpt_conn.service
-	@sudo systemctl disable	rpt_conn.service
-	@sudo systemctl enable	ircddbgateway.service
-	@sudo systemctl enable	$(PROGRAM).service
-	@sudo systemctl restart	$(PROGRAM).service
+	@sudo systemctl disable	rpt_conn.service	> /dev/null
+	@sudo systemctl enable	ircddbgateway.timer	> /dev/null
+	@echo "D*SWITCH (Nextion Addon Driver) を自動起動に設定しています..."
+	@sudo systemctl enable	$(PROGRAM).service	> /dev/null
+	@echo
+	@echo "/etc/nextion.iniを編集してください。"
+	@echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
 
+### nextionファイルのアップデート ###
+NUM = $(shell pgrep -c dmonitor)
 update	:
+# dmonitorが動いていたら止める
+ifneq ($(NUM),0)
+	@echo 'dmonitorをstopします。'
+	@sudo killall -2 dmonitor
+endif
 # プログラムのダウンロードとコンパイル
 	@echo "アップデートのチェックとコンパイルをします..."
 	@git pull
 	@make > /dev/null
 	@sudo mv $(PROGRAM)		/usr/local/bin
 	@echo "D*SWITCH (Nextion Addon Driver) をリスタートしています..."
-	@sudo killall -2 dmonitor
-	@sudo systemctl enable nextion.service
-	@sudo systemctl restart nextion.service
+	@sudo systemctl enable  $(PROGRAM).service
+	@sudo systemctl restart $(PROGRAM).service
 
 # Dependency of Header Files
 $(OBJECTS)		: Nextion.h
