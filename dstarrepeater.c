@@ -127,7 +127,7 @@ void dstarrepeater(void)
 
 					sprintf(cmdline, "remotecontrold %s unlink", nodecall);
 					system(cmdline);
-//					sleep(nx.microsec * 50);
+					usleep(nx.microsec * 100);
 					sprintf(cmdline, "remotecontrold %s link never %s", nodecall, refcall);
 					system(cmdline);
 				}

@@ -69,7 +69,7 @@
 #define	WAITTIME	100000			// 単位microsec（0.1秒）
 #define	VERSION		1			// バージョン情報
 #define	VERSUB		1
-#define RELEASE		1
+#define RELEASE		2
 
 /* 日付表示関連 */
 time_t	timer;
