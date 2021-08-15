@@ -33,16 +33,13 @@ void dmonitor(void)
 
         /* dmonitor.logのうち必要な項目のみのリスト作成 */
 	system("sudo pkill tail");
-        sprintf(dmonlogcmd, "tail -f %s%s | grep -E 'dmonitor start|Connected|Frequency|init|from|drop|FiFo' --line-buffered > /tmp/tmplog.txt &", LOGDIR, DMLOGFILE);
+        sprintf(dmonlogcmd, "tail -f %s%s | grep -E 'dmonitor start|dmonitor end|Connected|Frequency|init|from|drop packet|FiFo' --line-buffered > /tmp/tmplog.txt &", LOGDIR, DMLOGFILE);
 	system(dmonlogcmd);
 
 	/* 現在利用可能なリピータリストの取得*/
 	st.num = getlinkdata();
 
-	/* メインスクリーンの初期設定 */
-	sendcmd("dim=dims");
-	sendcmd("page DMON");
-
+	/* dmonitorスクリーンの初期設定 */
 	sprintf(command, "DMON.station.txt=\"STATION : %s\"", nx.station);
 	sendcmd(command);
 	sprintf(command, "DMON.t0.txt=\"STATION : %s\"", nx.station);
@@ -58,14 +55,6 @@ void dmonitor(void)
 	sprintf(command, "DMON.stat1.txt=\"Reading %d Repeaters\"", st.num);
 	sendcmd(command);
 	sendcmd("DMON.t2.txt=DMON.stat1.txt");
-
-
-	/* 全リストを空にした後リピータ数分の文字配列にコールサインを格納 */
-	for (i = 0; i < 21; i++)
-	{
-		sprintf(command, "RPTLIST.va%d.txt=\"%s\"", i, linkdata[i].call);
-		sendcmd(command);
-	}
 
 	/* チェックし	たIPアドレスをSYSTEM pageに表示 */
 	sprintf(command, "SYSTEM.va0.txt=\"%s\"", ds.ipaddress);
@@ -109,6 +98,9 @@ void dmonitor(void)
 				/* リピータリストに指定したコールサインが有った場合接続手順に入る */
 				if (strncmp(linkdata[i].call, usercmd, 8) == 0)
 				{
+					sendcmd("dim=dims");
+					sendcmd("page DMON");
+
 					/* 実行前処理 スキャン中なら止める */
 					system("sudo killall -q -9 repeater_scan");
 
@@ -129,7 +121,6 @@ void dmonitor(void)
 					/* 接続コマンドの実行 */
 					sprintf(command, "sudo /usr/bin/dmonitor '%s' %s %s '%s' '%s'", nx.station, linkdata[i].addr, linkdata[i].port, linkdata[i].call, linkdata[i].zone);
 					system(command);
-					sendcmd("page DMON");
 					flag = 1;		// リピータ接続だった時 1 となる
 				}
 			}

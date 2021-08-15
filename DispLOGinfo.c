@@ -237,13 +237,13 @@ void	dispstatus_dmon(void)
 		strcpy(chkline, line);
 
 		/* 過去のデータをクリアする  */
-		memset(status, '\0', sizeof(status));
-		memset(tmpstr, '\0', sizeof(tmpstr));
+		memset(status,  '\0', sizeof(status));
+		memset(tmpstr,  '\0', sizeof(tmpstr));
 
 		/* <1>どこに接続したかを取得 */
 		if ((tmpptr = strstr(line, "Connected")) != NULL)
 		{
-			rptcall[0] = '\0';
+			memset(rptcall, '\0', sizeof(rptcall));
 			strncpy(rptcall, tmpptr + 13, 8);
 			disp_rpt();
 		}
@@ -345,14 +345,14 @@ void	dispstatus_dmon(void)
 		}
 
 		/* <9>接続解除を取得 */
-//		if (strstr(line, "dmonitor end") != NULL)
-//		{
-//			rptcall[0] = '\0';
-//			strcpy(rptcall, "NONE");
-//			disp_rpt();
-//			strcpy(status, "Disconnected");
-//			disp_stat();
-//		}
+		if (strstr(line, "dmonitor end") != NULL)
+		{
+			rptcall[0] = '\0';
+			strcpy(rptcall, "NONE");
+			disp_rpt();
+			strcpy(status, "Disconnected");
+			disp_stat();
+		}
 
 		/* ドロップパケット比の表示 */
 		if ((nx.debug == 1) && ((tmpptr = strstr(line, "drop packet")) != NULL))
