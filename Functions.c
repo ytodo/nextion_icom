@@ -200,7 +200,7 @@ void syscmdswitch(void)
 			system("sudo systemctl stop dstarrepeater");
 
 			/* dmonitor関連アプリを完全停止 */
-			system("sudo killall -q -9 dmonitor");
+			system("sudo killall -q -2 dmonitor");
 			system("sudo rm -f /var/run/dmonitor.pid");
 			sprintf(command, "sudo systemctl stop %s", AUTOREPMON);
 			system(command);
@@ -216,6 +216,16 @@ void syscmdswitch(void)
 
 		case 1: // dmonitor
 			sendcmd("dim=10");
+
+			/* dmonitor関連アプリを完全停止 */
+			system("sudo killall -q -9 sleep");
+			system("sudo killall -q -2 dmonitor");
+			system("sudo rm -f /var/run/dmonitor.pid");
+			sprintf(command, "sudo systemctl stop %s", AUTOREPMON);
+			system(command);
+			usleep(nx.microsec * 100);
+
+			/* dmonitor再帰 */
 			dmonitor();
 			break;
 
@@ -278,6 +288,10 @@ void syscmdswitch(void)
 		system("sudo killall -q -s 2 dmonitor");
 		system("sudo rm /var/run/dmonitor.pid");
 		system("sudo apt clean && sudo apt update && sudo apt install dmonitor -y");
+		system("sudo systemctl stop rpt_conn");
+		system("sudo systemctl disable rpt_conn");
+		system("sudo systemctl stop auto_repmon");
+		system("sudo systemctl disable auto_repmon");
 
 		sendcmd("dim=10");
 		system("sudo systemctl restart nextion");
