@@ -21,6 +21,7 @@ void dmonitor(void)
 	char	tmpstr[32]	= {'\0'};
         char    dmonlogcmd[128] = {'\0'};
 
+
 	/* dmonitor関連サービスの起動 */
         if (AUTOREPMON == "auto_repmon_light")
         {
@@ -56,9 +57,11 @@ void dmonitor(void)
 	sendcmd(command);
 	sendcmd("DMON.t2.txt=DMON.stat1.txt");
 
-	/* チェックし	たIPアドレスをSYSTEM pageに表示 */
+	/* チェックしたIPアドレスをSYSTEM pageに表示 */
 	sprintf(command, "SYSTEM.va0.txt=\"%s\"", ds.ipaddress);
 	sendcmd(command);
+
+	sendcmd("page DMON");
 
 
 	/* 送・受信ループ */
