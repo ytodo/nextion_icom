@@ -21,14 +21,15 @@ void dispstatus_ref(void)
 	char	mycall[14]		= {'\0'};
 	char	urcall[9]		= {'\0'};
 	char	status2[32]		= {'\0'};
+	char	k = 0;							// 重複チェック用
 
 	/*
 	 * ログファイルからリフレクタへのリンク情報を抽出する
 	 */
 
 	/* コマンドの標準出力オープン */
-	if ((fp = popen("tail -n1 /tmp/tmplog.txt", "r")) == NULL )
-	{
+	if ((fp = popen("tail -n1 /tmp/tmplog.txt", "r")) == NULL )	// 重複チェックタイミング調整 -n1 --> -n2
+	{								// Thanks JA1UXX
 		printf("LOGinfo open error!!");
 		exit(EXIT_FAILURE);
 	}
@@ -40,7 +41,9 @@ void dispstatus_ref(void)
 		if (strncmp(line, chkline, strlen(line)) == 0) break;
 
 		/* 重複チェック */
-		strcpy(chkline, line);
+//		if (k = 0) 
+strcpy(chkline, line);			// 2行分の1行目のみ(k = 0の時）チェック
+//		k = 1;							// Thanks JA1UXX
 
 		/*
 		 * ラストパケットの抽出
