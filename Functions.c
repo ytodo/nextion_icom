@@ -15,7 +15,6 @@
 int	fd;
 int	fds;
 
-
 /*********************************************
  * シリアルポートのオープン
  *   This is from ON7LDS's NextionDriver
@@ -114,20 +113,22 @@ void recvdata(char *touchcmd)
 void dispclock(void)
 {
 	char	tmpstr[20] = {'\0'};
+	time_t	timer;
+	struct	tm *timeptr;
 
 	/* 日付･時刻表示 */
-	jstimer = time(NULL);
-	jstimeptr = localtime(&jstimer);
+	timer = time(NULL);
+	timeptr = localtime(&timer);
 
 	sprintf(command, "MAIN.t0.pco=%s", nx.clock_color);
 	sendcmd(command);
-	strftime(tmpstr, sizeof(tmpstr), "%H:%M:%S", jstimeptr);
+	strftime(tmpstr, sizeof(tmpstr), "%H:%M:%S", timeptr);
 	sprintf(command, "MAIN.t0.txt=\"%s\"", tmpstr);
 	sendcmd(command);
 
 	sprintf(command, "MAIN.t1.pco=%s", nx.clock_color);
 	sendcmd(command);
-	strftime(tmpstr, sizeof(tmpstr), "%Y.%m.%d", jstimeptr);
+	strftime(tmpstr, sizeof(tmpstr), "%Y.%m.%d", timeptr);
 	sprintf(command, "MAIN.t1.txt=\"%s\"", tmpstr);
 	sendcmd(command);
 
@@ -379,4 +380,3 @@ void syscmdswitch(void)
 	}
 	return;
 }
-

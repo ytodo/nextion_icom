@@ -69,13 +69,7 @@
 #define	WAITTIME	100000			// 単位microsec（0.1秒）
 #define	VERSION		1			// バージョン情報
 #define	VERSUB		1
-#define RELEASE		4
-
-/* 日付表示関連 */
-time_t	timer;
-struct	tm *timeptr;
-time_t	jstimer;
-struct	tm *jstimeptr;
+#define RELEASE		5
 
 /* Variables */
 typedef struct {				// Hole Punch リピータリスト

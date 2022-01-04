@@ -11,7 +11,6 @@ FILE	*fp;					// ファイルポインタ
 char	*tmpptr;				// 一時的ポインタ
 char	tmpstr[32]	= {'\0'};		// 一時的文字列
 
-
 /********************************************************
  * dstarrepeaterd-yyyy-mm-dd.log を読み込み、
  * 処理の結果情報を取得する
@@ -21,6 +20,9 @@ void dispstatus_ref(void)
 	char	mycall[14]		= {'\0'};
 	char	urcall[9]		= {'\0'};
 	char	status2[32]		= {'\0'};
+	time_t	timer;
+	struct	tm *timeptr;
+
 
 	/*
 	 * ログファイルからリフレクタへのリンク情報を抽出する
@@ -133,11 +135,11 @@ void dispstatus_ref(void)
 			status2[0] = '\0';
 
 			/* JST 時刻の算出 */
-			jstimer = time(NULL);
-			jstimeptr = localtime(&jstimer);
+			timer = time(NULL);
+			timeptr = localtime(&timer);
 
 			/* Radio header の場合RF を表示 */
-			strftime(status2, sizeof(status2), "RF  %H:%M ", jstimeptr);
+			strftime(status2, sizeof(status2), "RF  %H:%M ", timeptr);
 
 			/* ログよりコールサインMY, UR を取得 */
 			strncpy(mycall, tmpptr + 27, 13);
@@ -174,11 +176,11 @@ void dispstatus_ref(void)
 			status2[0] = '\0';
 
 			/* JST 時刻の算出 */
-			jstimer = time(NULL);
-			jstimeptr = localtime(&jstimer);
+			timer = time(NULL);
+			timeptr = localtime(&timer);
 
 			/* Network header の場合Net を表示 */
-			strftime(status2, sizeof(status2), "Net %H:%M ", jstimeptr);
+			strftime(status2, sizeof(status2), "Net %H:%M ", timeptr);
 
 			/* ログよりコールサインMY, UR を取得 */
 			strncpy(mycall, tmpptr + 30, 13);

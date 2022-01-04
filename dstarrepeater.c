@@ -17,13 +17,13 @@ void dstarrepeater(void)
 {
 	int	i;
 	int	flag;
-	char	chkusercmd[32]	= {'\0'};
-	char	refcall[9]	= {'\0'};
-	char	nodecall[9]	= {'\0'};
-
+	char	chkusercmd[32]		= {'\0'};
+	char	refcall[9]		= {'\0'};
+	char	nodecall[9]		= {'\0'};
         char    fname[32]               = {'\0'};       // ファイル名
         char    dstarlogpath[32]        = {'\0'};       // D-STAR Repeater ログのフルパス
-
+	time_t	timer;
+	struct	tm *timeptr;
 
 	system("sudo /usr/bin/rig_port_check");
 	system("sudo systemctl restart dstarrepeater");
