@@ -274,12 +274,14 @@ void syscmdswitch(void)
 
 	case 4:						// dmonitor 起動
 		st.mode = 1;
+		sendcmd("MAIN.mode.val=1");
 		system("sudo systemctl stop dstarrepeater");
 		dmonitor();
 		break;
 
 	case 5:						// dstarrepeater 起動
 		st.mode = 2;
+		sendcmd("MAIN.mode.val=2");
 		dstarrepeater();
 		break;
 
