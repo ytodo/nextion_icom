@@ -21,6 +21,7 @@ void dstarrepeater(void)
 	char	refcall[9]		= {'\0'};
 	char	nodecall[9]		= {'\0'};
         char    fname[32]               = {'\0'};       // ファイル名
+	char	chkfname[32]		= {'\0'};	// ファイル名変化チェック
         char    dstarlogpath[32]        = {'\0'};       // D-STAR Repeater ログのフルパス
 	time_t	timer;
 	struct	tm *timeptr;
@@ -28,17 +29,6 @@ void dstarrepeater(void)
 	system("sudo /usr/bin/rig_port_check");
 	system("sudo systemctl restart dstarrepeater");
 	dispipaddr();
-
-        /* 日付入りログファイル名の作成 */
-        timer = time(NULL);
-        timeptr = gmtime(&timer);
-        strftime(fname, sizeof(fname), "-%Y-%m-%d.log", timeptr);
-        sprintf(dstarlogpath, "%s%s%s", LOGDIR, DSLOGFILE, fname);
-
-        /* コマンドの標準出力をファイルへ */
-	system("sudo pkill tail");			// 重複禁止処理
-	sprintf(cmdline, "tail -f %s | grep -E 'Stats|AMBE|Linked to|Not linked|Radio|Network' --line-buffered > /tmp/tmplog.txt &", dstarlogpath);
-	system(cmdline);
 
 	/* メインスクリーンの初期設定 */
 	sendcmd("dim=dims");
@@ -58,6 +48,28 @@ void dstarrepeater(void)
 
 	/* 送・受信ループ */
 	while (1) {
+
+		/*
+		 * ログファイルのリアルタイム切替え(UTC日付変更時)
+		 */
+
+		/* 日付入りログファイル名の作成と変化のチェック */
+		timer = time(NULL);
+		timeptr = gmtime(&timer);
+		strftime(fname, sizeof(fname), "-%Y-%m-%d.log", timeptr);
+
+		/* ファイル名が変化した時点でコマンドを再送出 */
+		if (strcmp(fname, chkfname) != 0)
+		{
+			strcpy(chkfname, fname);
+			sprintf(dstarlogpath, "%s%s%s", LOGDIR, DSLOGFILE, fname);
+
+			/* コマンドの標準出力をファイルへ */
+			system("sudo pkill tail");			// 重複禁止処理
+			sprintf(cmdline, "tail -f %s | grep -E 'Stats|AMBE|Linked to|Not linked|Radio|Network' --line-buffered > /tmp/tmplog.txt &", dstarlogpath);
+			system(cmdline);
+		}
+
 
 		/*
 		 * 送信処理
