@@ -1,0 +1,8 @@
+/var/log/dmonitor.log {
+	daily
+	copytruncate
+	rotate 7
+	compress
+	missingok
+	notifempty
+}
