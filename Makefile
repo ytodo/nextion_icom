@@ -34,6 +34,7 @@ install	:
 	@echo "ファイルを配置しています..."
 	@sudo mv $(PROGRAM)		/usr/local/bin
 	@sudo cp $(PROGRAM).ini		/etc
+	@sudo cp dmonitor_log		/etc/logrotate.d
 # ユニットファイルの配置
 	@sudo cp $(PROGRAM).service	/etc/systemd/system
 	@sudo cp ircddbgateway.service	/etc/systemd/system
@@ -70,6 +71,7 @@ endif
 	@git pull
 	@make > /dev/null
 	@sudo mv $(PROGRAM)		/usr/local/bin
+	@sudo cp dmonitor_log		/etc/logrotate.d
 	@echo "D*SWITCH (Nextion Addon Driver) をリスタートしています..."
 	@sudo systemctl enable  $(PROGRAM).service
 	@sudo systemctl restart $(PROGRAM).service
