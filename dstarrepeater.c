@@ -28,7 +28,6 @@ void dstarrepeater(void)
 
 	system("sudo /usr/bin/rig_port_check");
 	system("sudo systemctl restart dstarrepeater");
-	dispipaddr();
 
 	/* メインスクリーンの初期設定 */
 	sendcmd("dim=dims");

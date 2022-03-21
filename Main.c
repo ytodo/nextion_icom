@@ -1,3 +1,6 @@
+
+
+
 /*
  *  Copyright (C) 2020- by Yosh Todo JE3HCZ
  *
@@ -47,9 +50,6 @@ int main(void)
 	/* 設定項目の取得と表示 */
 	getconfig();
 
-	/* IPアドレスの取得 */
-	dispipaddr();
-
 	/* シリアルポートのオープン nextion.iniより */
 	if ((nx.nextion_port != NULL) && (strlen(nx.nextion_port) != 0))
 	{
@@ -73,6 +73,9 @@ int main(void)
 	sendcmd("SPLASH.t4.txt=version.txt");    // バージョン表示
 	usleep(nx.microsec * 50);
 
+	/* IPアドレスの取得 */
+	dispipaddr();
+
 	/* 既存のコネクションを解除 */
 	disconnect_ref();
 
@@ -90,6 +93,8 @@ int main(void)
 
 		/* タッチパネルのデータを読み込む */
 		if (strncmp(nx.default_mode, "MAIN", 4) == 0) recvdata(usercmd);
+
+
 
 		/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
 		if ((strlen(usercmd) > 0) && (strncmp(usercmd, chkusercmd, 8) != 0))
