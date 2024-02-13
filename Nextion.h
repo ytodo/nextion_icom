@@ -67,9 +67,9 @@
 #define	TXHANG		1			// ラストパケット検出後のハングタイム（秒）
 #define	TXDELAY		0			// 実際の送信開始に対する表示開始の遅れ（秒）
 #define	WAITTIME	100000			// 単位microsec（0.1秒）
-#define	VERSION		1			// バージョン情報
-#define	VERSUB		1
-#define RELEASE		6
+#define	VERSION		2			// バージョン情報
+#define	VERSUB		0
+#define RELEASE		1
 
 /* Variables */
 typedef struct {				// Hole Punch リピータリスト
