@@ -43,14 +43,12 @@ install	:
 	@sudo systemctl daemon-reload
 # serviceの起動設定
 	@echo "サービスの有効／無効を調整しています..."
-	@sudo systemctl stop	monitorix
-	@sudo systemctl disable	monitorix 		> /dev/null
-	@sudo systemctl stop	lightdm.service
-	@sudo systemctl disable lightdm.service		> /dev/null
 	@sudo systemctl stop	auto_repmon.service
 	@sudo systemctl disable	auto_repmon.service	> /dev/null
 	@sudo systemctl stop	rpt_conn.service
 	@sudo systemctl disable	rpt_conn.service	> /dev/null
+	@sudo systemctl stop	lighttpd.service
+	@sudo systemctl disable	lighttpd.service	> /dev/null
 	@sudo systemctl enable	ircddbgateway.timer	> /dev/null
 	@echo "D*SWITCH (Nextion Addon Driver) を自動起動に設定しています..."
 	@sudo systemctl enable	$(PROGRAM).service	> /dev/null
@@ -74,14 +72,12 @@ endif
 	@sudo cp dmonitor_log		/etc/logrotate.d
 # serviceの起動設定
 	@echo "サービスの有効／無効を調整しています..."
-	@sudo systemctl stop    monitorix
-	@sudo systemctl disable monitorix               > /dev/null
-	@sudo systemctl stop    lightdm.service
-	@sudo systemctl disable lightdm.service         > /dev/null
 	@sudo systemctl stop    auto_repmon.service
 	@sudo systemctl disable auto_repmon.service     > /dev/null
 	@sudo systemctl stop    rpt_conn.service
 	@sudo systemctl disable rpt_conn.service        > /dev/null
+	@sudo systemctl stop	lighttpd.service
+	@sudo systemctl disable	lighttpd.service	> /dev/null
 	@sudo systemctl enable  ircddbgateway.timer     > /dev/null
 # Nextionの再起動
 	@echo "D*SWITCH (Nextion Addon Driver) をリスタートしています..."
