@@ -40,6 +40,8 @@ install	:
 	@sudo cp ircddbgateway.service	/etc/systemd/system
 	@sudo cp ircddbgateway.timer	/etc/systemd/system
 	@sudo cp dstarrepeater.service	/etc/systemd/system
+	@sudo cp nextion.service	/etc/systemd/system
+	@sudo cp nextion.timer		/etc/systemd/system
 	@sudo systemctl daemon-reload
 # serviceの起動設定
 	@echo "サービスの有効／無効を調整しています..."
@@ -49,9 +51,9 @@ install	:
 	@sudo systemctl disable	rpt_conn.service	> /dev/null
 	@sudo systemctl stop	lighttpd.service
 	@sudo systemctl disable	lighttpd.service	> /dev/null
-	@sudo systemctl enable	ircddbgateway.timer	> /dev/null
+	@sudo systemctl enable	ircddbgateway		> /dev/null
 	@echo "D*SWITCH (Nextion Addon Driver) を自動起動に設定しています..."
-	@sudo systemctl enable	$(PROGRAM).service	> /dev/null
+	@sudo systemctl enable	$(PROGRAM).timer	> /dev/null
 	@echo
 	@echo "/etc/nextion.iniを編集してください。"
 	@echo "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
@@ -78,7 +80,7 @@ endif
 	@sudo systemctl disable rpt_conn.service        > /dev/null
 	@sudo systemctl stop	lighttpd.service
 	@sudo systemctl disable	lighttpd.service	> /dev/null
-	@sudo systemctl enable  ircddbgateway.timer     > /dev/null
+	@sudo systemctl enable  ircddbgateway.service     > /dev/null
 # Nextionの再起動
 	@echo "D*SWITCH (Nextion Addon Driver) をリスタートしています..."
 	@sudo systemctl enable  $(PROGRAM).service
