@@ -1,6 +1,3 @@
-
-
-
 /*
  *  Copyright (C) 2020- by Yosh Todo JE3HCZ
  *
@@ -46,6 +43,15 @@ int main(void)
 	char	chkusercmd[32]	= {'\0'};
 	char	tmpstr[32]	= {'\0'};
 	char	SERIALPORT[16]	= {'\0'};
+	FILE	*fp;
+
+        /* dmonitorのバージョンを所得 */
+	if ((fp = popen("apt-cache madison dmonitor", "r")) != NULL)
+	{
+		fgets(line, sizeof(line), fp);
+		strncpy(nx.dmon_ver, line + 18, 2);
+        }
+        pclose(fp);
 
 	/* 設定項目の取得と表示 */
 	getconfig();

@@ -23,7 +23,6 @@ void dispstatus_ref(void)
 	time_t	timer;
 	struct	tm *timeptr;
 
-
 	/*
 	 * ログファイルからリフレクタへのリンク情報を抽出する
 	 */
@@ -267,9 +266,17 @@ void	dispstatus_dmon(void)
 			/* MyCallsignが単なるループではない場合 */
 			if (strncmp(mycall, mycallpre, 8) != 0)
 			{
-				strncpy(status, line + 5, 5);             // 日付時分
-				strcat(status, " ");
-				strncat(status, line + 11, 5);
+				if (strncmp(nx.dmon_ver, "02", 2) == 0)
+				{
+					strncpy(status, line + 5, 5);             // 日付時分
+					strcat(status, " ");
+					strncat(status, line + 11, 5);
+				}
+				if (strncmp(nx.dmon_ver, "01", 2) == 0)
+				{
+					printf(line);
+					strncpy(status, line, 12);
+				}
 				strcat(status, " ");
 				strncat(status, mycall, 8);            // コールサイン
 				strncat(status, tmpptr + 4, 3);        // ZR/GW
@@ -293,9 +300,16 @@ void	dispstatus_dmon(void)
 			} else {
 				strncpy(tmpstr, " RF", 3);
 			}
-			strncpy(status, line + 5, 5);             // 日付時分
-			strcat(status, " ");
-			strncat(status, line + 11, 5);
+			if (strncmp(nx.dmon_ver, "02", 2) == 0)
+			{
+				strncpy(status, line + 5, 5);             // 日付時分
+				strcat(status, " ");
+				strncat(status, line + 11, 5);
+			}
+			if (strncmp(nx.dmon_ver, "01", 2) == 0)
+			{
+				strncpy(status, line, 12);
+			}
 			strcat(status, " ");
 			strncat(status, tmpptr - 9, 8);         // コールサイン
 			strcat(status, tmpstr);                 // Terminal-AP Mode/DVAP/DVMEGA/Node

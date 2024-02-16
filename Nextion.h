@@ -69,7 +69,7 @@
 #define	WAITTIME	100000			// 単位microsec（0.1秒）
 #define	VERSION		2			// バージョン情報
 #define	VERSUB		0
-#define RELEASE		1
+#define RELEASE		2
 
 /* Variables */
 typedef struct {				// Hole Punch リピータリスト
@@ -91,6 +91,7 @@ typedef	struct {
 	char	rigtype[8];			// ICOM, DVAP, DVMEGA, NODE が入る
 	char	nextion_port[16];		// ttyUSB0, ttyAMA0等nextion.iniで指定
 	char	default_mode[8];		// 指定モードによって起動後の初期画面を選択
+	char	dmon_ver[3];			// dmonitorのバージョンを保存
 } nextion_ini_t;
 extern	nextion_ini_t	nx;			// nextion.iniの内容
 
