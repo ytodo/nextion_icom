@@ -110,7 +110,7 @@ typedef struct {
 } status_t;
 extern	status_t	st;			// Nextionの使用状況まとめ
 
-extern	char	command[64];			// Nextionに送信するコマンド
+extern	char	command[128];			// Nextionに送信するコマンド
 extern	char	cmdline[128];			// システムコマンド
 extern	char	stat_dmon[32];			// ログファイルからの状況取得用
 extern	char	stat_dstar1[32];		// 	〃

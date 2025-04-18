@@ -11,8 +11,8 @@ void	getactive(void)
 	char    *tmpptr;
 	char    *active_tbl  = "/var/www/html/repeater_active.html";
 	char    line[64]    = {'\0'};
-	char    tmpstr[32]  = {'\0'};
-	char    command[32] = {'\0'};
+	char    tmpstr[64]  = {'\0'};
+	char    command[128] = {'\0'};
 	char    statpre[32] = {'\0'};
 	char    ret[16]     = {'\0'};
 	int     i           = 0;
