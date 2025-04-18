@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////
 //	ファイル名	GetConfig.c
-//			2020.03.07-2021.02.17
+//			2020.03.07-2025.04.19
 //	機能	環境設定ファイルnextion.ini と dstarrepeater の内容を読む
 //////////////////////////////////////////////////////////////////////////////
 #include "Nextion.h"
@@ -10,7 +10,7 @@ void getconfig(void)
 	FILE	*fp;
 	char	*ret;
 	char	line[64]	= {'\0'};
-        char    band[10]   = {'\0'};
+	char    band[10]	= {'\0'};
 	int	i = 0;
 
 	/*
@@ -31,9 +31,9 @@ void getconfig(void)
 		if ((ret = strstr(line, "DEFAULT_REF")) != NULL) sscanf(line, "DEFAULT_REF=%[^\n]",	nx.default_ref);
 		if ((ret = strstr(line, "CLOCK_COLOR")) != NULL) sscanf(line, "CLOCK_COLOR=%[^\n]",	nx.clock_color);
 		if ((ret = strstr(line, "SLEEPTIME"))   != NULL) sscanf(line, "SLEEPTIME=%d",		&nx.microsec);
-		if ((ret = strstr(line, "DEBUG"))       != NULL) sscanf(line, "DEBUG=%d",		&nx.debug);
+		if ((ret = strstr(line, "DEBUG"))       != NULL) sscanf(line, "DEBUG=%d",			&nx.debug);
 		if ((ret = strstr(line, "PORT"))        != NULL) sscanf(line, "PORT=%[^\n]",		nx.nextion_port);
-		if ((ret = strstr(line, "MODE"))	!= NULL) sscanf(line, "MODE=%[^\n]",		nx.default_mode);
+		if ((ret = strstr(line, "MODE"))		!= NULL) sscanf(line, "MODE=%[^\n]",		nx.default_mode);
 	}
 	/* ファイルクローズ */
 	fclose(fp);
@@ -66,10 +66,10 @@ void getconfig(void)
 
 	while ((fgets(line, sizeof(line), fp)) != NULL)
 	{							// 構造体 dstarrepeater へ保存
-		if ((ret = strstr(line, "callsign"))     != NULL) sscanf(line, "callsign=%[^\n]",	ds.station);
+		if ((ret = strstr(line, "callsign"))     != NULL) sscanf(line, "callsign=%[^\n]",		ds.station);
 		if ((ret = strstr(line, "localAddress")) != NULL) sscanf(line, "localAddress=%[^\n]",	ds.ipaddress);
-		if ((ret = strstr(line, "localPort"))    != NULL) sscanf(line, "localPort=%[^\n]",	ds.localport);
-		if ((ret = strstr(line, "modemType"))    != NULL) sscanf(line, "modemType=%[^\n]",	ds.modemtype);
+		if ((ret = strstr(line, "localPort"))    != NULL) sscanf(line, "localPort=%[^\n]",		ds.localport);
+		if ((ret = strstr(line, "modemType"))    != NULL) sscanf(line, "modemType=%[^\n]",		ds.modemtype);
 	}
 
 	/* ファイルクローズ */

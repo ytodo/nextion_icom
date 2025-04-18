@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////
 //	ファイル名	GetUsers.c
-//			2020.03.07-2021.02.17
+//			2020.03.07-2025
 //	機能	multi_forwardに接続しているユーザの表示
 ///////////////////////////////////////////////////////////////////////////
 #include "Nextion.h"
@@ -9,14 +9,14 @@ void	getactive(void)
 {
 	FILE    *fp;
 	char    *tmpptr;
-	char    *active_tbl  = "/var/www/html/repeater_active.html";
-	char    line[64]    = {'\0'};
-	char    tmpstr[64]  = {'\0'};
+	char    *active_tbl	 = "/var/www/html/repeater_active.html";
+	char    line[64]     = {'\0'};
+	char    tmpstr[64]   = {'\0'};
 	char    command[128] = {'\0'};
-	char    statpre[32] = {'\0'};
-	char    ret[16]     = {'\0'};
-	int     i           = 0;
-	int     j           = 0;
+	char    statpre[32]  = {'\0'};
+	char    ret[16]      = {'\0'};
+	int     i            = 0;
+	int     j            = 0;
 
 	/* 画面を切り替える */
 	sendcmd("page ACTIVE");

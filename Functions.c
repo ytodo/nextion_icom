@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 //	ファイル名	Functions.c
-//			2020.03.07-2021.02.20
+//			2020.03.07-2025.04.19
 //	機能	openport		ttyAMA0ポートを開ける（from ON7LDS source)
 //		sendcmd			Nextionへのコマンド送信
 //		recvdata		Nextionからのコマンド受信
@@ -37,12 +37,12 @@ int openport(char *devicename, long baudrate)
 	cfsetospeed(&newtio,baudrate);
 
 	newtio.c_cflag &= ~PARENB;
-	newtio.c_cflag &= ~CSTOPB;		// ストップビット   : 1bit
-	newtio.c_cflag &= ~CSIZE;		// データビットサイズ
-	newtio.c_cflag |=  CS8;			// データビット     : 8bits
+	newtio.c_cflag &= ~CSTOPB;			// ストップビット   : 1bit
+	newtio.c_cflag &= ~CSIZE;			// データビットサイズ
+	newtio.c_cflag |=  CS8;				// データビット     : 8bits
 
-	newtio.c_cflag &= ~CRTSCTS;
-	newtio.c_cflag |= CREAD | CLOCAL;	// 受信有効｜ローカルライン（モデム制御無し）
+//	newtio.c_cflag &= ~CRTSCTS;
+	newtio.c_cflag |=  CREAD | CLOCAL;	// 受信有効｜ローカルライン（モデム制御無し）
 
 	newtio.c_iflag = 0;
 	newtio.c_oflag = 0;
@@ -55,7 +55,7 @@ int openport(char *devicename, long baudrate)
 		exit(EXIT_FAILURE);
 	}
 
-	ioctl(fd, TCSETS, &newtio);		//ポートの設定を有効にする
+	ioctl(fd, TCSETS, &newtio);			//ポートの設定を有効にする
 
 	return (fd);
 }

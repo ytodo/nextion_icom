@@ -79,8 +79,8 @@ endif
 	@sudo systemctl stop    rpt_conn.service
 	@sudo systemctl disable rpt_conn.service        > /dev/null
 	@sudo systemctl stop	lighttpd.service
-	@sudo systemctl disable	lighttpd.service	> /dev/null
-	@sudo systemctl enable  ircddbgateway.service     > /dev/null
+	@sudo systemctl disable	lighttpd.service		> /dev/null
+	@sudo systemctl enable  ircddbgateway.service	> /dev/null
 # Nextionの再起動
 	@echo "D*SWITCH (Nextion Addon Driver) をリスタートしています..."
 	@sudo systemctl enable  $(PROGRAM).service

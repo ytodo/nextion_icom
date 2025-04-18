@@ -24,7 +24,7 @@
 //      D-STAR  Nextion display for ICOM Terminal/Access Mode
 //
 //      ファイル名      Main.c
-//                      2020.03.05 - 2021.02.20
+//                      2020.03.05 - 2025.04.19
 //
 //      機能    Multi_Forwardが搭載されているリピータリストを取得して
 //              「接続可能リピータ」としてdmonitor用ディスプレイに表示。

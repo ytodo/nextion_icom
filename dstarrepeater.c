@@ -2,7 +2,7 @@
 // 	D-STAR  Nextion display for ICOM Terminal/Access Mode
 //
 //	ファイル名	dstarrepeater.c
-//			2020.03.05 - 2021.02.17
+//			2020.03.05 - 2021.04.19
 //
 //	機能	ircDDBGatewayとDStarRepeaterによるシステムに
 //		アドオンとして常駐し状況をNextionに表示したり
@@ -18,11 +18,11 @@ void dstarrepeater(void)
 	int	i;
 	int	flag;
 	char	chkusercmd[32]		= {'\0'};
-	char	refcall[9]		= {'\0'};
-	char	nodecall[9]		= {'\0'};
-        char    fname[32]               = {'\0'};       // ファイル名
+	char	refcall[9]			= {'\0'};
+	char	nodecall[9]			= {'\0'};
+    char    fname[32]			= {'\0'};       // ファイル名
 	char	chkfname[32]		= {'\0'};	// ファイル名変化チェック
-        char    dstarlogpath[32]        = {'\0'};       // D-STAR Repeater ログのフルパス
+    char    dstarlogpath[32]	= {'\0'};       // D-STAR Repeater ログのフルパス
 	time_t	timer;
 	struct	tm *timeptr;
 

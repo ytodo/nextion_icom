@@ -69,7 +69,7 @@
 #define	WAITTIME	100000			// 単位microsec（0.1秒）
 #define	VERSION		2			// バージョン情報
 #define	VERSUB		0
-#define RELEASE		2
+#define RELEASE		3
 
 /* Variables */
 typedef struct {				// Hole Punch リピータリスト
@@ -133,26 +133,26 @@ extern	char	chkstat3[32];
 
 /* Functions */
 int	openport(char *devicename, long baudrate);
-int	getlinkdata(void);			// GetLinkData.c
-int	disp_stat();				//      〃
-int	disp_rpt();				//      〃
-void	next_page(void);			//	〃
-void	previous_page(void);			//	〃
+int	getlinkdata(void);				// GetLinkData.c
+int	disp_stat();					//      〃
+int	disp_rpt();						//      〃
+void	next_page(void);			//		〃
+void	previous_page(void);		//		〃
 void	dmonitor(void);				// dmonitor.c
-void	dstarrepeater(void);			// dstarrepeater.c
+void	dstarrepeater(void);		// dstarrepeater.c
 void	getusers(void);				// GetUsers.c
 void	getactive(void);			// GetActive.c
 void	getconfig(void);			// GetConfig.c
-void	dispstatus_dmon(void);			// DispLOGinfo.c
-void	dispstatus_ref(void);			//	〃
+void	dispstatus_dmon(void);		// DispLOGinfo.c
+void	dispstatus_ref(void);		//		〃
 void	dispipaddr(void);			// DispCMDinfo.c
-void	disptemp(void);				//	〃
+void	disptemp(void);				//		〃
 void	sendcmd(char *cmd);			// Functions.c
-void	recvdata(char *touchcmd);		//	〃
-void	dispclock(void);			//	〃
-void	dispcapture(void);			//      〃
-void	syscmdswitch(void);			//	〃
-void	disconnect_ref(void);			//	〃
+void	recvdata(char *touchcmd);	//		〃
+void	dispclock(void);			//		〃
+void	dispcapture(void);			//  	〃
+void	syscmdswitch(void);			//		〃
+void	disconnect_ref(void);		//		〃
 
 #endif // __NEXTION_H__
 
