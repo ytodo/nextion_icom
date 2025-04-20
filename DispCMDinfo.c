@@ -1,9 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 //	ファイル名	DispCMDinfo.c
-//			2020.03.07-2021.02.17
+//			2020.03.07-2025.04.20
 //	機能	dispipaddr	本プログラム実行中の物理インターフェースIPを取得表示
-//		disptemp	本プログラム実行中のRaspberryPiにおけるCPU温度を表示
-//		システムコマンドを実行することによってデータを取得
+//			disptemp	本プログラム実行中のRaspberryPiにおけるCPU温度を表示
+//			システムコマンドを実行することによってデータを取得
 ////////////////////////////////////////////////////////////////////////////////////////
 #include	"Nextion.h"
 
@@ -79,9 +79,9 @@ void disptemp(void)
 	if ((fp = popen(cmdline, "r")) != NULL)
 	{
 		fgets(line, sizeof(line), fp);
-		usleep(WAITTIME * 2);		// 完全に返り値を取得するまで待つ
+		usleep(WAITTIME * 2);					// 完全に返り値を取得するまで待つ
        		line[strlen(line) - 1] = '\0';
-		strcpy(cputemp, &line[5]);	// 先頭の不要文字をカットする
+		strcpy(cputemp, &line[5]);				// 先頭の不要文字をカットする
 
 		/* CPU 温度の表示*/
 		sprintf(command, "IDLE.temp.txt=\"%s\"", cputemp);

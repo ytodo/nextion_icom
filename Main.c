@@ -45,7 +45,7 @@ int main(void)
 	char	SERIALPORT[16]	= {'\0'};
 	FILE	*fp;
 
-        /* dmonitorのバージョンを所得 */
+    /* dmonitorのバージョンを所得 */
 	if ((fp = popen("apt-cache madison dmonitor", "r")) != NULL)
 	{
 		fgets(line, sizeof(line), fp);
@@ -100,8 +100,6 @@ int main(void)
 		/* タッチパネルのデータを読み込む */
 		if (strncmp(nx.default_mode, "MAIN", 4) == 0) recvdata(usercmd);
 
-
-
 		/* タッチデータが選択されている場合、前回と同じかチェック（同じならパス） */
 		if ((strlen(usercmd) > 0) && (strncmp(usercmd, chkusercmd, 8) != 0))
 		{
@@ -121,4 +119,3 @@ int main(void)
 
 	return(EXIT_SUCCESS);
 }
-

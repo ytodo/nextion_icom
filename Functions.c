@@ -1,12 +1,12 @@
 ///////////////////////////////////////////////////////////////////////////////////////
 //	ファイル名	Functions.c
 //			2020.03.07-2025.04.19
-//	機能	openport		ttyAMA0ポートを開ける（from ON7LDS source)
-//		sendcmd			Nextionへのコマンド送信
-//		recvdata		Nextionからのコマンド受信
-//		dispclock		デジタル時計の表示
-//		syscmdswitch		タッチパネルから受けるコマンドの分岐
-//		基本的なファンクション・コマンドのツールボックス
+//	機能	openport			ttyAMA0ポートを開ける（from ON7LDS source)
+//			sendcmd				Nextionへのコマンド送信
+//			recvdata			Nextionからのコマンド受信
+//			dispclock			デジタル時計の表示
+//			syscmdswitch		タッチパネルから受けるコマンドの分岐
+//			基本的なファンクション・コマンドのツールボックス
 ///////////////////////////////////////////////////////////////////////////////////////
 #include "Nextion.h"
 
@@ -95,9 +95,10 @@ void recvdata(char *touchcmd)
 	{
 		for (i = 0; i < len; i++)
 		{
-            		if (buf[i] >= 30 && buf[i] <= 122)
+			// 数字またはアルファベットならば
+			if (buf[i] >= 30 && buf[i] <= 122)
 			{
-    				sprintf(&touchcmd[j], "%c", buf[i]);
+    			sprintf(&touchcmd[j], "%c", buf[i]);
 				j++;
 			}
 		}
@@ -141,15 +142,15 @@ void dispclock(void)
  *********************************************/
 void disconnect_ref(void)
 {
-        char    nodecall[9] = {'\0'};
-	int	i	    = 0;
+    char    nodecall[9] = {'\0'};
+	int	i	= 0;
 
 	strncpy(nodecall, ds.station, 8);
 	for (i = 0; i < 8; i++)
 	{
 		if (!strncmp(&nodecall[i], " ", 1))
 		{
-			nodecall[i] = '_';
+			nodecall[i] = '_';		// 'REF047 C'を'REF047_C'に変換
 		}
 	}
 	sprintf(cmdline, "remotecontrold %s unlink", nodecall);
@@ -165,8 +166,8 @@ void disconnect_ref(void)
 void syscmdswitch(void)
 {
 	int	flag	= 0;
-	int	i	= 0;
-	char    nodecall[9]     = {'\0'};
+	int	i		= 0;
+	char nodecall[9]	= {'\0'};
 
 	/* 共通 */
 	if (strncmp(usercmd, "restart",  7) == 0) flag =  1;

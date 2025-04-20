@@ -7,8 +7,8 @@
 //////////////////////////////////////////////////////////////////////////////////
 #include	"Nextion.h"
 
-FILE	*fp;					// ファイルポインタ
-char	*tmpptr;				// 一時的ポインタ
+FILE	*fp;						// ファイルポインタ
+char	*tmpptr;					// 一時的ポインタ
 char	tmpstr[32]	= {'\0'};		// 一時的文字列
 
 /********************************************************
@@ -220,7 +220,7 @@ void	dispstatus_dmon(void)
 {
 	FILE	*fp;
 	char	*tmpptr;
-	char	mycall[9]	= {'\0'};
+	char	mycall[9]		= {'\0'};
 	char	mycallpre[9]	= {'\0'};
 
 
@@ -443,4 +443,3 @@ int disp_stat()
 	}
 	return(0);
 }
-
