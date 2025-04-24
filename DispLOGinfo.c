@@ -2,8 +2,8 @@
 //	ファイル名	DispLOGinfo.c
 //			2020.03.07-2025.04.18
 //	機能	dispstatus_ref	dstarrepeaterd.logから現状をピックアップ
-//		dispstatus_dmon	dmonitor.logから現状をピックアップ
-//		Nextion上にラストハードやステータスとして表示する。
+//			dispstatus_dmon	dmonitor.logから現状をピックアップ
+//			Nextion上にラストハードやステータスとして表示する。
 //////////////////////////////////////////////////////////////////////////////////
 #include	"Nextion.h"
 
@@ -66,7 +66,6 @@ void dispstatus_ref(void)
 			/* IDLE 画面に戻る */
 			sendcmd("page IDLE");
 		}
-
 
 
 		/*
@@ -313,6 +312,9 @@ void	dispstatus_dmon(void)
 			strcat(status, " ");
 			strncat(status, tmpptr - 9, 8);         // コールサイン
 			strcat(status, tmpstr);                 // Terminal-AP Mode/DVAP/DVMEGA/Node
+
+			/* RFからのエリアCQ操作でエリアリピータへの接続コマンドとする */
+			if (strncmp(tmpptr, "/", 1) == 0) strcpy(rfcommand, tmpstr);
 			disp_stat();
 		}
 
@@ -361,6 +363,7 @@ void	dispstatus_dmon(void)
 		if ((strstr(line, "my2:UNLK") != NULL) || (strstr(line, "UNLINK   from Rig") != NULL))
 		{
 			strcpy(status, "UNLINK FROM RIG");
+			strcpy(rfcommand, "UNLINK");
 			disp_stat();
 		}
 
@@ -435,7 +438,6 @@ int disp_stat()
 		/* 取得ステイタス=> STATUS1 */
 		sprintf(command, "DMON.stat1.txt=\"%s\"", status);
 		sendcmd(command);
-
 		sendcmd("DMON.t2.txt=DMON.stat1.txt");
 		sendcmd("DMON.t3.txt=DMON.stat2.txt");
 		sendcmd("USERS.t8.txt=DMON.stat1.txt");

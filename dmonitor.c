@@ -21,6 +21,9 @@ void dmonitor(void)
 	char	tmpstr[32]		= {'\0'};
 	char    dmonlogcmd[256] = {'\0'};
 
+	/*
+	 *	起動と初期表示設定
+	 */
 
 	/* dmonitor関連サービスの起動 */
 	if (AUTOREPMON == "auto_repmon_light")
@@ -34,7 +37,7 @@ void dmonitor(void)
 
     /* dmonitor.logのうち必要な項目のみのリスト作成 */
 	system("sudo pkill tail");
-        sprintf(dmonlogcmd, "tail -f %s%s | grep -E 'dmonitor start|dmonitor end|Connected|Frequency|init|from|drop packet|FiFo' --line-buffered > /tmp/tmplog.txt &", LOGDIR, DMLOGFILE);
+	sprintf(dmonlogcmd, "tail -f %s%s | grep -E 'dmonitor start|dmonitor end|Connected|Frequency|init|from|drop packet|FiFo' --line-buffered > /tmp/tmplog.txt &", LOGDIR, DMLOGFILE);
 	system(dmonlogcmd);
 
 	/* 現在利用可能なリピータリストの取得*/
@@ -63,14 +66,20 @@ void dmonitor(void)
 	sprintf(command, "SYSTEM.va0.txt=\"%s\"", ds.ipaddress);
 	sendcmd(command);
 
+	/* dmonitor専用ページへ移行 */
 	sendcmd("page DMON");
 
-
-	/* 送・受信ループ */
+	/*
+	 *	 送・受信ループ
+	 */
 	while (1)
 	{
 		/* タッチされたデータを読み込む */
 		recvdata(usercmd);
+
+		/* RFCommand データが入っている場合 */
+		if (strlen(rfcommand) != 0 && strncmp(rfcommand, "/", 1) == 0)
+			strcpy(usercmd, rfcommand);
 
 		/* もしタッチデータが選択されていない場合、初回のみデフォルトリピータをセットする */
 		if ((strlen(usercmd) == 0) && (strlen(chkusercmd) == 0) && (strlen(nx.default_rpt) != 0))
@@ -138,16 +147,17 @@ void dmonitor(void)
 		dispstatus_dmon();
 
 		/* 無線機からのコマンドを接続解除の間受け取る準備 */
-		if (strcmp(status, "UNLINK FROM RIG") == 0)
+		if (strcmp(rfcommand, "UNLINK") == 0)
 		{
 			system("sudo killall -q -2 dmonitor");
 			system("sudo rm -f /var/nun/dmonitor.pid");
 			usleep(nx.microsec * 300);
 			system("sudo systemctl restart rpt_conn");
-			status[0] = '\0';
+	 		status[0] = '\0';
+			rfcommand[0] = '\0';
 		}
 
-                /* CPUの速さによるループ調整（nextion.ini:SLEEPTIME）*/
+		/* CPUの速さによるループ調整（nextion.ini:SLEEPTIME）*/
 		usleep(nx.microsec * 5);
 
 	} // Loop

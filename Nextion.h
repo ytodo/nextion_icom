@@ -63,96 +63,97 @@
 #define AUTOREPMON	"auto_repmon"
 // 設定値
 #define	BAUDRATE	B9600
-#define	LISTSIZE	512			// 最大リピータ数
-#define	TXHANG		1			// ラストパケット検出後のハングタイム（秒）
-#define	TXDELAY		0			// 実際の送信開始に対する表示開始の遅れ（秒）
-#define	WAITTIME	100000			// 単位microsec（0.1秒）
-#define	VERSION		2			// バージョン情報
+#define	LISTSIZE	512						// 最大リピータ数
+#define	TXHANG		1						// ラストパケット検出後のハングタイム（秒）
+#define	TXDELAY		0						// 実際の送信開始に対する表示開始の遅れ（秒）
+#define	WAITTIME	100000					// 単位microsec（0.1秒）
+#define	VERSION		2						// バージョン情報
 #define	VERSUB		0
 #define RELEASE		3
 
 /* Variables */
-typedef struct {				// Hole Punch リピータリスト
-	char    call[9];			// リピータコールサイン
-	char    addr[16];			// リピータグローバルアドレス
-	char    port[6];			// multi_forward接続ポート
-	char    zone[9];			// リピータゾーンコール
-	char    name[20];			// 予備
+typedef struct {							// Hole Punch リピータリスト
+	char    call[9];						// リピータコールサイン
+	char    addr[16];						// リピータグローバルアドレス
+	char    port[6];						// multi_forward接続ポート
+	char    zone[9];						// リピータゾーンコール
+	char    name[20];						// 予備
 } repeater_t;
 extern	repeater_t	linkdata[LISTSIZE];     // リピータリスト構造体配列の宣言
 
 typedef	struct {
-	char	station[9];			// ノードコール（Terminal:個人コール/Access Point:クラブコール）
-	char	default_rpt[9];			// 立ち上げ時自動接続リピータ
-	char	default_ref[9];			// 立ち上げ時自動接続リフレクタ
-	char	clock_color[8];			// デジタル時計の文字色指定
-	unsigned int	microsec;		// リスト書き込み時のスピード調整用
-	unsigned int	debug;			// 0:通常／1:デバッグモード(status表示が多くなる）
-	char	rigtype[8];			// ICOM, DVAP, DVMEGA, NODE が入る
-	char	nextion_port[16];		// ttyUSB0, ttyAMA0等nextion.iniで指定
-	char	default_mode[8];		// 指定モードによって起動後の初期画面を選択
-	char	dmon_ver[3];			// dmonitorのバージョンを保存
+	char	station[9];						// ノードコール（Terminal:個人コール/Access Point:クラブコール）
+	char	default_rpt[9];					// 立ち上げ時自動接続リピータ
+	char	default_ref[9];					// 立ち上げ時自動接続リフレクタ
+	char	clock_color[8];					// デジタル時計の文字色指定
+	unsigned int	microsec;				// リスト書き込み時のスピード調整用
+	unsigned int	debug;					// 0:通常／1:デバッグモード(status表示が多くなる）
+	char	rigtype[8];						// ICOM, DVAP, DVMEGA, NODE が入る
+	char	nextion_port[16];				// ttyUSB0, ttyAMA0等nextion.iniで指定
+	char	default_mode[8];				// 指定モードによって起動後の初期画面を選択
+	char	dmon_ver[3];					// dmonitorのバージョンを保存
 } nextion_ini_t;
-extern	nextion_ini_t	nx;			// nextion.iniの内容
+extern	nextion_ini_t	nx;					// nextion.iniの内容
 
 typedef	struct {
-	char	station[16];			// ノードコール（Terminal:個人コール/Access Point:クラブコール）
-	char	ipaddress[16];			// DStarRepeaterのIPアドレス
-	char	localport[6];			// DStarRepeaterのローカルポート
-	char	modemtype[32];			// DStarRepeaterのモデムタイプ
+	char	station[16];					// ノードコール（Terminal:個人コール/Access Point:クラブコール）
+	char	ipaddress[16];					// DStarRepeaterのIPアドレス
+	char	localport[6];					// DStarRepeaterのローカルポート
+	char	modemtype[32];					// DStarRepeaterのモデムタイプ
 } dstarrepeater_t;
-extern	dstarrepeater_t	ds;			// dstarrepeaterの設定内容
+extern	dstarrepeater_t	ds;					// dstarrepeaterの設定内容
 
 typedef struct {
-	int	mode;				// 使用中のモード
-	int	selected_page;			// 表示されているページ (num % 21)
-	int	num;				// 読み込み済みリピータ数
+	int	mode;								// 使用中のモード
+	int	selected_page;						// 表示されているページ (num % 21)
+	int	num;								// 読み込み済みリピータ数
 } status_t;
-extern	status_t	st;			// Nextionの使用状況まとめ
+extern	status_t	st;						// Nextionの使用状況まとめ
 
-extern	char	command[128];			// Nextionに送信するコマンド
-extern	char	cmdline[128];			// システムコマンド
-extern	char	stat_dmon[32];			// ログファイルからの状況取得用
-extern	char	stat_dstar1[32];		// 	〃
-extern	char	stat_dstar2[32]; 		// 	〃（主にラストハード）
-extern	char	usercmd[32];			// タッチパネルからのコマンド
-extern	char	linkref[9];			// 接続先リフレクタ
-extern	char	station_dmon[9];		// dmonitor接続用コールサイン
-extern	char	station_dstar[9];		// リフレクタ接続用コールサイン
-extern	char	chklink[16];			// ループ内の多重処理禁止用
-extern	char	chklink2[16];			// ループ内の多重処理禁止用
+extern	char	command[128];				// Nextionに送信するコマンド
+extern	char	cmdline[128];				// システムコマンド
+extern	char	stat_dmon[32];				// ログファイルからの状況取得用
+extern	char	stat_dstar1[32];			// 	〃
+extern	char	stat_dstar2[32];			// 	〃（主にラストハード）
+extern	char	usercmd[32];				// タッチパネルからのコマンド
+extern	char	linkref[9];					// 接続先リフレクタ
+extern	char	station_dmon[9];			// dmonitor接続用コールサイン
+extern	char	station_dstar[9];			// リフレクタ接続用コールサイン
+extern	char	chklink[16];				// ループ内の多重処理禁止用
+extern	char	chklink2[16];				// ループ内の多重処理禁止用
 extern	char	line[256];
-extern	char	chkline[256];			// ループ内の多重処理禁止用
+extern	char	chkline[256];				// ループ内の多重処理禁止用
 extern	char	chkline2[256];
 extern	char	rptcall[9];
 extern	char	chkrptcall[9];
 extern	char	status[32];
+extern  char	rfcommand[32];				// statusのうちRFによるコマンドを代入
 extern	char	chkstat1[32];
 extern	char	chkstat2[32];
 extern	char	chkstat3[32];
 
 /* Functions */
 int	openport(char *devicename, long baudrate);
-int	getlinkdata(void);				// GetLinkData.c
-int	disp_stat();					//      〃
-int	disp_rpt();						//      〃
-void	next_page(void);			//		〃
-void	previous_page(void);		//		〃
-void	dmonitor(void);				// dmonitor.c
-void	dstarrepeater(void);		// dstarrepeater.c
-void	getusers(void);				// GetUsers.c
-void	getactive(void);			// GetActive.c
-void	getconfig(void);			// GetConfig.c
-void	dispstatus_dmon(void);		// DispLOGinfo.c
-void	dispstatus_ref(void);		//		〃
-void	dispipaddr(void);			// DispCMDinfo.c
-void	disptemp(void);				//		〃
-void	sendcmd(char *cmd);			// Functions.c
-void	recvdata(char *touchcmd);	//		〃
-void	dispclock(void);			//		〃
-void	dispcapture(void);			//  	〃
-void	syscmdswitch(void);			//		〃
-void	disconnect_ref(void);		//		〃
+int	getlinkdata(void);						// GetLinkData.c
+int	disp_stat();							//      〃
+int	disp_rpt();								//      〃
+void	next_page(void);					//		〃
+void	previous_page(void);				//		〃
+void	dmonitor(void);						// dmonitor.c
+void	dstarrepeater(void);				// dstarrepeater.c
+void	getusers(void);						// GetUsers.c
+void	getactive(void);					// GetActive.c
+void	getconfig(void);					// GetConfig.c
+void	dispstatus_dmon(void);				// DispLOGinfo.c
+void	dispstatus_ref(void);				//		〃
+void	dispipaddr(void);					// DispCMDinfo.c
+void	disptemp(void);						//		〃
+void	sendcmd(char *cmd);					// Functions.c
+void	recvdata(char *touchcmd);			//		〃
+void	dispclock(void);					//		〃
+void	dispcapture(void);					//  	〃
+void	syscmdswitch(void);					//		〃
+void	disconnect_ref(void);				//		〃
 
 #endif // __NEXTION_H__
 

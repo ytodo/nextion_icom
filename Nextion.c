@@ -28,6 +28,7 @@ char		chkline2[256]		= {'\0'};
 char		rptcall[9]			= {'\0'};
 char		chkrptcall[9]		= {'\0'};
 char		status[32]			= {'\0'};
+char		rfcommand[32]		= {'\0'};
 char		chkstat1[32]		= {'\0'};
 char		chkstat2[32]		= {'\0'};
 char		chkstat3[32]		= {'\0'};
