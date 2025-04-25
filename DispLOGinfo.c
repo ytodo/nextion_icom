@@ -281,7 +281,7 @@ void	dispstatus_dmon(void)
 				strncat(status, tmpptr + 4, 3);        // ZR/GW
 			}
 			disp_stat();
-                }
+		}
 
 		/* <4>無線機から送信したときのログを出力 */
 		if ((tmpptr = strstr(line, "from Rig"   )) != NULL ||
@@ -314,7 +314,7 @@ void	dispstatus_dmon(void)
 			strcat(status, tmpstr);                 // Terminal-AP Mode/DVAP/DVMEGA/Node
 
 			/* RFからのエリアCQ操作でエリアリピータへの接続コマンドとする */
-			if (strncmp(tmpptr, "/", 1) == 0) strcpy(rfcommand, tmpstr);
+			if (strncmp(tmpptr, "/", 1) == 0 && strncmp(nx.rigtype, "ICOM", 4) != 0) strcpy(rfcommand, tmpstr);
 			disp_stat();
 		}
 
