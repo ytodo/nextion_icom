@@ -78,7 +78,7 @@ void dmonitor(void)
 		recvdata(usercmd);
 
 		/* RFCommand データが入っている場合 */
-		if (strlen(rfcommand) != 0 && strncmp(rfcommand, "/", 1) == 0)
+		if ((strlen(usercmd) == 0) && (strncmp(rfcommand, "/", 1) == 0))
 			strcpy(usercmd, rfcommand);
 
 		/* もしタッチデータが選択されていない場合、初回のみデフォルトリピータをセットする */
@@ -152,7 +152,7 @@ void dmonitor(void)
 			system("sudo killall -q -2 dmonitor");
 			system("sudo rm -f /var/nun/dmonitor.pid");
 			usleep(nx.microsec * 300);
-			system("sudo systemctl restart rpt_conn");
+			system("sudo systemctl start rpt_conn");
 	 		status[0] = '\0';
 			rfcommand[0] = '\0';
 		}
