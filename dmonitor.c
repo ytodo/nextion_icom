@@ -151,8 +151,11 @@ void dmonitor(void)
 		{
 			system("sudo killall -q -2 dmonitor");
 			system("sudo rm -f /var/nun/dmonitor.pid");
-			usleep(nx.microsec * 300);
+			usleep(nx.microsec * 5);
 			system("sudo systemctl start rpt_conn");
+			usleep(nx.microsec * 5);
+			system("sudo systemctl start rpt_conn");
+
 	 		status[0] = '\0';
 			rfcommand[0] = '\0';
 		}
