@@ -2,13 +2,14 @@
 //	D-STAR  Nextion display for ICOM Terminal/Access Mode
 //
 //	ファイル名	dmonitor.c
-//			2020.03.05 - 2025.04.19
+//			2020.3.05 - 2025.4.27
+//			update 2025.4.27
 //
 //	機能	Multi_Forwardが搭載されているリピータリストを取得して
-//		「接続可能リピータ」としてdmonitor用ディスプレイに表示。
-//		タッチパネルから接続する
-//		また、同様にターミナルモードのDStarRepeaterの接続と、
-//		状態表示もし、双方を切れ替えて使用する
+//			「接続可能リピータ」としてdmonitor用ディスプレイに表示。
+//			タッチパネルから接続する
+//			また、同様にターミナルモードのDStarRepeaterの接続と、
+//			状態表示もし、双方を切れ替えて使用する
 ////////////////////////////////////////////////////////////////////////
 #include	"Nextion.h"
 
@@ -121,7 +122,7 @@ void dmonitor(void)
 					/* dmonitorを完全に終了させる */
 					system("sudo killall -q -2 dmonitor");
 					system("sudo rm -f /var/run/dmonitor.pid");
-					usleep(nx.microsec * 300);
+					usleep(nx.microsec * 100);
 
 					/* リピータコネクタを停止する */
 					system("sudo systemctl stop rpt_conn");
@@ -151,10 +152,10 @@ void dmonitor(void)
 		{
 			system("sudo killall -q -2 dmonitor");
 			system("sudo rm -f /var/nun/dmonitor.pid");
-			usleep(nx.microsec * 5);
+			usleep(nx.microsec * 10);						// 30000 usec * 10 = 0.3 sec
 			system("sudo systemctl start rpt_conn");
 			usleep(nx.microsec * 5);
-			system("sudo systemctl start rpt_conn");
+			system("sudo systemctl restart rpt_conn");
 
 	 		status[0] = '\0';
 			rfcommand[0] = '\0';

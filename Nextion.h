@@ -69,7 +69,7 @@
 #define	WAITTIME	100000					// 単位microsec（0.1秒）
 #define	VERSION		2						// バージョン情報
 #define	VERSUB		0
-#define RELEASE		4
+#define RELEASE		5
 
 /* Variables */
 typedef struct {							// Hole Punch リピータリスト
