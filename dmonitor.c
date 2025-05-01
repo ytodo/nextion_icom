@@ -152,7 +152,7 @@ void dmonitor(void)
 		{
 			system("sudo killall -q -2 dmonitor");
 			system("sudo rm -f /var/nun/dmonitor.pid");
-			usleep(nx.microsec * 10);						// 30000 usec * 10 = 0.3 sec
+			usleep(nx.microsec * 100);						// 30000 usec * 100 = 3 sec
 			system("sudo systemctl start rpt_conn");
 			usleep(nx.microsec * 5);
 			system("sudo systemctl restart rpt_conn");
